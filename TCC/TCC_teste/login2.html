@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENAI Login</title>
     <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
     <div class="login-container">
@@ -49,7 +50,7 @@
         const querySnapshot = await getDocs(userQuery);
         if (!querySnapshot.empty) {
           window.alert("Login successful");
-          window.location.href = "dashboard.html"; // Redirect to a dashboard or home page
+          window.location.href = "homeadm.html"; // Redirect to a dashboard or home page
         } else {
           window.alert("Invalid NIF or Password");
         }
