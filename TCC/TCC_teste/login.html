@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f2; /* Light background */
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #ff5722; /* Firebase red */
+      margin-bottom: 10px;
+    }
+
+    .description {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #333;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    button.loginbtn {
+      background-color: #ff5722; /* Firebase red */
+      color: #fff;
+      border: none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.loginbtn:hover {
+      background-color: #e64a19; /* Darker red */
+    }
+
+    .signup {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .signup a {
+      color: #ff5722; /* Firebase red */
+      text-decoration: none;
+    }
+
+    .signup a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <p class="description">Please login to access your account</p>
+
+    <form id="loginForm">
+      <label for="nif"><b>NIF</b></label>
+      <input type="text" placeholder="Enter NIF" name="nif" id="nif" required />
+
+      <label for="password"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="password" id="password" required />
+
+      <button type="button" id="loginBtn" class="loginbtn">Login</button>
+    </form>
+
+    <div class="signup">
+      <p>Don't have an account? <a href="register.html">Sign up</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+      authDomain: "fir-crud-56c52.firebaseapp.com",
+      projectId: "fir-crud-56c52",
+      storageBucket: "fir-crud-56c52.appspot.com",
+      messagingSenderId: "906266562649",
+      appId: "1:906266562649:web:55742c6c6b67449857e148",
+      measurementId: "G-VN53GXMXM6",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const analytics = getAnalytics(app);
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const nif = document.getElementById("nif").value;
+      const password = document.getElementById("password").value;
+      try {
+        const userQuery = query(collection(db, "users"), where("nif", "==", nif), where("password", "==", password));
+        const querySnapshot = await getDocs(userQuery);
+        if (!querySnapshot.empty) {
+          window.alert("Login successful");
+          window.location.href = "dashboard.html"; // Redirect to a dashboard or home page
+        } else {
+          window.alert("Invalid NIF or Password");
+        }
+      } catch (error) {
+        console.error("Error logging in: ", error);
+      }
+    });
+  </script>
+</body>
+</html>
