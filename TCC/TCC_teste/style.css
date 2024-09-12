@@ -1,0 +1,93 @@
+/* Reset básico para remover margens e preenchimento padrão */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Fundo degradê */
+    background: linear-gradient(to bottom, #900000, #2A0000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 351px;
+    height: 443px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Move os itens para cima */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-weight: bold;
+    padding-bottom: 10px; /* Reduz a área de preenchimento */
+    text-align: center;
+}
+
+h2 {
+    text-align: center; /* Centraliza o texto "LOGIN" */
+    margin-bottom: 10px; /* Ajusta o espaçamento entre o título e os campos */
+}
+
+
+.logo img {
+    max-height: 50px;
+    width: auto;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #FF0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Estilo para o footer */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    /* padding: -5px; */
+    transform: translateY(20px);
+   
+}
+
+.footer img {
+    max-width: 1500px; /* Ajuste o tamanho da imagem conforme necessário */
+    height: auto;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%; /* Ajusta a largura para 90% da tela */
+        height: auto; /* Altura automática para manter a proporção */
+        padding: 15px;
+    }
+
+    .logo img {
+        max-height: 40px;
+    }
+}
