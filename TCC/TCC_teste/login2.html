@@ -22,26 +22,6 @@
     </div>
     <div class="footer">
         <img src="Group125.png" alt="">
-    </div>
-    <div class="container">
-    <h1>Login</h1>
-    <p class="description">Please login to access your account</p>
-
-    <form id="loginForm">
-      <label for="nif"><b>NIF</b></label>
-      <input type="text" placeholder="Enter NIF" name="nif" id="nif" required />
-
-      <label for="password"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="password" id="password" required />
-
-      <button type="button" id="loginBtn" class="loginbtn">Login</button>
-    </form>
-
-    <div class="signup">
-      <p>Don't have an account? <a href="register.html">Sign up</a></p>
-    </div>
-  </div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getFirestore, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
