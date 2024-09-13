@@ -1,283 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ordem de Serviços</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulário de Serviços</title>
   <style>
-    /* General styles */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff8f2; /* Light background */
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+       body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
 
-    .container {
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 600px;
+      .container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar menu */
+      .sidebar {
+        background-color: #900000;
+        color: #fff;
+        width: 220px;
+        padding: 20px;
+        border-radius: 10px 0 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .sidebar img {
+        width: 150px;
+        margin-bottom: 30px;
+      }
+
+      .sidebar a {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 16px;
+        margin-bottom: 10px;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+      }
+
+      .sidebar a:hover {
+        background-color: #900000;
+      }
+
+      .sidebar a i {
+        margin-right: 10px;
+      }
+
+      /* Header */
+      .header {
+        height: 75px;
+        background-color: rgb(95, 93, 93);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+        border-radius: 0 0 15px 0;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 18px;
+        margin: 0;
+        color: white;
+      }
+
+      .header img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+    /* Main content */
+    .main {
+      flex: 1;
       padding: 20px;
+      background-color: #f5f5f5;
     }
 
-    h1 {
-      color: #ff5722; /* Firebase red */
-      margin-bottom: 10px;
+    .form-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .description {
-      color: #666;
+    .form-container h2 {
+      text-align: center;
       margin-bottom: 20px;
+      font-size: 20px;
     }
 
-    label {
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
       display: block;
-      margin: 10px 0 5px;
-      color: #333;
+      margin-bottom: 5px;
+      font-weight: bold;
     }
 
-    input[type="text"] {
-      width: calc(100% - 20px);
+    .form-group input[type="text"],
+    .form-group input[type="date"] {
+      width: 100%;
       padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
       box-sizing: border-box;
     }
 
-    button.registerbtn {
-      background-color: #ff5722; /* Firebase red */
-      color: #fff;
-      border: none;
+    .form-group input[type="text"]:focus,
+    .form-group input[type="date"]:focus {
+      outline: none;
+      border-color: #900000;
+    }
+
+    .submit-button {
+      background-color: #900000;
+      color: white;
       padding: 15px;
-      width: 100%;
-      border-radius: 4px;
+      border: none;
+      border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
+      width: 100%;
     }
 
-    button.registerbtn:hover {
-      background-color: #e64a19; /* Darker red */
+    .submit-button:hover {
+      background-color: #700000;
     }
 
-    hr {
-      border: 0;
-      border-top: 1px solid #eee;
-      margin: 20px 0;
-    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
 
-    .signin {
-      text-align: center;
-      margin-top: 20px;
-    }
+      .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+      }
 
-    .signin a {
-      color: #ff5722; /* Firebase red */
-      text-decoration: none;
-    }
-
-    .signin a:hover {
-      text-decoration: underline;
+      .main {
+        padding: 20px 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Ordem de Serviços</h1>
-    <p class="description">Cadastrar nova ordem de serviço</p>
-    <hr />
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+      <img src="logo.png" alt="Logo" />
+      <a href="#">INÍCIO</a>
+      <a href="#">FUNCIONÁRIOS</a>
+      <a href="#">USUÁRIOS</a>
+      <a href="#">SERVIÇOS</a>
+    </div>
 
-    <form id="ordemForm">
-      <label for="descricao"><b>Descrição</b></label>
-      <input type="text" placeholder="Descrição" name="descricao" id="descricao" required />
+    <!-- Main content -->
+    <div class="main">
+      <!-- Header -->
+      <div class="header">
+        <span>Bem-vindo de volta!</span>
+        <img src="teste.png" alt="User Profile" />
+      </div>
 
-      <label for="dataCriacao"><b>Data de Criação</b></label>
-      <input type="text" placeholder="Data de Criação" name="dataCriacao" id="dataCriacao" required />
-
-      <label for="criador"><b>Criador</b></label>
-      <input type="text" placeholder="Criador" name="criador" id="criador" required />
-
-      <label for="atribuido"><b>Atribuído</b></label>
-      <input type="text" placeholder="Atribuído" name="atribuido" id="atribuido" required />
-
-      <label for="status"><b>Status</b></label>
-      <input type="text" placeholder="Status" name="status" id="status" required />
-
-      <label for="ambiente"><b>Ambiente</b></label>
-      <input type="text" placeholder="Ambiente" name="ambiente" id="ambiente" required />
-
-      <label for="tipoSolicitacao"><b>Tipo de Solicitação</b></label>
-      <input type="text" placeholder="Tipo de Solicitação" name="tipoSolicitacao" id="tipoSolicitacao" required />
-
-      <label for="dataLimite"><b>Data Limite</b></label>
-      <input type="text" placeholder="Data Limite" name="dataLimite" id="dataLimite" required />
-
-      <label for="dataPedido"><b>Data do Pedido</b></label>
-      <input type="text" placeholder="Data do Pedido" name="dataPedido" id="dataPedido" required />
-
-      <label for="prioridade"><b>Prioridade</b></label>
-      <input type="text" placeholder="Prioridade" name="prioridade" id="prioridade" required />
-
-      <hr />
-      <button type="button" id="submitData" name="submitData" class="registerbtn">Cadastrar Ordem de Serviço</button>
-    </form>
-
-    <hr />
-
-    <!-- Tabela para exibir as ordens de serviço -->
-    <h2>Ordens de Serviço Cadastradas</h2>
-    <table id="ordemTable" border="1" style="width: 100%;">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Descrição</th>
-          <th>Criador</th>
-          <th>Atribuído</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Os dados serão inseridos aqui pelo JavaScript -->
-      </tbody>
-    </table>
-
-    <div class="signin">
-      <p>Já tem uma conta? <a href="login.html">Login</a></p>
+      <!-- Formulário de Serviços -->
+      <div class="form-container">
+        <h2>FORMULÁRIO DE SERVIÇOS</h2>
+        <div class="form-group">
+          <label for="solicitante">Solicitante</label>
+          <input type="text" id="solicitante" name="solicitante" />
+        </div>
+        <div class="form-group">
+          <label for="bloco">Em qual bloco será a manutenção?</label>
+          <input type="text" id="bloco" name="bloco" />
+        </div>
+        <div class="form-group">
+          <label for="ambiente">Qual ambiente?</label>
+          <input type="text" id="ambiente" name="ambiente" />
+        </div>
+        <div class="form-group">
+          <label for="tipoManutencao">Qual o tipo de manutenção?</label>
+          <input type="text" id="tipoManutencao" name="tipoManutencao" />
+        </div>
+        <div class="form-group">
+          <label for="solicitacao">Qual a solicitação?</label>
+          <input type="text" id="solicitacao" name="solicitacao" />
+        </div>
+        <div class="form-group">
+          <label for="dataProblema">Data em que o problema ocorreu</label>
+          <input type="date" id="dataProblema" name="dataProblema" />
+        </div>
+        <button type="submit" class="submit-button">CRIAR ODS</button>
+      </div>
     </div>
   </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import {
-      getFirestore,
-      addDoc,
-      collection,
-      getDocs,
-      doc,
-      deleteDoc,
-      updateDoc,
-    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
-      authDomain: "fir-crud-56c52.firebaseapp.com",
-      projectId: "fir-crud-56c52",
-      storageBucket: "fir-crud-56c52.appspot.com",
-      messagingSenderId: "906266562649",
-      appId: "1:906266562649:web:55742c6c6b67449857e148",
-      measurementId: "G-VN53GXMXM6",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const analytics = getAnalytics(app);
-
-    // Função para adicionar ordem de serviço
-    document.getElementById("submitData").addEventListener("click", async () => {
-      const descricao = document.getElementById("descricao").value;
-      const dataCriacao = document.getElementById("dataCriacao").value;
-      const criador = document.getElementById("criador").value;
-      const atribuido = document.getElementById("atribuido").value;
-      const status = document.getElementById("status").value;
-      const ambiente = document.getElementById("ambiente").value;
-      const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
-      const dataLimite = document.getElementById("dataLimite").value;
-      const dataPedido = document.getElementById("dataPedido").value;
-      const prioridade = document.getElementById("prioridade").value;
-
-      try {
-        await addDoc(collection(db, "ordemServicos"), {
-          descricao,
-          dataCriacao,
-          criador,
-          atribuido,
-          status,
-          ambiente,
-          tipoSolicitacao,
-          dataLimite,
-          dataPedido,
-          prioridade,
-        });
-        window.alert("Ordem de Serviço Adicionada");
-        loadOrdens(); // Recarrega a tabela após adicionar
-      } catch (error) {
-        console.error("Erro ao adicionar ordem de serviço: ", error);
-      }
-    });
-
-    // Função para carregar ordens de serviço do Firestore e exibi-las na tabela
-    async function loadOrdens() {
-      const querySnapshot = await getDocs(collection(db, "ordemServicos"));
-      const ordemTable = document.querySelector("#ordemTable tbody");
-      ordemTable.innerHTML = ""; // Limpa a tabela antes de recarregar
-
-      querySnapshot.forEach((doc) => {
-        const ordemData = doc.data();
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-          <td>${doc.id}</td>
-          <td>${ordemData.descricao}</td>
-          <td>${ordemData.criador}</td>
-          <td>${ordemData.atribuido}</td>
-          <td>${ordemData.status}</td>
-          <td>
-            <button onclick="editOrdem('${doc.id}', '${ordemData.descricao}', '${ordemData.criador}', '${ordemData.atribuido}', '${ordemData.status}')">Editar</button>
-            <button onclick="deleteOrdem('${doc.id}')">Deletar</button>
-          </td>
-        `;
-
-        ordemTable.appendChild(row);
-      });
-    }
-
-    // Função para editar ordem de serviço
-    window.editOrdem = async (id, currentDescricao, currentCriador, currentAtribuido, currentStatus) => {
-      const newDescricao = prompt("Nova Descrição", currentDescricao);
-      const newCriador = prompt("Novo Criador", currentCriador);
-      const newAtribuido = prompt("Novo Atribuído", currentAtribuido);
-      const newStatus = prompt("Novo Status", currentStatus);
-      if (newDescricao && newCriador && newAtribuido && newStatus) {
-        try {
-          const ordemDoc = doc(db, "ordemServicos", id);
-          await updateDoc(ordemDoc, {
-            descricao: newDescricao,
-            criador: newCriador,
-            atribuido: newAtribuido,
-            status: newStatus,
-          });
-          window.alert("Ordem de Serviço Atualizada");
-          loadOrdens(); // Recarrega a tabela após atualizar
-        } catch (error) {
-          console.error("Erro ao atualizar ordem de serviço: ", error);
-        }
-      }
-    };
-
-    // Função para excluir ordem de serviço
-    window.deleteOrdem = async (id) => {
-      if (confirm("Tem certeza que deseja deletar esta ordem de serviço?")) {
-        try {
-          await deleteDoc(doc(db, "ordemServicos", id));
-          window.alert("Ordem de Serviço Deletada");
-          loadOrdens(); // Recarrega a tabela após excluir
-        } catch (error) {
-          console.error("Erro ao deletar ordem de serviço: ", error);
-        }
-      }
-    };
-
-    // Carrega as ordens de serviço ao carregar a página
-    loadOrdens();
-  </script>
 </body>
 </html>
