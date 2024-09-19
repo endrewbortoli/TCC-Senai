@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Formulário de Usuários</title>
 
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/css/novofuncionario.css">
-
 </head>
 <body>
-        <div class="container">
+    <div class="container">
         <!-- Sidebar Menu -->
         <div class="sidebar">
           <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
           <a href="admdashboard.html"> INÍCIO</a>
           <a href="funcionarios.html"> FUNCIONÁRIOS</a>
           <a href="servicos.html"> SERVIÇOS</a>
-
         </div>
 
-        
         <!-- Main content -->
         <div class="main arroz">
           <!-- Header -->
@@ -29,43 +26,93 @@
             <img src="../../assets/img/teste.png" alt="User Profile" />
           </div>
 
-      <!-- Formulário de Serviços -->
-      <div class="form-container">
-        <h2>FORMULÁRIO DE USUÁRIOS</h2>
-        <div class="form-group">
-          <label for="descricao">Nome Completo</label>
-          <input type="text" id="descricao" name="descricao" />
-        </div>
-        <div class="form-group">
-          <label for="atribuido">Email</label>
-          <input type="text" id="atribuido" name="atribuido" />
-        </div>
-        <div class="form-group">
-          <label for="status">Senha</label>
-          <input type="text" id="status" name="status" />
-        </div>
-        <div class="form-group">
-          <label for="ambiente">NIF</label>
-          <input type="text" id="ambiente" name="ambiente" />
-        </div>
-        <div class="form-group">
-          <label for="tipoSolicitacao">Tipo de usuário</label>
-        <select class="form-group">
-          <option value="">Selecione</option>
-          <option value="option1">Administrador</option>
-          <option value="option2">Trabalhador</option>
-          <option value="option3">Geral</option>
-        </select>
-        </div>
+          <!-- Formulário de Usuários -->
+          <div class="form-container">
+            <h2>FORMULÁRIO DE USUÁRIOS</h2>
 
+            <div class="form-group">
+              <label for="nome">Nome Completo</label>
+              <input type="text" id="nome" name="nome" />
+            </div>
 
-        <button type="button" id="submitData" class="submit-button">CRIAR ODS</button>
-      </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" />
+            </div>
+
+            <div class="form-group">
+              <label for="senha">Senha</label>
+              <input type="password" id="senha" name="senha" />
+            </div>
+
+            <div class="form-group">
+              <label for="nif">NIF</label>
+              <input type="text" id="nif" name="nif" />
+            </div>
+
+            <div class="form-group">
+              <label for="tipoUsuario">Tipo de Usuário</label>
+              <select id="tipoUsuario" name="tipoUsuario">
+                <option value="">Selecione</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Trabalhador">Trabalhador</option>
+                <option value="Geral">Geral</option>
+              </select>
+            </div>
+
+            <button type="button" id="submitData" class="submit-button">Criar Usuário</button>
+          </div>
+        </div>
     </div>
-  </div>
 
-    <script>
-        
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import {
+          getFirestore,
+          addDoc,
+          collection
+        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+            authDomain: "fir-crud-56c52.firebaseapp.com",
+            projectId: "fir-crud-56c52",
+            storageBucket: "fir-crud-56c52.appspot.com",
+            messagingSenderId: "906266562649",
+            appId: "1:906266562649:web:55742c6c6b67449857e148",
+            measurementId: "G-VN53GXMXM6"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Função para adicionar usuário ao Firestore
+        document.getElementById("submitData").addEventListener("click", async () => {
+            const nome = document.getElementById("nome").value;
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+            const nif = document.getElementById("nif").value;
+            const tipoUsuario = document.getElementById("tipoUsuario").value;
+
+            if (nome && email && senha && nif && tipoUsuario) {
+                try {
+                    await addDoc(collection(db, "users"), {
+                        nome: nome,
+                        email: email,
+                        senha: senha,
+                        nif: nif,
+                        tipoUsuario: tipoUsuario
+                    });
+                    alert("Usuário cadastrado com sucesso!");
+                } catch (error) {
+                    console.error("Erro ao adicionar usuário: ", error);
+                }
+            } else {
+                alert("Por favor, preencha todos os campos!");
+            }
+        });
     </script>
 </body>
 </html>

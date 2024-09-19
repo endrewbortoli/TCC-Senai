@@ -121,12 +121,12 @@
 
                 row.innerHTML = `
                     <td>${userData.nif}</td>
-                    <td>${userData.name}</td>
+                    <td>${userData.nome}</td>
                     <td>${userData.email}</td>
-                    <td>${userData.password}</td>
-                    <td>${userData.level}</td>
+                    <td>${userData.senha}</td>
+                    <td>${userData.tipoUsuario}</td>
                     <td>
-                        <button onclick="editUser('${doc.id}', '${userData.nif}', '${userData.name}', '${userData.email}', '${userData.password}', '${userData.level}')">Editar</button>
+                        <button onclick="editUser('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.nivel}')">Editar</button>
                         <button onclick="deleteUser('${doc.id}')">Deletar</button>
                     </td>
                 `;
