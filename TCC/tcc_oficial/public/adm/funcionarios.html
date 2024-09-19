@@ -7,28 +7,92 @@
 
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/css/funcionarios.css">
+    <style>
+        /* Estilo da tabela */
+        .styled-table {
+            width: 100%;
+            border-collapse: separate; /* Para permitir bordas arredondadas */
+            border-spacing: 0;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 12px; /* Bordas arredondadas */
+            overflow: hidden; /* Para garantir que as bordas fiquem consistentes */
+        }
+
+        /* Cabeçalho da tabela */
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        /* Células do cabeçalho e do corpo */
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+        }
+
+        /* Efeito de alternância nas linhas */
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        /* Última linha */
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        /* Efeito de hover nas linhas */
+        .styled-table tbody tr:hover {
+            background-color: #dddddd;
+            cursor: pointer;
+        }
+
+        /* Ícone de edição (substitua os botões por ícones) */
+        .styled-table td button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .styled-table td button.edit-btn {
+            background-image: url('../../assets/img/edit-icon.svg'); /* Ícone de editar */
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .styled-table td button.delete-btn {
+            background-image: url('../../assets/img/delete-icon.svg'); /* Ícone de deletar */
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
         <div class="sidebar">
-          <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
-          <a href="admdashboard.html"> INÍCIO</a>
-          <a href="funcionarios.html"> FUNCIONÁRIOS</a>
-          <a href="servicos.html"> SERVIÇOS</a>
-
+            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
+            <a href="admdashboard.html"> INÍCIO</a>
+            <a href="funcionarios.html"> FUNCIONÁRIOS</a>
+            <a href="servicos.html"> SERVIÇOS</a>
         </div>
 
         <!-- Main content -->
         <div class="main arroz">
-          <!-- Header -->
-          <div class="header">
-            <h1>Bem vindo de volta!</h1>
-            <img src="../../assets/img/teste.png" alt="User Profile" />
-          </div>
-  
-        <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
-        <button class="open-button"><a href="novofuncionario.html">Cadastrar usuário</a></button>
+            <!-- Header -->
+            <div class="header">
+                <h1>Bem vindo de volta!</h1>
+                <img src="../../assets/img/teste.png" alt="User Profile" />
+            </div>
+
+            <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
+            <button class="open-button"><a href="novofuncionario.html">Cadastrar usuário</a></button>
 
             <!-- Tabela para exibir os dados -->
             <h2>Registered Users</h2>
@@ -50,41 +114,6 @@
         </div>
     </div>
 
-    <style>
-        /* Estilo da tabela */
-        .styled-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.9em;
-            font-family: Arial, sans-serif;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .styled-table thead tr {
-            background-color: #009879;
-            color: #ffffff;
-            text-align: left;
-        }
-
-        .styled-table th,
-        .styled-table td {
-            padding: 12px 15px;
-        }
-
-        .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
-
-        .styled-table tbody tr:nth-of-type(even) {
-            background-color: #f3f3f3;
-        }
-
-        .styled-table tbody tr:last-of-type {
-            border-bottom: 2px solid #009879;
-        }
-    </style>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import {
@@ -100,7 +129,7 @@
             apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
             authDomain: "fir-crud-56c52.firebaseapp.com",
             projectId: "fir-crud-56c52",
-            storageBucket: "fir-crud-56c52.appspot.com",
+            storageBucket: "fir-crud-56c52",
             messagingSenderId: "906266562649",
             appId: "1:906266562649:web:55742c6c6b67449857e148",
             measurementId: "G-VN53GXMXM6",
@@ -126,8 +155,8 @@
                     <td>${userData.senha}</td>
                     <td>${userData.tipoUsuario}</td>
                     <td>
-                        <button onclick="editUser('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.nivel}')">Editar</button>
-                        <button onclick="deleteUser('${doc.id}')">Deletar</button>
+                        <button class="edit-btn" onclick="editUser('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"></button>
+                        <button class="delete-btn" onclick="deleteUser('${doc.id}')"></button>
                     </td>
                 `;
 
@@ -146,7 +175,7 @@
             if (newNif && newName && newEmail && newPassword && newLevel) {
                 try {
                     const userDoc = doc(db, "users", id);
-                    await updateDoc(userDoc, { nif: newNif, name: newName, email: newEmail, password: newPassword, level: newLevel });
+                    await updateDoc(userDoc, { nif: newNif, nome: newName, email: newEmail, senha: newPassword, tipoUsuario: newLevel });
                     alert("Usuário atualizado com sucesso!");
                     loadUsers(); // Recarrega a tabela após atualizar
                 } catch (error) {
