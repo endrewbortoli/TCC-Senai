@@ -3,82 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+    <title>Dashboard</title>
 
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/css/funcionarios.css">
-    <!-- <link rel="stylesheet" href="../../assets/css/style.css"> -->
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
         <div class="sidebar">
-          <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
-          <a href="#"> INÍCIO</a>
-          <a href="#"> FUNCIONÁRIOS</a>
-          <a href="#"> USUÁRIOS</a>
-          <a href="#"> SERVIÇOS</a>
+            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
+            <a href="#"> INÍCIO</a>
+            <a href="#"> FUNCIONÁRIOS</a>
+            <a href="#"> USUÁRIOS</a>
+            <a href="#"> SERVIÇOS</a>
         </div>
-  
+
         <!-- Main content -->
-        <div class="main arroz">
-          <!-- Header -->
-          <div class="header">
-            <h1>Bem vindo de volta!</h1>
-            <img src="../../assets/img/teste.png" alt="User Profile" />
-          </div>
-  
-        <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
-        <button class="open-button" onclick="createUser()" >Cadastrar usuário</button>
+        <div class="main">
+            <!-- Header -->
+            <div class="header">
+                <h1>Bem vindo de volta!</h1>
+                <img src="../../assets/img/teste.png" alt="User Profile" />
+            </div>
 
-        <!-- Dropdown para filtro -->
-        <select class="filter-dropdown">
-          <option value="">Filtrar por...</option>
-          <option value="option1">Opção 1</option>
-          <option value="option2">Opção 2</option>
-          <option value="option3">Opção 3</option>
-        </select>
-
-        <!-- Barra de pesquisa -->
-        <input type="text" class="search-bar" placeholder="Pesquisar..." />
-
-
-          <!-- Content Section (Table) -->
-          <div class="content">
-            <h2>Detalhes</h2>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>NOME</th>
-                  <th>NIF</th>
-                  <th>EMAIL</th>
-                  <th>SENHA</th>
-                  <th>NÍVEL</th>
-                  <th>AÇÕES</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </tbody>
+            <!-- Tabela para exibir os dados -->
+            <h2>Registered Users</h2>
+            <table id="userTable" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>NIF</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Senha</th>
+                        <th>Nível</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os dados serão inseridos aqui pelo JavaScript -->
+                </tbody>
             </table>
-          </div>
         </div>
-      </div>
     </div>
 
-    <!-- Popup Modal -->
-    <div class="overlay" id="overlay
+    <style>
+        /* Estilo da tabela */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import {
+            getFirestore,
+            getDocs,
+            doc,
+            deleteDoc,
+            updateDoc,
+            collection
+        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+            authDomain: "fir-crud-56c52.firebaseapp.com",
+            projectId: "fir-crud-56c52",
+            storageBucket: "fir-crud-56c52.appspot.com",
+            messagingSenderId: "906266562649",
+            appId: "1:906266562649:web:55742c6c6b67449857e148",
+            measurementId: "G-VN53GXMXM6",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Função para carregar usuários do Firestore e exibi-los na tabela
+        async function loadUsers() {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            const userTable = document.querySelector("#userTable tbody");
+            userTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+
+            querySnapshot.forEach((doc) => {
+                const userData = doc.data();
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${userData.nif}</td>
+                    <td>${userData.name}</td>
+                    <td>${userData.email}</td>
+                    <td>${userData.password}</td>
+                    <td>${userData.level}</td>
+                    <td>
+                        <button onclick="editUser('${doc.id}', '${userData.nif}', '${userData.name}', '${userData.email}', '${userData.password}', '${userData.level}')">Editar</button>
+                        <button onclick="deleteUser('${doc.id}')">Deletar</button>
+                    </td>
+                `;
+
+                userTable.appendChild(row);
+            });
+        }
+
+        // Função para editar usuário
+        window.editUser = async (id, currentNif, currentName, currentEmail, currentPassword, currentLevel) => {
+            const newNif = prompt("Novo NIF:", currentNif);
+            const newName = prompt("Novo Nome:", currentName);
+            const newEmail = prompt("Novo Email:", currentEmail);
+            const newPassword = prompt("Nova Senha:", currentPassword);
+            const newLevel = prompt("Novo Nível:", currentLevel);
+
+            if (newNif && newName && newEmail && newPassword && newLevel) {
+                try {
+                    const userDoc = doc(db, "users", id);
+                    await updateDoc(userDoc, { nif: newNif, name: newName, email: newEmail, password: newPassword, level: newLevel });
+                    alert("Usuário atualizado com sucesso!");
+                    loadUsers(); // Recarrega a tabela após atualizar
+                } catch (error) {
+                    console.error("Erro ao atualizar usuário: ", error);
+                }
+            }
+        };
+
+        // Função para excluir usuário
+        window.deleteUser = async (id) => {
+            if (confirm("Tem certeza que deseja deletar este usuário?")) {
+                try {
+                    await deleteDoc(doc(db, "users", id));
+                    alert("Usuário deletado com sucesso!");
+                    loadUsers(); // Recarrega a tabela após excluir
+                } catch (error) {
+                    console.error("Erro ao deletar usuário: ", error);
+                }
+            }
+        };
+
+        // Carrega os usuários ao carregar a página
+        loadUsers();
+    </script>
 </body>
 </html>
