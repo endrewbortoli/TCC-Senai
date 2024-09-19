@@ -237,3 +237,6 @@
           width: 100%;
         }
       }
+body > div > div.main.arroz > h2{
+        margin-left: 35px;
+      }
