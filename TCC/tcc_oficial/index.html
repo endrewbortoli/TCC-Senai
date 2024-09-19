@@ -15,7 +15,7 @@
         <h2>LOGIN</h2>
         <form id="loginForm">
             <input type="text" id="nif" class="input-field" placeholder="NIF" required>
-            <input type="password" id="password" class="input-field" placeholder="SENHA" required>
+            <input type="password" id="senha" class="input-field" placeholder="SENHA" required>
             <button type="button" id="loginBtn" class="login-button">LOGIN</button>
         </form>
     </div>
@@ -42,22 +42,49 @@
         const db = getFirestore(app);
         const analytics = getAnalytics(app);
 
-        document.getElementById("loginBtn").addEventListener("click", async () => {
-            const nif = document.getElementById("nif").value;
-            const password = document.getElementById("password").value;
-            try {
-                const userQuery = query(collection(db, "users"), where("nif", "==", nif), where("password", "==", password));
-                const querySnapshot = await getDocs(userQuery);
-                if (!querySnapshot.empty) {
-                    window.alert("Login bem-sucedido");
-                    window.location.href = "public/adm/admdashboard.html"; // Redirecionar para a página do dashboard ou inicial
+document.getElementById("loginBtn").addEventListener("click", async () => {
+    const nif = document.getElementById("nif").value;
+    const senha = document.getElementById("senha").value;
+
+    try {
+        const userQuery = query(
+            collection(db, "users"),
+            where("nif", "==", nif),
+            where("senha", "==", senha)
+        );
+
+        const querySnapshot = await getDocs(userQuery);
+
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+                const userData = doc.data();
+                const tipoUsuario = userData.tipoUsuario;
+
+                // Armazenar estado de login no sessionStorage
+                sessionStorage.setItem('userLogged', 'true'); // Armazenar flag de login
+                sessionStorage.setItem('tipoUsuario', tipoUsuario); // Armazenar o tipo de usuário, se necessário
+
+                if (tipoUsuario === "Administrador") {
+                    window.alert("Login bem-sucedido como Administrador");
+                    window.location.href = "public/adm/admdashboard.html";
+                } else if (tipoUsuario === "Manutenção") {
+                    window.alert("Login bem-sucedido como equipe de Manutenção");
+                    window.location.href = "public/manutencao/manutencaodashboard.html";
+                } else if (tipoUsuario === "Geral") {
+                    window.alert("Login bem-sucedido como Geral");
+                    window.location.href = "public/geral/geraldashboard.html";
                 } else {
-                    window.alert("NIF ou Senha inválidos");
+                    window.alert("Nível de usuário desconhecido");
                 }
-            } catch (error) {
-                console.error("Erro ao fazer login: ", error);
             }
-        });
+        );
+        } else {
+            window.alert("NIF ou Senha inválidos");
+        }
+    } catch (error) {
+        console.error("Erro ao fazer login: ", error);
+    }
+});
     </script>
 </body>
 </html>

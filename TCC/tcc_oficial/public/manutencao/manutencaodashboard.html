@@ -120,6 +120,7 @@
         <div class="profile">
         <span>Bem vindo de volta!</span>
         <img src="../../assets/img/teste.png" alt="Profile Picture">
+        <button onclick="logout()">Logout</button>
     </div>
 </header>
 
@@ -182,6 +183,18 @@
         </tbody>
     </table>
 </div>
+  <script>
+    function logout() {
+    sessionStorage.removeItem('userLogged');
+    sessionStorage.removeItem('tipoUsuario');
+    window.location.href = "../index.html"; // Redireciona para a página de login
+}
+        // Verificar se o usuário está logado
+    if (sessionStorage.getItem('userLogged') !== 'true') {
+        // Redireciona para a página de login se não estiver logado
+        window.location.href = "../index.html";
+    }
 
+  </script>
 </body>
 </html>
