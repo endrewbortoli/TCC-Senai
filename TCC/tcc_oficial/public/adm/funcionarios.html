@@ -31,14 +31,20 @@
             <img src="../../assets/img/teste.png" alt="User Profile" />
           </div>
   
-        <!-- Status Section -->
-        <div class="top-bar">
-          <div class="status-container">
-            <div class="status-box">
-              <h2>NÃO ATRIBUÍDOS</h2>
-              <span>0</span>
-            </div>
-          </div>
+        <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
+        <button class="open-button" onclick="createUser()" >Cadastrar usuário</button>
+
+        <!-- Dropdown para filtro -->
+        <select class="filter-dropdown">
+          <option value="">Filtrar por...</option>
+          <option value="option1">Opção 1</option>
+          <option value="option2">Opção 2</option>
+          <option value="option3">Opção 3</option>
+        </select>
+
+        <!-- Barra de pesquisa -->
+        <input type="text" class="search-bar" placeholder="Pesquisar..." />
+
 
           <!-- Content Section (Table) -->
           <div class="content">

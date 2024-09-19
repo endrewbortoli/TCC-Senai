@@ -172,3 +172,63 @@
         font-size: 16px;
         cursor: pointer;
       }
+
+                    /* Botão para abrir o formulário */
+      .open-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #900000;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 20px;
+        margin-right: 10px;
+      }
+
+      /* Dropdown para o filtro */
+      .filter-dropdown {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+        margin-right: 10px;
+      }
+
+      /* Barra de pesquisa */
+      .search-bar {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 200px;
+      }
+
+      /* Seta para voltar */
+      .back-arrow {
+        font-size: 24px;
+        color: #900000;
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: inline-block;
+      }
+
+      /* Estilos para dispositivos móveis */
+      @media (max-width: 768px) {
+        .form-popup {
+          width: 90%;
+          max-height: 85%;
+        }
+
+        .open-button,
+        .filter-dropdown,
+        .search-bar {
+          margin-bottom: 10px;
+        }
+
+        .search-bar {
+          width: 100%;
+        }
+      }
