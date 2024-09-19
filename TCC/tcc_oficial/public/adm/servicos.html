@@ -33,19 +33,168 @@
           </div>
 
                   <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
-        <button class="open-button"><a href="novofuncionario.html">Cadastrar usuário</a></button>
-
-        <!-- Dropdown para filtro -->
-        <select class="filter-dropdown">
-          <option value="">Filtrar por...</option>
-          <option value="option1">Opção 1</option>
-          <option value="option2">Opção 2</option>
-          <option value="option3">Opção 3</option>
-        </select>
+        <button class="open-button"><a href="novoservico.html">Cadastrar serviços</a></button>
 
         <!-- Barra de pesquisa -->
         <input type="text" class="search-bar" placeholder="Pesquisar..." />
 
+                    <!-- Tabela para exibir os dados -->
+            <h2>Ordens de Serviço</h2>
+            <table id="osTable" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Solicitante</th>
+                        <th>Atribuído a</th>
+                        <th>Status</th>
+                        <th>Ambiente</th>
+                        <th>Data do Pedido</th>
+                        <th>Data Limite</th>
+                        <th>Prioridade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os dados serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
+
+                <style>
+        /* Estilo da tabela */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import {
+            getFirestore,
+            getDocs,
+            doc,
+            deleteDoc,
+            updateDoc,
+            collection
+        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+            authDomain: "fir-crud-56c52.firebaseapp.com",
+            projectId: "fir-crud-56c52",
+            storageBucket: "fir-crud-56c52.appspot.com",
+            messagingSenderId: "906266562649",
+            appId: "1:906266562649:web:55742c6c6b67449857e148",
+            measurementId: "G-VN53GXMXM6",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Função para carregar ordens de serviço do Firestore e exibi-las na tabela
+        async function loadOrdensServico() {
+            const querySnapshot = await getDocs(collection(db, "ordemServicos"));
+            const osTable = document.querySelector("#osTable tbody");
+            osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+
+            querySnapshot.forEach((doc) => {
+                const osData = doc.data();
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${osData.descricao}</td>
+                    <td>${osData.criador}</td>
+                    <td>${osData.atendido}</td>
+                    <td>${osData.status}</td>
+                    <td>${osData.ambiente}</td>
+                    <td>${osData.dataPedido}</td>
+                    <td>${osData.dataLimite}</td>
+                    <td>${osData.prioridade}</td>
+                    <td>
+                        <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atendido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">Editar</button>
+                        <button onclick="deleteOS('${doc.id}')">Deletar</button>
+                    </td>
+                `;
+
+                osTable.appendChild(row);
+            });
+        }
+
+        // Função para editar ordem de serviço
+        window.editOS = async (id, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
+            const newDescricao = prompt("Nova Descrição:", descricao);
+            const newCriador = prompt("Novo Solicitante:", criador);
+            const newAtribuido = prompt("Novo Atribuído a:", atribuido);
+            const newStatus = prompt("Novo Status:", status);
+            const newAmbiente = prompt("Novo Ambiente:", ambiente);
+            const newDataPedido = prompt("Nova Data do Pedido:", dataPedido);
+            const newDataLimite = prompt("Nova Data Limite:", dataLimite);
+            const newPrioridade = prompt("Nova Prioridade:", prioridade);
+
+            if (newDescricao && newCriador && newAtribuido && newStatus && newAmbiente && newDataPedido && newDataLimite && newPrioridade) {
+                try {
+                    const osDoc = doc(db, "ordemServicos", id);
+                    await updateDoc(osDoc, {
+                        descricao: newDescricao,
+                        criador: newCriador,
+                        atribuido: newAtribuido,
+                        status: newStatus,
+                        ambiente: newAmbiente,
+                        dataPedido: newDataPedido,
+                        dataLimite: newDataLimite,
+                        prioridade: newPrioridade
+                    });
+                    alert("Ordem de Serviço atualizada com sucesso!");
+                    loadOrdensServico(); // Recarrega a tabela após atualizar
+                } catch (error) {
+                    console.error("Erro ao atualizar ordem de serviço: ", error);
+                }
+            }
+        };
+
+        // Função para excluir ordem de serviço
+        window.deleteOS = async (id) => {
+            if (confirm("Tem certeza que deseja deletar esta ordem de serviço?")) {
+                try {
+                    await deleteDoc(doc(db, "ordemServicos", id));
+                    alert("Ordem de Serviço deletada com sucesso!");
+                    loadOrdensServico(); // Recarrega a tabela após excluir
+                } catch (error) {
+                    console.error("Erro ao deletar ordem de serviço: ", error);
+                }
+            }
+        };
+
+        // Carrega as ordens de serviço ao carregar a página
+        loadOrdensServico();
+    </script>
 
 </body>
 </html>
