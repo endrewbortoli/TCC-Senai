@@ -186,6 +186,11 @@
         margin: 20px;
         margin-right: 10px;
       }
+                    /* Botão para abrir o formulário */
+      .open-button a{
+        color: #fff;
+        text-decoration: none;
+      }
 
       /* Dropdown para o filtro */
       .filter-dropdown {
