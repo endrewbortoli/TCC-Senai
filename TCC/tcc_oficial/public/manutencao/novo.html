@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENAI - Manutenção</title>
+    <title>Dashboard</title>
+
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
-    <link rel="stylesheet" href="../../assets/css/novofuncionario.css">
+    <link rel="stylesheet" href="../../assets/css/funcionarios.css">
     <style>
         /* Global settings */
         body {
@@ -53,11 +54,6 @@
             background-color: #900000;
         }
 
-        .sidebar a i {
-            margin-right: 10px;
-        }
-
-        /* Header */
         .header {
             height: 75px;
             background-color: rgb(95, 93, 93);
@@ -83,28 +79,38 @@
             object-fit: cover;
         }
 
-        .btn-back {
-            background-color: #990000;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
+        /* Estilo das caixas */
+        .form-container {
+            width: 90%;
+            margin: 25px 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
 
-        .content {
-            margin-left: 120px;
-            padding: 20px;
-        }
-
-        .form-task {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 15px;
         }
 
         .form-group {
+            flex: 1;
+            min-width: 45%; /* Cada caixa ocupará 45% da largura */
             margin-bottom: 15px;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            box-sizing: border-box;
         }
 
         .form-group label {
@@ -113,30 +119,12 @@
             margin-bottom: 5px;
         }
 
-        .form-group input, 
-        .form-group textarea, 
-        .form-group select {
-            width: 95%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        textarea {
+            resize: none;
+            height: 100px;
         }
 
-        .form-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-            margin-right: 15px;
-        }
-
-        .form-row .form-group:last-child {
-            margin-right: 0;
-        }
-
-        /* Responsive adjustments */
+        /* Responsivo */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -155,83 +143,140 @@
             .main {
                 padding: 100px 20px 20px;
             }
+
+            .form-group {
+                min-width: 100%; /* Em dispositivos menores, cada campo ocupará 100% da largura */
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Container for Sidebar and Main Content -->
     <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <img src="user-photo.jpg" alt="Logo">
-            <a href="#" class="btn-back">&larr; VOLTAR</a>
-        </aside>
+        <!-- Sidebar Menu -->
+        <div class="sidebar">
+            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
+            <a href="admdashboard.html"> INÍCIO</a>
+            <a href="funcionarios.html"> FUNCIONÁRIOS</a>
+            <a href="servicos.html"> SERVIÇOS</a>
+        </div>
 
-        <!-- Main content -->
         <div class="main">
-            <!-- Header -->
-            <header class="header">
-                <h1>SENAI - Manutenção</h1>
-                <div class="user-info">
-                    <p>Bem vindo de volta!</p>
-                    <img src="user-photo.jpg" alt="Foto de Perfil">
-                </div>
-            </header>
-
-            <!-- Form Section -->
-            <div class="nicolas">
-                <form class="form-task">
-                    <div class="form-group">
-                        <label for="nome">Nome</label>
-                        <input type="text" id="nome" value="Manutenção notebooks">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao">Descrição</label>
-                        <textarea id="descricao" rows="4"></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="data-limite">Data Limite</label>
-                            <input type="date" id="data-limite" value="2024-09-04">
-                        </div>
-                        <div class="form-group">
-                            <label for="prioridade">Prioridade</label>
-                            <input type="text" id="prioridade" value="Alta">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status">
-                                <option value="">Selecione o status</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="requeridor">Requeridor</label>
-                            <input type="text" id="requeridor" value="Marcelo Soares Silva">
-                        </div>
-                        <div class="form-group">
-                            <label for="autorizador">Autorizador</label>
-                            <input type="text" id="autorizador" value="Ariel Rodrigues da Silva">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="local">Local</label>
-                            <input type="text" id="local" value="B2">
-                        </div>
-                        <div class="form-group">
-                            <label for="sala">Sala</label>
-                            <input type="text" id="sala" value="Sala Multiuso">
-                        </div>
-                    </div>
-                </form>
+          <!-- Header -->
+          <div class="header">
+            <h1>SENAI - Manutenção</h1>
+            <div class="user-info">
+                <p>Bem vindo de volta!</p>
+                <img src="user-photo.jpg" alt="User Profile" />
             </div>
+          </div>
+
+          <!-- Formulário de Dados de Manutenção -->
+          <div class="form-container">
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="nome">Nome</label>
+                      <input type="text" id="nome" placeholder="Nome da manutenção">
+                  </div>
+
+                  <div class="form-group">
+                      <label for="descricao">Descrição</label>
+                      <textarea id="descricao" placeholder="Descrição da manutenção"></textarea>
+                  </div>
+              </div>
+
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="dataLimite">Data Limite</label>
+                      <input type="date" id="dataLimite">
+                  </div>
+
+                  <div class="form-group">
+                      <label for="prioridade">Prioridade</label>
+                      <input type="text" id="prioridade" placeholder="Prioridade">
+                  </div>
+
+                  <div class="form-group">
+                      <label for="status">Status</label>
+                      <select id="status">
+                          <option value="">Selecione o status</option>
+                          <option value="pendente">Pendente</option>
+                          <option value="concluido">Concluído</option>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="requeridor">Requeridor</label>
+                      <input type="text" id="requeridor" placeholder="Nome do requeridor">
+                  </div>
+
+                  <div class="form-group">
+                      <label for="autorizador">Autorizador</label>
+                      <input type="text" id="autorizador" placeholder="Nome do autorizador">
+                  </div>
+              </div>
+
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="local">Local</label>
+                      <input type="text" id="local" placeholder="Local">
+                  </div>
+
+                  <div class="form-group">
+                      <label for="sala">Sala</label>
+                      <input type="text" id="sala" placeholder="Sala">
+                  </div>
+              </div>
+          </div>
         </div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+    <script>
+        // Configurações do Firebase (ajustar com as credenciais do seu projeto)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_DOMINIO.firebaseapp.com",
+            projectId: "SEU_PROJETO_ID",
+            storageBucket: "SEU_BUCKET.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SUA_APP_ID"
+        };
+
+        // Inicializar o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        // Referência para a coleção de manutenções
+        const maintenanceRef = db.collection('manutencoes');
+
+        // Função para carregar e exibir os dados nos campos
+        function loadMaintenanceData() {
+            maintenanceRef.get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    const maintenance = doc.data();
+
+                    // Preencher os campos com os dados do Firebase
+                    document.getElementById('nome').value = maintenance.nome;
+                    document.getElementById('descricao').value = maintenance.descricao;
+                    document.getElementById('dataLimite').value = maintenance.dataLimite;
+                    document.getElementById('prioridade').value = maintenance.prioridade;
+                    document.getElementById('status').value = maintenance.status;
+                    document.getElementById('requeridor').value = maintenance.requeridor;
+                    document.getElementById('autorizador').value = maintenance.autorizador;
+                    document.getElementById('local').value = maintenance.local;
+                    document.getElementById('sala').value = maintenance.sala;
+                });
+            }).catch((error) => {
+                console.error("Erro ao carregar dados: ", error);
+            });
+        }
+
+        // Chamar a função para carregar os dados ao carregar a página
+        window.onload = loadMaintenanceData;
+    </script>
 </body>
 </html>
+
