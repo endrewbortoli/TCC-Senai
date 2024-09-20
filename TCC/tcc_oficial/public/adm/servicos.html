@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
         <link rel="stylesheet" href="../../assets/css/funcionarios.css">
+        <link rel="stylesheet" href="../../assets/css/servicos.css">
 
     
     <!-- <link rel="stylesheet" href="../../assets/css/style.css"> -->
@@ -25,7 +26,7 @@
         </div>
   
         <!-- Main content -->
-        <div class="main arroz">
+        <div class="main">
           <!-- Header -->
           <div class="header">
             <h1>Bem vindo de volta!</h1>
@@ -139,8 +140,8 @@
                     <td>${osData.dataLimite}</td>
                     <td>${osData.prioridade}</td>
                     <td>
-                        <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atendido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">Editar</button>
-                        <button onclick="deleteOS('${doc.id}')">Deletar</button>
+                        <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atendido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')"><img src="../../assets/img/pen.png"></button>
+                        <button onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
                     </td>
                 `;
 
