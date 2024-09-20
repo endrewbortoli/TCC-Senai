@@ -18,13 +18,18 @@
           <a href="servicos.html"> SERVIÇOS</a>
         </div>
 
-        <!-- Main content -->
-        <div class="main arroz">
+          <!-- Header -->
+        <div class="main">
           <!-- Header -->
           <div class="header">
-            <h1>Bem vindo de volta!</h1>
+            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+            <button onclick="logout()">SAIR</button>
+            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+            </div>            
             <img src="../../assets/img/teste.png" alt="User Profile" />
+
           </div>
+
 
           <!-- Formulário de Usuários -->
           <div class="form-container">
@@ -116,5 +121,8 @@
             }
         });
     </script>
+
+        <script src="../../assets/js/verificacao.js"></script>
+
 </body>
 </html>

@@ -85,9 +85,14 @@
         <div class="main">
           <!-- Header -->
           <div class="header">
-            <h1>Bem vindo de volta!</h1>
+            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+            <button onclick="logout()">SAIR</button>
+            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+            </div>            
             <img src="../../assets/img/teste.png" alt="User Profile" />
+
           </div>
+
 
           <!-- Botão para abrir o formulário e barra de pesquisa -->
           <button class="open-button"><a href="novoservico.html">Cadastrar serviços</a></button>
@@ -153,14 +158,14 @@
                 row.innerHTML = `
                     <td>${osData.descricao}</td>
                     <td>${osData.criador}</td>
-                    <td>${osData.atendido}</td>
+                    <td>${osData.atribuido}</td>
                     <td>${osData.status}</td>
                     <td>${osData.ambiente}</td>
                     <td>${osData.dataPedido}</td>
                     <td>${osData.dataLimite}</td>
                     <td>${osData.prioridade}</td>
                     <td>
-                        <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atendido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')"><img src="../../assets/img/pen.png"></button>
+                        <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')"><img src="../../assets/img/pen.png"></button>
                         <button onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
                     </td>
                 `;
@@ -217,6 +222,7 @@
         // Carrega as ordens de serviço ao carregar a página
         loadOrdensServico();
     </script>
+    <script src="../../assets/js/verificacao.js"></script>
 
 </body>
 </html>

@@ -6,6 +6,8 @@
 
 if (sessionStorage.getItem('userLogged') === "true") {
     const tipoUsuario = sessionStorage.getItem('tipoUsuario');
+    const nomeUsuario = sessionStorage.getItem('nome'); // Nome do usuário logado
+
     const currentPath = window.location.pathname;
 
     // Verifica o tipo de usuário e redireciona somente se estiver na página errada

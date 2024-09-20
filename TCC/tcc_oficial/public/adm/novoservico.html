@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/css/novofuncionario.css">
 
+    <link rel="stylesheet" href="../../assets/js/verificacao.js">
+
 </head>
 <body>
         <div class="container">
@@ -22,12 +24,17 @@
 
         
         <!-- Main content -->
-        <div class="main arroz">
+        <div class="main">
           <!-- Header -->
           <div class="header">
-            <h1>Bem vindo de volta!</h1>
+            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+            <button onclick="logout()">SAIR</button>
+            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+            </div>            
             <img src="../../assets/img/teste.png" alt="User Profile" />
+
           </div>
+
 
       <!-- Formulário de Serviços -->
       <div class="form-container">
@@ -38,7 +45,7 @@
         </div>
         <div class="form-group">
           <label for="criador">Solicitante</label>
-          <input type="text" id="criador" name="criador" />
+          <input type="text" id="criador" name="criador"/>
         </div>
         <div class="form-group">
           <label for="atribuido">Atribuído a</label>
@@ -52,10 +59,17 @@
           <label for="ambiente">Ambiente</label>
           <input type="text" id="ambiente" name="ambiente" />
         </div>
+
         <div class="form-group">
-          <label for="tipoSolicitacao">Tipo de Solicitação</label>
-          <input type="text" id="tipoSolicitacao" name="tipoSolicitacao" />
+            <label for="tipoSolicitacao">Tipo da Solicitação</label>
+              <select id="tipoSolicitacao" name="tipoSolicitacao">
+                <option value="">Selecione</option>
+                <option value="Preventiva">Preventiva</option>
+                <option value="Manutencao">Manutenção</option>
+                <option value="Geral">Programada</option>
+              </select>
         </div>
+
         <div class="form-group">
           <label for="dataPedido">Data do Pedido</label>
           <input type="date" id="dataPedido" name="dataPedido" />
@@ -64,10 +78,17 @@
           <label for="dataLimite">Data Limite</label>
           <input type="date" id="dataLimite" name="dataLimite" />
         </div>
+
         <div class="form-group">
-          <label for="prioridade">Prioridade</label>
-          <input type="text" id="prioridade" name="prioridade" />
+              <label for="prioridade">Prioridade</label>
+              <select id="prioridade" name="prioridade">
+                <option value="">Selecione</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Media">Média</option>
+                <option value="Alta">Alta</option>
+              </select>
         </div>
+
         <button type="button" id="submitData" class="submit-button">CRIAR ODS</button>
       </div>
     </div>
@@ -100,6 +121,14 @@
     const db = getFirestore(app);
     const analytics = getAnalytics(app);
 
+//     document.addEventListener('DOMContentLoaded', () => {
+//   const nomeUsuario = sessionStorage.getItem('nome'); // Obtém o nome do usuário logado
+//   if (nomeUsuario) {
+//     document.getElementById('solicitante').value = nomeUsuario; // Preenche o campo "Solicitante"
+//   }
+// });
+
+
     // Função para adicionar ordem de serviço
     document.getElementById("submitData").addEventListener("click", async () => {
       const descricao = document.getElementById("descricao").value;
@@ -125,11 +154,15 @@
           prioridade,
         });
         window.alert("Ordem de Serviço Adicionada");
+                window.location.href = "../../public/adm/funcionarios.html";
+
       } catch (error) {
         console.error("Erro ao adicionar ordem de serviço: ", error);
       }
     });
   </script>
+    <script src="../../assets/js/verificacao.js"></script>
 
 </body>
+
 </html>
