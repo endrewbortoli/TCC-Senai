@@ -5,15 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
-
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
         <link rel="stylesheet" href="../../assets/css/funcionarios.css">
         <link rel="stylesheet" href="../../assets/css/servicos.css">
 
     
-    <!-- <link rel="stylesheet" href="../../assets/css/style.css"> -->
+    <style>
+        /* Estilo da tabela adaptado */
+        .styled-table {
+            width: 90%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 30px;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .styled-table thead tr {
+            background-color: #7b7b7b;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #dddddd;
+            cursor: pointer;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #3a3a3a;
+        }
+
+        /* Botões de ação como ícones */
+        .styled-table td button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .styled-table td button.edit-btn {
+            background-image: url('../../assets/img/edit-icon.svg');
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .styled-table td button.delete-btn {
+            background-image: url('../../assets/img/delete-icon.svg');
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -33,68 +89,32 @@
             <img src="../../assets/img/teste.png" alt="User Profile" />
           </div>
 
-                  <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
-        <button class="open-button"><a href="novoservico.html">Cadastrar serviços</a></button>
+          <!-- Botão para abrir o formulário e barra de pesquisa -->
+          <button class="open-button"><a href="novoservico.html">Cadastrar serviços</a></button>
+          <input type="text" class="search-bar" placeholder="Pesquisar..." />
 
-        <!-- Barra de pesquisa -->
-        <input type="text" class="search-bar" placeholder="Pesquisar..." />
-
-                    <!-- Tabela para exibir os dados -->
-            <h2>Ordens de Serviço</h2>
-            <table id="osTable" class="styled-table">
-                <thead>
-                    <tr>
-                        <th>Descrição</th>
-                        <th>Solicitante</th>
-                        <th>Atribuído a</th>
-                        <th>Status</th>
-                        <th>Ambiente</th>
-                        <th>Data do Pedido</th>
-                        <th>Data Limite</th>
-                        <th>Prioridade</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Os dados serão inseridos aqui pelo JavaScript -->
-                </tbody>
-            </table>
-
-                <style>
-        /* Estilo da tabela */
-        .styled-table {
-            width: 95%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.9em;
-            font-family: Arial, sans-serif;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            margin-left: 25px;
-        }
-
-        .styled-table thead tr {
-            background-color: #7b7b7b;
-            color: #ffffff;
-            text-align: left;
-        }
-
-        .styled-table th,
-        .styled-table td {
-            padding: 12px 15px;
-        }
-
-        .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
-
-        .styled-table tbody tr:nth-of-type(even) {
-            background-color: #f3f3f3;
-        }
-
-        .styled-table tbody tr:last-of-type {
-            border-bottom: 2px solid #7b7b7b;
-        }
-    </style>
+          <!-- Tabela para exibir os dados -->
+          <h2>Ordens de Serviço</h2>
+          <table id="osTable" class="styled-table">
+              <thead>
+                  <tr>
+                      <th>Descrição</th>
+                      <th>Solicitante</th>
+                      <th>Atribuído a</th>
+                      <th>Status</th>
+                      <th>Ambiente</th>
+                      <th>Data do Pedido</th>
+                      <th>Data Limite</th>
+                      <th>Prioridade</th>
+                      <th>Ações</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Os dados serão inseridos aqui pelo JavaScript -->
+              </tbody>
+          </table>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
