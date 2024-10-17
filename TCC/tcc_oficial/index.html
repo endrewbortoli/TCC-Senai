@@ -150,55 +150,57 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import { getFirestore, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
-            authDomain: "fir-crud-56c52.firebaseapp.com",
-            projectId: "fir-crud-56c52",
-            storageBucket: "fir-crud-56c52.appspot.com",
-            messagingSenderId: "906266562649",
-            appId: "1:906266562649:web:55742c6c6b67449857e148",
-            measurementId: "G-VN53GXMXM6",
-        };
+const firebaseConfig = {
+    apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+    authDomain: "fir-crud-56c52.firebaseapp.com",
+    projectId: "fir-crud-56c52",
+    storageBucket: "fir-crud-56c52.appspot.com",
+    messagingSenderId: "906266562649",
+    appId: "1:906266562649:web:55742c6c6b67449857e148",
+    measurementId: "G-VN53GXMXM6",
+};
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const analytics = getAnalytics(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const analytics = getAnalytics(app);
 
-        document.getElementById("loginBtn").addEventListener("click", async () => {
-            const nif = document.getElementById("nif").value;
-            const senha = document.getElementById("senha").value;
+document.getElementById("loginBtn").addEventListener("click", async () => {
+    const nif = document.getElementById("nif").value;
+    const senha = document.getElementById("senha").value;
 
-            try {
-                const userQuery = query(
-                    collection(db, "users"),
-                    where("nif", "==", nif),
-                    where("senha", "==", senha)
-                );
+    try {
+        const userQuery = query(
+            collection(db, "users"),
+            where("nif", "==", nif),
+            where("senha", "==", senha)
+        );
 
-                const querySnapshot = await getDocs(userQuery);
+        const querySnapshot = await getDocs(userQuery);
 
-                if (!querySnapshot.empty) {
-                    querySnapshot.forEach((doc) => {
-                        const userData = doc.data();
-                        const tipoUsuario = userData.tipoUsuario;
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+                const userData = doc.data();
+                const tipoUsuario = userData.tipoUsuario;
+                const nomeDoUsuario = userData.nome; // Supondo que o campo do nome é 'nome'
 
-                        sessionStorage.setItem('userLogged', 'true'); // Armazenar flag de login
-                        sessionStorage.setItem('tipoUsuario', tipoUsuario); // Armazenar o tipo de usuário
+                sessionStorage.setItem('userLogged', 'true'); // Armazenar flag de login
+                sessionStorage.setItem('tipoUsuario', tipoUsuario); // Armazenar o tipo de usuário
+                sessionStorage.setItem('nome', nomeDoUsuario); // Armazenar o nome do usuário
 
-                        window.alert("Login bem-sucedido");
-                        window.location.href = "public/adm/admdashboard.html";
-                    });
-                } else {
-                    window.alert("NIF ou Senha inválidos");
-                }
-            } catch (error) {
-                console.error("Erro ao fazer login: ", error);
-            }
-        });
+                window.alert("Login bem-sucedido");
+                window.location.href = "public/adm/admdashboard.html";
+            });
+        } else {
+            window.alert("NIF ou Senha inválidos");
+        }
+    } catch (error) {
+        console.error("Erro ao fazer login: ", error);
+    }
+});
     </script>
 </body>
 </html>
