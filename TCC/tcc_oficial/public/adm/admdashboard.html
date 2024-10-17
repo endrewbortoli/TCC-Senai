@@ -5,91 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
-
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/js/verificacao.js">
-
-    <!-- <link rel="stylesheet" href="../../assets/css/style.css"> -->
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
         <div class="sidebar">
-          <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
-          <a href="admdashboard.html"> INÍCIO</a>
-          <a href="funcionarios.html"> FUNCIONÁRIOS</a>
-          <a href="servicos.html"> SERVIÇOS</a>
+            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
+            <a href="admdashboard.html"> INÍCIO</a>
+            <a href="funcionarios.html"> FUNCIONÁRIOS</a>
+            <a href="servicos.html"> SERVIÇOS</a>
         </div>
   
         <!-- Main content -->
         <div class="main">
-          <!-- Header -->
-          <div class="header">
-            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-            <button onclick="logout()">SAIR</button>
-            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
-            </div>            
-            <img src="../../assets/img/teste.png" alt="User Profile" />
-
-          </div>
-  
-          <!-- Status Section -->
-          <div class="nicolas">
-            <div class="status-container" >
-              <div class="status-box">
-                <h2>NÃO ATRIBUÍDOS</h2>
-                <span>0</span>
-              </div>
-              <div class="status-box">
-                <h2>EM ANDAMENTO</h2>
-                <span>0</span>
-              </div>
-              <div class="status-box">
-                <h2>ESPERANDO CONFIRMAÇÃO</h2>
-                <span>0</span>
-              </div>
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+                    <button onclick="logout()">SAIR</button>
+                    <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+                </div>            
+                <img src="../../assets/img/teste.png" alt="User Profile" />
             </div>
   
-            <!-- Content Section (Table) -->
-            <div class="content">
-              <h2>Detalhes</h2>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>NOME</th>
-                    <th>AUTORIZADO</th>
-                    <th>DATA LIMITE</th>
-                    <th>STATUS</th>
-                    <th>DETALHES</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <div class="status-select">
-                        <select>
-                          <option value="">Selecione o status:</option>
-                          <option value="pendente">Pendente</option>
-                          <option value="aprovado">Aprovado</option>
-                          <option value="reprovado">Reprovado</option>
-                        </select>
-                      </div>
-                    </td>
-                    <td><a href="#" class="button">VER MAIS</a></td>
-                  </tr>
-                </tbody>
-              </table>
+            <!-- Status Section -->
+            <div class="nicolas">
+                <div class="status-container">
+                    <div class="status-box">
+                        <h2>NÃO ATRIBUÍDOS</h2>
+                        <span id="naoAtribuidosCount">0</span>
+                    </div>
+                    <div class="status-box">
+                        <h2>EM ANDAMENTO</h2>
+                        <span id="emAndamentoCount">0</span>
+                    </div>
+                    <div class="status-box">
+                        <h2>ESPERANDO CONFIRMAÇÃO</h2>
+                        <span id="esperandoConfirmacaoCount">0</span>
+                    </div>
+                </div>
+  
+                <!-- Content Section (Table) -->
+                <div class="content">
+                    <h2>Detalhes</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>NOME</th>
+                                <th>AUTORIZADO</th>
+                                <th>DATA LIMITE</th>
+                                <th>STATUS</th>
+                                <th>DETALHES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <div class="status-select">
+                                        <select>
+                                            <option value="" disabled selected>Selecione o status:</option>
+                                            <option value="pendente">Pendente</option>
+                                            <option value="aprovado">Aprovado</option>
+                                            <option value="reprovado">Reprovado</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td><a href="#" class="button">VER MAIS</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-</body>
+    </div>
 
     <script src="../../assets/js/verificacao.js"></script>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getFirestore, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+            authDomain: "fir-crud-56c52.firebaseapp.com",
+            projectId: "fir-crud-56c52",
+            storageBucket: "fir-crud-56c52.appspot.com",
+            messagingSenderId: "906266562649",
+            appId: "1:906266562649:web:55742c6c6b67449857e148",
+            measurementId: "G-VN53GXMXM6",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function updateStatusCounts() {
+            // Contar não atribuídos
+            const naoAtribuidosQuery = query(collection(db, "ordemServicos"), where("atribuido", "==", ""));
+            const naoAtribuidosSnapshot = await getDocs(naoAtribuidosQuery);
+            document.getElementById("naoAtribuidosCount").innerText = naoAtribuidosSnapshot.size;
+
+            // Contar em andamento
+            const emAndamentoQuery = query(collection(db, "ordemServicos"), where("status", "==", "em andamento"));
+            const emAndamentoSnapshot = await getDocs(emAndamentoQuery);
+            document.getElementById("emAndamentoCount").innerText = emAndamentoSnapshot.size;
+
+            // Contar esperando confirmação
+            const esperandoConfirmacaoQuery = query(collection(db, "ordemServicos"), where("status", "==", "esperando confirmação"));
+            const esperandoConfirmacaoSnapshot = await getDocs(esperandoConfirmacaoQuery);
+            document.getElementById("esperandoConfirmacaoCount").innerText = esperandoConfirmacaoSnapshot.size;
+        }
+
+        // Chama a função para atualizar as contagens ao carregar a página
+        window.onload = updateStatusCounts;
+    </script>
+</body>
 </html>

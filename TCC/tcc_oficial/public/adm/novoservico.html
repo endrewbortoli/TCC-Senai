@@ -57,14 +57,6 @@
           <label for="status">Status</label>
               <select id="status" name="status">
                 <option value="">Selecione</option>
-                <option value="Autorizado">Autorizado</option>
-                <option value="Nao-atribuido">Não atribuido</option>
-                <option value="Atribuido">Atribuido</option>
-                <option value="Aceito">Aceito</option>
-                <option value="Andamento">Andamento</option>
-                <option value="Aguardando-compra">Aguardando compra</option>
-                <option value="Finalizado">Finalizado</option>
-                <option value="Verificado">Verificado</option>
               </select>       
         </div>
 
@@ -76,7 +68,7 @@
         <div class="form-group">
             <label for="tipoSolicitacao">Tipo da Solicitação</label>
               <select id="tipoSolicitacao" name="tipoSolicitacao">
-                <option value="">Selecione</option>
+                <option value="" disabled selected>Selecione</option>
                 <option value="Preventiva">Preventiva</option>
                 <option value="Manutencao">Manutenção</option>
                 <option value="Geral">Programada</option>
@@ -95,7 +87,7 @@
         <div class="form-group">
               <label for="prioridade">Prioridade</label>
               <select id="prioridade" name="prioridade">
-                <option value="">Selecione</option>
+                <option value="" disabled selected>Selecione</option>
                 <option value="Baixa">Baixa</option>
                 <option value="Media">Média</option>
                 <option value="Alta">Alta</option>
@@ -197,10 +189,8 @@ document.addEventListener("DOMContentLoaded", preencherUsuariosManutencao);
 
 
   </script>
-    <script src="../../assets/js/verificacao.js"></script>
-
-
-    </script>
+  
+  <script src="../../assets/js/verificacao.js"></script>
 
 </body>
 
