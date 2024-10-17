@@ -6,10 +6,9 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
-        <link rel="stylesheet" href="../../assets/css/funcionarios.css">
-        <link rel="stylesheet" href="../../assets/css/servicos.css">
+    <link rel="stylesheet" href="../../assets/css/funcionarios.css">
+    <link rel="stylesheet" href="../../assets/css/servicos.css">
 
-    
     <style>
         /* Estilo da tabela adaptado */
         .styled-table {
@@ -69,160 +68,250 @@
             background-size: contain;
             background-repeat: no-repeat;
         }
+
+        /* Estilo do Modal */
+        .modal {
+            display: none; /* Esconder o modal por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px; /* Limita a largura do modal */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilos do Formulário */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Espaçamento entre os campos */
+        }
+
+        label {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
         <div class="sidebar">
-          <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
-          <a href="admdashboard.html"> INÍCIO</a>
-          <a href="funcionarios.html"> FUNCIONÁRIOS</a>
-          <a href="servicos.html"> SERVIÇOS</a>
+            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
+            <a href="admdashboard.html"> INÍCIO</a>
+            <a href="funcionarios.html"> FUNCIONÁRIOS</a>
+            <a href="servicos.html"> SERVIÇOS</a>
         </div>
   
         <!-- Main content -->
         <div class="main">
-          <!-- Header -->
-          <div class="header">
-            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-            <button onclick="logout()">SAIR</button>
-            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
-            </div>            
-            <img src="../../assets/img/teste.png" alt="User Profile" />
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+                    <button onclick="logout()">SAIR</button>
+                    <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+                </div>            
+                <img src="../../assets/img/teste.png" alt="User Profile" />
+            </div>
 
-          </div>
+            <!-- Botão para abrir o formulário e barra de pesquisa -->
+            <button class="open-button"><a href="novoservico.html">Cadastrar serviços</a></button>
+            <input type="text" class="search-bar" placeholder="Pesquisar..." />
 
-
-          <!-- Botão para abrir o formulário e barra de pesquisa -->
-          <button class="open-button"><a href="novoservico.html">Cadastrar serviços</a></button>
-          <input type="text" class="search-bar" placeholder="Pesquisar..." />
-
-          <!-- Tabela para exibir os dados -->
-          <h2>Ordens de Serviço</h2>
-          <table id="osTable" class="styled-table">
-              <thead>
-                  <tr>
-                      <th>Descrição</th>
-                      <th>Solicitante</th>
-                      <th>Atribuído a</th>
-                      <th>Status</th>
-                      <th>Ambiente</th>
-                      <th>Data do Pedido</th>
-                      <th>Data Limite</th>
-                      <th>Prioridade</th>
-                      <th>Ações</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <!-- Os dados serão inseridos aqui pelo JavaScript -->
-              </tbody>
-          </table>
+            <!-- Tabela para exibir os dados -->
+            <h2>Ordens de Serviço</h2>
+            <table id="osTable" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Solicitante</th>
+                        <th>Atribuído a</th>
+                        <th>Status</th>
+                        <th>Ambiente</th>
+                        <th>Data do Pedido</th>
+                        <th>Data Limite</th>
+                        <th>Prioridade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os dados serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import {
-            getFirestore,
-            getDocs,
-            doc,
-            deleteDoc,
-            updateDoc,
-            collection
-        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+<div id="ordemServicoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeOrdemServicoModal()">&times;</span>
+        <h2>Editar Ordem de Serviço</h2>
+        <form id="ordemServicoForm">
+            <label for="editOrdemId">ID da Ordem:</label>
+            <input type="text" id="editOrdemId" required disabled><br>
+            <label for="editDescricao">Descrição:</label>
+            <input type="text" id="editDescricao" required><br>
+            <label for="editCriador">Criador:</label>
+            <input type="text" id="editCriador" required><br>
+            <label for="editAtribuido">Atribuído a:</label>
+            <input type="text" id="editAtribuido" required><br>
+            <label for="editStatus">Status:</label>
+            <input type="text" id="editStatus" required><br>
+            <label for="editAmbiente">Ambiente:</label>
+            <input type="text" id="editAmbiente" required><br>
+            <label for="editDataPedido">Data do Pedido:</label>
+            <input type="date" id="editDataPedido" required><br>
+            <label for="editDataLimite">Data Limite:</label>
+            <input type="date" id="editDataLimite" required><br>
+            <label for="editPrioridade">Prioridade:</label>
+            <input type="text" id="editPrioridade" required><br>
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
-            authDomain: "fir-crud-56c52.firebaseapp.com",
-            projectId: "fir-crud-56c52",
-            storageBucket: "fir-crud-56c52.appspot.com",
-            messagingSenderId: "906266562649",
-            appId: "1:906266562649:web:55742c6c6b67449857e148",
-            measurementId: "G-VN53GXMXM6",
-        };
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import {
+        getFirestore,
+        getDocs,
+        doc,
+        deleteDoc,
+        updateDoc,
+        collection
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+        authDomain: "fir-crud-56c52.firebaseapp.com",
+        projectId: "fir-crud-56c52",
+        storageBucket: "fir-crud-56c52.appspot.com",
+        messagingSenderId: "906266562649",
+        appId: "1:906266562649:web:55742c6c6b67449857e148",
+        measurementId: "G-VN53GXMXM6",
+    };
 
-        // Função para carregar ordens de serviço do Firestore e exibi-las na tabela
-        async function loadOrdensServico() {
-            const querySnapshot = await getDocs(collection(db, "ordemServicos"));
-            const osTable = document.querySelector("#osTable tbody");
-            osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let currentEditingId; // Variável para armazenar o ID da Ordem de Serviço que está sendo editada
 
-            querySnapshot.forEach((doc) => {
-                const osData = doc.data();
-                const row = document.createElement("tr");
+    async function loadOrdensServico() {
+        const querySnapshot = await getDocs(collection(db, "ordemServicos"));
+        const osTable = document.querySelector("#osTable tbody");
+        osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
 
-                row.innerHTML = `
-                    <td>${osData.descricao}</td>
-                    <td>${osData.criador}</td>
-                    <td>${osData.atribuido}</td>
-                    <td>${osData.status}</td>
-                    <td>${osData.ambiente}</td>
-                    <td>${osData.dataPedido}</td>
-                    <td>${osData.dataLimite}</td>
-                    <td>${osData.prioridade}</td>
-                    <td>
-                        <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')"><img src="../../assets/img/pen.png"></button>
-                        <button onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
-                    </td>
-                `;
+        querySnapshot.forEach((doc) => {
+            const osData = doc.data();
+            const row = document.createElement("tr");
 
-                osTable.appendChild(row);
-            });
-        }
+            row.innerHTML = `
+                <td>${osData.descricao}</td>
+                <td>${osData.criador}</td>
+                <td>${osData.atribuido}</td>
+                <td>${osData.status}</td>
+                <td>${osData.ambiente}</td>
+                <td>${osData.dataPedido}</td>
+                <td>${osData.dataLimite}</td>
+                <td>${osData.prioridade}</td>
+                <td>
+                    <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                        <img src="../../assets/img/pen.png">
+                    </button>
+                    <button onclick="deleteOS('${doc.id}')">
+                        <img src="../../assets/img/closeicon.webp">
+                    </button>
+                </td>
+            `;
 
-        // Função para editar ordem de serviço
-        window.editOS = async (id, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
-            const newDescricao = prompt("Nova Descrição:", descricao);
-            const newCriador = prompt("Novo Solicitante:", criador);
-            const newAtribuido = prompt("Novo Atribuído a:", atribuido);
-            const newStatus = prompt("Novo Status:", status);
-            const newAmbiente = prompt("Novo Ambiente:", ambiente);
-            const newDataPedido = prompt("Nova Data do Pedido:", dataPedido);
-            const newDataLimite = prompt("Nova Data Limite:", dataLimite);
-            const newPrioridade = prompt("Nova Prioridade:", prioridade);
+            osTable.appendChild(row);
+        });
+    }
 
-            if (newDescricao && newCriador && newAtribuido && newStatus && newAmbiente && newDataPedido && newDataLimite && newPrioridade) {
-                try {
-                    const osDoc = doc(db, "ordemServicos", id);
-                    await updateDoc(osDoc, {
-                        descricao: newDescricao,
-                        criador: newCriador,
-                        atribuido: newAtribuido,
-                        status: newStatus,
-                        ambiente: newAmbiente,
-                        dataPedido: newDataPedido,
-                        dataLimite: newDataLimite,
-                        prioridade: newPrioridade
-                    });
-                    alert("Ordem de Serviço atualizada com sucesso!");
-                    loadOrdensServico(); // Recarrega a tabela após atualizar
-                } catch (error) {
-                    console.error("Erro ao atualizar ordem de serviço: ", error);
-                }
-            }
-        };
+    window.editOS = (id, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
+        currentEditingId = id; // Armazena o ID da ordem de serviço sendo editada
+        document.getElementById("editOrdemId").value = id; // Define o ID no campo de texto (se necessário)
+        document.getElementById("editDescricao").value = descricao;
+        document.getElementById("editCriador").value = criador;
+        document.getElementById("editAtribuido").value = atribuido;
+        document.getElementById("editStatus").value = status;
+        document.getElementById("editAmbiente").value = ambiente;
+        document.getElementById("editDataPedido").value = dataPedido;
+        document.getElementById("editDataLimite").value = dataLimite;
+        document.getElementById("editPrioridade").value = prioridade; // Aqui, você deve garantir que esse ID exista no HTML
+        document.getElementById("ordemServicoModal").style.display = "block";
+    };
 
-        // Função para excluir ordem de serviço
-        window.deleteOS = async (id) => {
-            if (confirm("Tem certeza que deseja deletar esta ordem de serviço?")) {
-                try {
-                    await deleteDoc(doc(db, "ordemServicos", id));
-                    alert("Ordem de Serviço deletada com sucesso!");
-                    loadOrdensServico(); // Recarrega a tabela após excluir
-                } catch (error) {
-                    console.error("Erro ao deletar ordem de serviço: ", error);
-                }
-            }
-        };
+    window.closeOrdemServicoModal = () => {
+        document.getElementById("ordemServicoModal").style.display = "none";
+    };
 
-        // Carrega as ordens de serviço ao carregar a página
+    document.getElementById("ordemServicoForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const descricao = document.getElementById("editDescricao").value;
+        const criador = document.getElementById("editCriador").value;
+        const atribuido = document.getElementById("editAtribuido").value;
+        const status = document.getElementById("editStatus").value;
+        const ambiente = document.getElementById("editAmbiente").value;
+        const dataPedido = document.getElementById("editDataPedido").value;
+        const dataLimite = document.getElementById("editDataLimite").value;
+        const prioridade = document.getElementById("editPrioridade").value;
+
+        // Atualiza o documento no Firestore
+        await updateDoc(doc(db, "ordemServicos", currentEditingId), {
+            descricao: descricao,
+            criador: criador,
+            atribuido: atribuido,
+            status: status,
+            ambiente: ambiente,
+            dataPedido: dataPedido,
+            dataLimite: dataLimite,
+            prioridade: prioridade,
+        });
+
+        closeOrdemServicoModal();
         loadOrdensServico();
-    </script>
-    <script src="../../assets/js/verificacao.js"></script>
+    });
 
+    window.deleteOS = async (id) => {
+        const confirmation = confirm("Tem certeza que deseja excluir esta Ordem de Serviço?");
+        if (confirmation) {
+            await deleteDoc(doc(db, "ordemServicos", id));
+            loadOrdensServico();
+        }
+    };
+
+    window.onload = loadOrdensServico;
+
+    function logout() {
+        console.log("Logout realizado");
+    }
+</script>
 </body>
 </html>
