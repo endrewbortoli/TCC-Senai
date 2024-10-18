@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Feedback</title>
+
+    <link rel="stylesheet" href="../../assets/css/admdashboard.css">
+    <link rel="stylesheet" href="../../assets/js/verificacao.js">
+    <style>
+        /* Estilo da tabela e modal */
+        .styled-table {
+            width: 90%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 30px;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .styled-table thead tr {
+            background-color: #7b7b7b;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #3a3a3a;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #dddddd;
+            cursor: pointer;
+        }
+
+        .styled-table td button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .styled-table td button.edit-btn {
+            background-image: url('../../assets/img/edit-icon.svg');
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .styled-table td button.delete-btn {
+            background-image: url('../../assets/img/delete-icon.svg');
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Menu -->
+        <div class="sidebar">
+            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
+            <a href="admdashboard.html"> INÍCIO</a>
+            <a href="funcionarios.html"> FUNCIONÁRIOS</a>
+            <a href="servicos.html"> SERVIÇOS</a>
+            <a href="feedback.html" class="active"> FEEDBACK</a> <!-- Link para a nova página -->
+        </div>
+  
+        <!-- Main content -->
+        <div class="main">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+                    <button onclick="logout()">SAIR</button>
+                    <h1 style="margin-left: 10px;">Visualização de Feedback</h1>
+                </div>            
+                <img src="../../assets/img/teste.png" alt="User Profile" />
+            </div>
+
+            <!-- Feedback Section -->
+            <div class="feedback-container">
+                <h2 style="text-align: center;">Feedbacks Recebidos</h2>
+                <table class="styled-table"> <!-- Adicionada a classe styled-table -->
+                    <thead>
+                        <tr>
+                            <th>Nome do Usuário</th>
+                            <th>Descrição</th>
+                            <th>Avaliação</th>
+                            <th>Vídeo</th>
+                            <th>Imagem</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedbackTableBody">
+                        <!-- Os feedbacks serão inseridos aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/verificacao.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getFirestore, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+            authDomain: "fir-crud-56c52.firebaseapp.com",
+            projectId: "fir-crud-56c52",
+            storageBucket: "fir-crud-56c52.appspot.com",
+            messagingSenderId: "906266562649",
+            appId: "1:906266562649:web:55742c6c6b67449857e148",
+            measurementId: "G-VN53GXMXM6",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadFeedback() {
+            const feedbackCollection = collection(db, "feedback");
+            const feedbackSnapshot = await getDocs(feedbackCollection);
+            const feedbackList = feedbackSnapshot.docs.map(doc => doc.data());
+
+            const feedbackTableBody = document.getElementById("feedbackTableBody");
+            feedbackList.forEach(feedback => {
+                const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${feedback.criador || 'Anônimo'}</td>
+                <td>${feedback.descricao}</td>
+                <td>${feedback.avaliacao}</td>
+                <td>${feedback.videoUrl ? `<a href="${feedback.videoUrl}" download>Baixar Vídeo</a>` : 'N/A'}</td>
+                <td>${feedback.imageUrl ? `<a href="${feedback.imageUrl}" download>Baixar Imagem</a>` : 'N/A'}</td>
+                <td>${new Date().toLocaleString()}</td>
+            `;
+                feedbackTableBody.appendChild(row);
+            });
+        }
+
+        // Chama a função para carregar o feedback ao carregar a página
+        window.onload = loadFeedback;
+    </script>
+</body>
+</html>
