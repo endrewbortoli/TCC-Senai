@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Estilos mantidos do seu código original */
         * {
             margin: 0;
             padding: 0;
@@ -64,11 +63,17 @@
             justify-content: flex-end;
             margin-bottom: 20px;
         }
+        .search-bar {
+            position: relative; /* Para o ícone da lupa */
+        }
         .search-bar input {
             width: 250px;
-            padding: 8px;
+            padding: 8px 30px 8px 40px; /* Ajuste para a esquerda */
             border-radius: 4px;
             border: 1px solid #ccc;
+        }
+        .search-bar input::placeholder {
+            color: #aaa; /* Cor do placeholder */
         }
         .search-bar button {
             background-color: #ff4d4d;
@@ -78,6 +83,16 @@
             margin-left: 10px;
             border-radius: 4px;
             cursor: pointer;
+        }
+        .search-bar button img {
+            vertical-align: middle; /* Centraliza verticalmente o ícone */
+        }
+        .search-bar .icon {
+            position: absolute; /* Para colocar o ícone da lupa */
+            left: 10px; /* Distância da esquerda */
+            top: 50%; /* Para centralizar verticalmente */
+            transform: translateY(-50%); /* Ajusta para o centro */
+            pointer-events: none; /* Para não interferir com o clique no input */
         }
         table {
             width: 100%;
@@ -126,8 +141,10 @@
         </div>
 
         <div class="search-bar">
-            <input type="text" placeholder="Pesquisar">
-            <button><img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/></button>
+            <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="pesquisar()">
+            <div class="icon">
+                <img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/>
+            </div>
         </div>
     </div>
 
@@ -141,7 +158,7 @@
                 <th>Detalhes</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tabelaServicos">
             <tr>
                 <td colspan="5">Carregando ordens de serviço...</td>
             </tr>
@@ -156,7 +173,7 @@
 
     // Inicialização do Firebase
     const firebaseConfig = {
-        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY", // Substitua por sua chave de API real
+        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
         authDomain: "fir-crud-56c52.firebaseapp.com",
         projectId: "fir-crud-56c52",
         storageBucket: "fir-crud-56c52.appspot.com",
@@ -170,7 +187,7 @@
 
     // Função para carregar serviços atribuídos
     const carregarServicosAtribuidos = async (nomeUsuario) => {
-        const tabelaServicos = document.querySelector("table tbody");
+        const tabelaServicos = document.getElementById("tabelaServicos");
         tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
 
         try {
@@ -192,15 +209,8 @@
                     <td>${servico.descricao}</td>
                     <td>${servico.dataLimite}</td>
                     <td>${servico.prioridade}</td>
-                    <td>
-                        <select>
-                            <option value="${servico.status}">${servico.status}</option>
-                            <option value="Concluído">Concluído</option>
-                            <option value="Em andamento">Em andamento</option>
-                            <option value="Pendente">Pendente</option>
-                        </select>
-                    </td>
-                    <td><button class="ver-mais">VER MAIS</button></td>
+                    <td>${servico.status}</td>
+                    <td><button class="ver-mais" onclick="window.location.href='detalhes.html?id=${doc.id}'">VER MAIS</button></td>
                 `;
                 tabelaServicos.appendChild(tr);
             });
@@ -209,6 +219,32 @@
             tabelaServicos.innerHTML = `<tr><td colspan="5">Erro ao carregar serviços.</td></tr>`;
         }
     };
+
+    // Função para pesquisar ordens de serviço
+    window.pesquisar = function() { // Torna a função acessível no escopo global
+        const queryInput = document.getElementById('searchInput').value.toLowerCase();
+        const tabelaServicos = document.getElementById("tabelaServicos");
+        const linhas = tabelaServicos.getElementsByTagName("tr");
+
+        for (let i = 0; i < linhas.length; i++) {
+            const cols = linhas[i].getElementsByTagName("td");
+            let found = false;
+
+            // Verifica se a linha contém o texto pesquisado
+            for (let j = 0; j < cols.length - 1; j++) { // -1 para não incluir a coluna do botão "VER MAIS"
+                if (cols[j]) {
+                    const textoColuna = cols[j].textContent.toLowerCase();
+                    if (textoColuna.includes(queryInput)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            // Mostra ou oculta a linha
+            linhas[i].style.display = found ? "" : "none";
+        }
+    }
 
     // Função de logout
     const logout = () => {
