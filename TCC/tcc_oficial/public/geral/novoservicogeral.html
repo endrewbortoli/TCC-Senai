@@ -233,7 +233,7 @@
             }
 
             try {
-                const docRef = await addDoc(collection(db, "ordensServico"), {
+                const docRef = await addDoc(collection(db, "ordemServicos"), {
                     descricao: descricao,
                     criador: criador,
                     status: status,
@@ -244,8 +244,9 @@
                     prioridade: prioridade,
                 });
 
-                console.log("Ordem de serviço registrada com ID:", docRef.id);
                 alert("Ordem de serviço criada com sucesso!");
+                window.location.href = "../../public/geral/geraldashboard.html";
+
                 document.querySelector(".form-container").reset(); // Limpa o formulário
             } catch (e) {
                 console.error("Erro ao adicionar documento: ", e);

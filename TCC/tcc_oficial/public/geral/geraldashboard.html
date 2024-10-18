@@ -184,13 +184,11 @@
                 <thead>
                     <tr>
                         <th>Descrição</th>
-                        <th>Solicitante</th>
                         <th>Atribuído a</th>
                         <th>Status</th>
                         <th>Ambiente</th>
                         <th>Data do Pedido</th>
                         <th>Data Limite</th>
-                        <th>Prioridade</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -222,46 +220,57 @@
     // Verifica se o nome do usuário está armazenado
     const nomeUsuario = sessionStorage.getItem('nome');
 
-    if (!nomeUsuario) {
-        console.warn("Nenhum nome de usuário encontrado no sessionStorage.");
-        document.querySelector('#userGreeting').textContent = "Bem-vindo de volta, Anônimo!";
-    } else {
-        document.querySelector('#userGreeting').textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
-        console.log(`Carregando serviços para o usuário: ${nomeUsuario}`);
-        carregarServicosAtribuidos(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
-    }
+if (!nomeUsuario) {
+    console.warn("Nenhum nome de usuário encontrado no sessionStorage.");
+    document.querySelector('#userGreeting').textContent = "Bem-vindo de volta, Anônimo!";
+} else {
+    document.querySelector('#userGreeting').textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
+    console.log(`Carregando serviços para o usuário: ${nomeUsuario}`);
+    loadOrdensServico(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
+}
 
-        async function loadOrdensServico() {
-        const querySnapshot = await getDocs(collection(db, "ordemServicos"));
+
+async function loadOrdensServico(nomeUsuario) {
+    // Cria uma query para buscar ordens de serviço onde o campo 'criador' é igual ao nome do usuário logado
+    const q = query(collection(db, "ordemServicos"), where("criador", "==", nomeUsuario));
+
+    try {
+        const querySnapshot = await getDocs(q);
         const osTable = document.querySelector("#osTable tbody");
         osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
 
+        // Itera pelos documentos filtrados e preenche a tabela
         querySnapshot.forEach((doc) => {
             const osData = doc.data();
             const row = document.createElement("tr");
 
+            // Verifica se os campos estão vazios e substitui por "Não atribuído" e "Não aprovado" quando necessário
+            const atribuido = osData.atribuido ? osData.atribuido : "Não atribuído";
+            const status = osData.status ? osData.status : "Em analise";
+
             row.innerHTML = `
                 <td>${osData.descricao}</td>
-                <td>${osData.criador}</td>
-                <td>${osData.atribuido}</td>
-                <td>${osData.status}</td>
+                <td>${atribuido}</td>
+                <td>${status}</td>
                 <td>${osData.ambiente}</td>
                 <td>${osData.dataPedido}</td>
                 <td>${osData.dataLimite}</td>
-                <td>${osData.prioridade}</td>
                 <td>
-                    <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                        <img src="../../assets/img/pen.png">
+                    <button onclick="editOS('${doc.id}', '${osData.descricao}', '${atribuido}', '${status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}')">
+                        <img src="../../assets/img/pen.png" style='width:15px'>
                     </button>
                     <button onclick="deleteOS('${doc.id}')">
-                        <img src="../../assets/img/closeicon.webp">
+                        <img src="../../assets/img/closeicon.webp" style='width:15px'>
                     </button>
                 </td>
             `;
 
             osTable.appendChild(row);
         });
+    } catch (error) {
+        console.error("Erro ao carregar ordens de serviço: ", error);
     }
+}
 
 </script>
 
