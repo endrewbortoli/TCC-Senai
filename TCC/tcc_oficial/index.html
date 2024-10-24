@@ -5,6 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENAI Login</title>
     <link rel="stylesheet" href=".././/tcc_oficial/assets/css/style.css">
+    <style>
+        /* Estilos para o layout responsivo */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .logo img {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+            position: relative; /* Para posicionar o ícone */
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 40px; /* Espaço para o ícone */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 30px; /* Ajustar largura do ícone */
+            height: 30px; /* Ajustar altura do ícone */
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #ec0c0c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-button:hover {
+            background-color: #90281c;
+        }
+
+        .footer {
+            margin-top: 20px;
+        }
+
+        .footer img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+
+        /* Estilos responsivos para dispositivos menores */
+        @media (max-width: 768px) {
+            .login-container {
+                width: 80%;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .input-field {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .login-button {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .footer img {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* Estilos para telas muito pequenas */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 75%; /* Diminuir a largura da caixa de login */
+                padding: 15px; /* Menos espaçamento interno */
+            }
+
+            .logo img {
+                width: 100px; /* Diminuir o tamanho do logo */
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            .input-field {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            .login-button {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            .footer img {
+                max-width: 200px; /* Reduzir o tamanho da imagem do rodapé */
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
