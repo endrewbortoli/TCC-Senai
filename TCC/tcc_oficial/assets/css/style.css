@@ -7,7 +7,7 @@
 
 body {
     /* Fundo degradê */
-    background: linear-gradient(to bottom, #900000, #2A0000);
+    background-image: linear-gradient(to bottom, #900000, #2A0000);
     display: flex;
     justify-content: center;
     align-items: center;
