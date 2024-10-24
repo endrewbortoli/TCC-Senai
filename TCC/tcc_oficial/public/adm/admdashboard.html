@@ -86,7 +86,7 @@
   
                 <!-- Content Section (Table) -->
                 <div class="content">
-                    <h2>Detalhes</h2>
+                    <h2>Ordens de Serviço Abertas</h2>
                     <table class="table">
                         <thead>
                             <tr>
@@ -120,10 +120,19 @@
             <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
             <p><strong>Status:</strong> 
                 <select id="modalStatusSelect">
-                    <option value="Não aprovado">Não aprovado</option>
+                    <option value="Não Atribuído">Não Atribuído</option>
+                    <option value="Atribuído">Atribuído</option>
+                    <option value="Aceito">Aceito</option>
                     <option value="Em andamento">Em andamento</option>
-                    <option value="Esperando Confirmação">Esperando Confirmação</option>
+                    <option value="Aguardando compra">Aguardando compra</option>
+                    <option value="Finalizado">Finalizado</option>
+                    <option value="Verificado">Verificado</option>
+                    <option value="Feedback">Feedback</option>
+                    <option value="Fechado">Fechado</option>
                 </select>
+            </p>
+            <p><strong>Atribuído a:</strong> 
+                <select id="modalAtribuidoSelect"></select>
             </p>
             <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacao"></span></p>
             <button id="saveStatusButton">Salvar Status</button>
@@ -199,42 +208,50 @@
                 document.getElementById("modalPrioridade").textContent = ordemServico.prioridade || "Normal";
                 document.getElementById("modalTipoSolicitacao").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
 
-                // Configura o status selecionado no select
-                const modalStatusSelect = document.getElementById("modalStatusSelect");
-                modalStatusSelect.value = ordemServico.status || "Indefinido";
-
                 // Exibe o modal
                 document.getElementById("detalhesModal").style.display = "block";
             });
-
-    // Adiciona evento ao botão de salvar status
-    document.getElementById("saveStatusButton").onclick = async function() {
-        const newStatus = document.getElementById("modalStatusSelect").value;
-
-        // Adiciona um alerta de confirmação
-        const confirmChange = window.confirm("Você realmente deseja alterar o status para '" + newStatus + "'?");
-
-        if (confirmChange) {
-            await updateOrdensServicosStatus(ordemId, newStatus);
-        }
-    };
-
         }
 
-        // Função para atualizar o status da ordem de serviço no Firestore
+// Função para carregar usuários da manutenção
+async function loadUsuariosManutencao() {
+    const usuariosRef = collection(db, "users"); // Ajuste o nome da coleção conforme necessário
+    const querySnapshot = await getDocs(usuariosRef);
+    const modalAtribuidoSelect = document.getElementById("modalAtribuidoSelect");
+
+    modalAtribuidoSelect.innerHTML = ""; // Limpa opções existentes
+
+    // Adiciona uma opção vazia no início
+    const emptyOption = document.createElement("option");
+    emptyOption.value = "";
+    emptyOption.textContent = "";
+    modalAtribuidoSelect.appendChild(emptyOption);
+
+    querySnapshot.forEach((doc) => {
+        const usuario = doc.data();
+        // Supondo que o usuário tenha um campo "nome" para exibir
+        if (usuario.tipoUsuario === "Manutenção") { // Ajuste conforme sua lógica para identificar usuários de Manutenção
+            const option = document.createElement("option");
+            option.value = doc.id; // Usando o ID do documento como valor
+            option.textContent = usuario.nome; // Nome do usuário
+            modalAtribuidoSelect.appendChild(option);
+        }
+    });
+}
+        // Função para atualizar o status e o atribuído da ordem de serviço
         async function updateOrdensServicosStatus(ordemId, newStatus) {
+            const atribuido = document.getElementById("modalAtribuidoSelect").value; // Captura o usuário atribuído
             const docRef = doc(db, "ordemServicos", ordemId);
             await updateDoc(docRef, {
-                status: newStatus
+                status: newStatus,
+                atribuido: atribuido // Atualiza o campo atribuído
             });
-            // Fechar o modal após a atualização
-            document.getElementById("detalhesModal").style.display = "none";
-            // Recarregar as ordens de serviço para refletir a mudança
-            loadOrdensServicos();
-            countOrdensServicos();
+            document.getElementById("detalhesModal").style.display = "none"; // Fecha o modal
+            loadOrdensServicos(); // Recarrega as ordens de serviço
+            countOrdensServicos(); // Atualiza contadores
         }
 
-        // Função para contar ordens de serviço e atualizar contadores
+        // Função para contar ordens de serviço por status
         async function countOrdensServicos() {
             const statusCounts = {
                 "Não aprovado": 0,
@@ -252,26 +269,30 @@
                 }
             });
 
+            // Atualiza contadores na interface
             document.getElementById("naoAtribuidosCount").textContent = statusCounts["Não aprovado"];
             document.getElementById("emAndamentoCount").textContent = statusCounts["Em andamento"];
             document.getElementById("esperandoConfirmacaoCount").textContent = statusCounts["Esperando Confirmação"];
         }
 
-        // Chama as funções ao carregar a página
-        loadOrdensServicos();
-        countOrdensServicos();
+        // Event listener para o botão de salvar status
+        document.getElementById("saveStatusButton").addEventListener("click", () => {
+            const ordemId = document.querySelector(".verMaisBtn").getAttribute("data-id"); // Captura o ID da ordem de serviço atual
+            const newStatus = document.getElementById("modalStatusSelect").value;
+            updateOrdensServicosStatus(ordemId, newStatus);
+        });
 
-        // Função para fechar o modal
+        // Evento para fechar o modal
         document.querySelector(".close").onclick = function() {
             document.getElementById("detalhesModal").style.display = "none";
-        };
+        }
 
-        // Fecha o modal se o usuário clicar fora dele
-        window.onclick = function(event) {
-            if (event.target == document.getElementById("detalhesModal")) {
-                document.getElementById("detalhesModal").style.display = "none";
-            }
-        };
+        // Carrega as ordens de serviço e os usuários na inicialização
+        window.onload = async function() {
+            await loadOrdensServicos();
+            await loadUsuariosManutencao();
+            countOrdensServicos();
+        }
     </script>
 </body>
 </html>
