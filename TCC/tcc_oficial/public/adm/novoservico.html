@@ -49,12 +49,17 @@
         </div>
         <div class="form-group">
           <label for="atribuido">Atribuído a</label>
-          <input type="text" id="atribuido" name="atribuido" />
+          <select id="atribuido" name="atribuido">
+            <option value="">Selecione</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="status">Status</label>
-          <input type="text" id="status" name="status" />
+              <select id="status" name="status">
+                <option value="">Selecione</option>
+              </select>       
         </div>
+
         <div class="form-group">
           <label for="ambiente">Ambiente</label>
           <input type="text" id="ambiente" name="ambiente" />
@@ -63,7 +68,7 @@
         <div class="form-group">
             <label for="tipoSolicitacao">Tipo da Solicitação</label>
               <select id="tipoSolicitacao" name="tipoSolicitacao">
-                <option value="">Selecione</option>
+                <option value="" disabled selected>Selecione</option>
                 <option value="Preventiva">Preventiva</option>
                 <option value="Manutencao">Manutenção</option>
                 <option value="Geral">Programada</option>
@@ -82,7 +87,7 @@
         <div class="form-group">
               <label for="prioridade">Prioridade</label>
               <select id="prioridade" name="prioridade">
-                <option value="">Selecione</option>
+                <option value="" disabled selected>Selecione</option>
                 <option value="Baixa">Baixa</option>
                 <option value="Media">Média</option>
                 <option value="Alta">Alta</option>
@@ -96,6 +101,7 @@
   <!-- Firebase Firestore Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
     import {
       getFirestore,
       addDoc,
@@ -120,13 +126,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const analytics = getAnalytics(app);
-
-//     document.addEventListener('DOMContentLoaded', () => {
-//   const nomeUsuario = sessionStorage.getItem('nome'); // Obtém o nome do usuário logado
-//   if (nomeUsuario) {
-//     document.getElementById('solicitante').value = nomeUsuario; // Preenche o campo "Solicitante"
-//   }
-// });
 
 
     // Função para adicionar ordem de serviço
@@ -154,14 +153,44 @@
           prioridade,
         });
         window.alert("Ordem de Serviço Adicionada");
-                window.location.href = "../../public/adm/funcionarios.html";
+                window.location.href = "../../public/adm/servicos.html";
 
       } catch (error) {
         console.error("Erro ao adicionar ordem de serviço: ", error);
       }
     });
+
+
+// Função para buscar e preencher os usuários de "Manutenção"
+const preencherUsuariosManutencao = async () => {
+  const atribuidoSelect = document.getElementById("atribuido");
+
+  try {
+    // Consultar os usuários com tipoUsuario "Manutenção"
+    const q = query(collection(db, "users"), where("tipoUsuario", "==", "Manutenção"));
+    const querySnapshot = await getDocs(q);
+
+    // Adicionar cada usuário ao campo de seleção
+    querySnapshot.forEach((doc) => {
+      const userData = doc.data();
+      const option = document.createElement("option");
+      option.value = userData.nome; // ou use outro campo, como o ID do usuário
+      option.textContent = userData.nome;
+      atribuidoSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Erro ao buscar usuários de Manutenção: ", error);
+  }
+};
+
+// Chamar a função ao carregar a página
+document.addEventListener("DOMContentLoaded", preencherUsuariosManutencao);
+
+
+
   </script>
-    <script src="../../assets/js/verificacao.js"></script>
+  
+  <script src="../../assets/js/verificacao.js"></script>
 
 </body>
 

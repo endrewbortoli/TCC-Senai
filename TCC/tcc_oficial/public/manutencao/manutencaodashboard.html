@@ -57,24 +57,23 @@
             text-align: center;
             font-weight: bold;
             font-size: 16px;
-            position: relative;
-        }
-        .stats .box.blue {
-            background-color: #ff4d4d;
-        }
-        .stats .box.red {
-            background-color: #ff4d4d;
         }
         .search-bar {
             display: flex;
             justify-content: flex-end;
             margin-bottom: 20px;
         }
+        .search-bar {
+            position: relative; /* Para o ícone da lupa */
+        }
         .search-bar input {
             width: 250px;
-            padding: 8px;
+            padding: 8px 30px 8px 40px; /* Ajuste para a esquerda */
             border-radius: 4px;
             border: 1px solid #ccc;
+        }
+        .search-bar input::placeholder {
+            color: #aaa; /* Cor do placeholder */
         }
         .search-bar button {
             background-color: #ff4d4d;
@@ -84,6 +83,16 @@
             margin-left: 10px;
             border-radius: 4px;
             cursor: pointer;
+        }
+        .search-bar button img {
+            vertical-align: middle; /* Centraliza verticalmente o ícone */
+        }
+        .search-bar .icon {
+            position: absolute; /* Para colocar o ícone da lupa */
+            left: 10px; /* Distância da esquerda */
+            top: 50%; /* Para centralizar verticalmente */
+            transform: translateY(-50%); /* Ajusta para o centro */
+            pointer-events: none; /* Para não interferir com o clique no input */
         }
         table {
             width: 100%;
@@ -101,15 +110,12 @@
             background-color: #f2f2f2;
             font-weight: bold;
         }
-        table td select, table td button {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
-        table td button {
-            background-color: #6c757d;
+        button.ver-mais {
+            background-color: #ff4d4d;
             color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
             cursor: pointer;
         }
     </style>
@@ -117,9 +123,9 @@
 <body>
 
 <header>
-        <img src="../../assets/img/whitesenailogo.svg" alt="Logo Senai" style="height: 85px;">    
-        <div class="profile">
-        <span>Bem vindo de volta!</span>
+    <img src="../../assets/img/whitesenailogo.svg" alt="Logo Senai" style="height: 85px;">    
+    <div class="profile">
+        <span id="userGreeting">Bem-vindo de volta, Anônimo!</span>
         <img src="../../assets/img/teste.png" alt="Profile Picture">
         <button onclick="logout()">Logout</button>
     </div>
@@ -135,12 +141,12 @@
         </div>
 
         <div class="search-bar">
-            <input type="text" placeholder="Pesquisar">
-            <button><img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/></button>
+            <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="pesquisar()">
+            <div class="icon">
+                <img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/>
+            </div>
         </div>
-    
     </div>
-
 
     <table>
         <thead>
@@ -152,39 +158,112 @@
                 <th>Detalhes</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tabelaServicos">
             <tr>
-                <td>Manutenção dos notebooks</td>
-                <td>04/09/2024</td>
-                <td>Alta</td>
-                <td>
-                    <select>
-                        <option>Selecione o status</option>
-                        <option>Concluído</option>
-                        <option>Em andamento</option>
-                        <option>Pendente</option>
-                    </select>
-                </td>
-                <td><button>VER MAIS</button></td>
-            </tr>
-            <tr>
-                <td>Manutenção dos notebooks</td>
-                <td>04/09/2024</td>
-                <td>Alta</td>
-                <td>
-                    <select>
-                        <option>Selecione o status</option>
-                        <option>Concluído</option>
-                        <option>Em andamento</option>
-                        <option>Pendente</option>
-                    </select>
-                </td>
-                <td><button>VER MAIS</button></td>
+                <td colspan="5">Carregando ordens de serviço...</td>
             </tr>
         </tbody>
     </table>
 </div>
-        <script src="../../assets/js/verificacao.js"></script>
+
+<script src="../../assets/js/verificacao.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    // Inicialização do Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+        authDomain: "fir-crud-56c52.firebaseapp.com",
+        projectId: "fir-crud-56c52",
+        storageBucket: "fir-crud-56c52.appspot.com",
+        messagingSenderId: "906266562649",
+        appId: "1:906266562649:web:55742c6c6b67449857e148",
+        measurementId: "G-VN53GXMXM6",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Função para carregar serviços atribuídos
+    const carregarServicosAtribuidos = async (nomeUsuario) => {
+        const tabelaServicos = document.getElementById("tabelaServicos");
+        tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
+
+        try {
+            // Consulta para buscar serviços com o campo "atribuido" igual ao nome do usuário
+            const q = query(collection(db, "ordemServicos"), where("atribuido", "==", nomeUsuario));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                tabelaServicos.innerHTML = `<tr><td colspan="5">Nenhum serviço atribuído.</td></tr>`;
+                return;
+            }
+
+            // Preenche a tabela com os dados filtrados
+            querySnapshot.forEach((doc) => {
+                const servico = doc.data();
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${servico.descricao}</td>
+                    <td>${servico.dataLimite}</td>
+                    <td>${servico.prioridade}</td>
+                    <td>${servico.status}</td>
+                    <td><button class="ver-mais" onclick="window.location.href='detalhes.html?id=${doc.id}'">VER MAIS</button></td>
+                `;
+                tabelaServicos.appendChild(tr);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar os serviços atribuídos: ", error);
+            tabelaServicos.innerHTML = `<tr><td colspan="5">Erro ao carregar serviços.</td></tr>`;
+        }
+    };
+
+    // Função para pesquisar ordens de serviço
+    window.pesquisar = function() { // Torna a função acessível no escopo global
+        const queryInput = document.getElementById('searchInput').value.toLowerCase();
+        const tabelaServicos = document.getElementById("tabelaServicos");
+        const linhas = tabelaServicos.getElementsByTagName("tr");
+
+        for (let i = 0; i < linhas.length; i++) {
+            const cols = linhas[i].getElementsByTagName("td");
+            let found = false;
+
+            // Verifica se a linha contém o texto pesquisado
+            for (let j = 0; j < cols.length - 1; j++) { // -1 para não incluir a coluna do botão "VER MAIS"
+                if (cols[j]) {
+                    const textoColuna = cols[j].textContent.toLowerCase();
+                    if (textoColuna.includes(queryInput)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            // Mostra ou oculta a linha
+            linhas[i].style.display = found ? "" : "none";
+        }
+    }
+
+    // Função de logout
+    const logout = () => {
+        sessionStorage.clear(); // Limpa o sessionStorage
+        window.location.href = "login.html"; // Redireciona para a página de login
+    };
+
+    // Verifica se o nome do usuário está armazenado
+    const nomeUsuario = sessionStorage.getItem('nome');
+
+    if (!nomeUsuario) {
+        console.warn("Nenhum nome de usuário encontrado no sessionStorage.");
+        document.querySelector('#userGreeting').textContent = "Bem-vindo de volta, Anônimo!";
+    } else {
+        document.querySelector('#userGreeting').textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
+        console.log(`Carregando serviços para o usuário: ${nomeUsuario}`);
+        carregarServicosAtribuidos(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
+    }
+</script>
 
 </body>
 </html>

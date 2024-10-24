@@ -8,9 +8,20 @@ function logout() {
 
 // Verifica se o usuário está logado
 if (sessionStorage.getItem('userLogged') === "true") {
+    
     const nomeUsuario = sessionStorage.getItem('nome'); // Nome do usuário logado
     const currentPath = window.location.pathname;
     const tipoUsuario = sessionStorage.getItem('tipoUsuario'); // Tipo de usuário salvo no sessionStorage
+// Exemplo de definição de userData, caso seja necessário:
+const userData = localStorage.getItem('userData'); // ou pegue o valor de algum lugar
+
+// Utilize userData depois de garantir que está definido corretamente
+if (userData) {
+    console.log('Dados do usuário:', userData);
+} else {
+    console.log('userData não foi definido corretamente');
+}
+
 
     // Verifica o tipo de usuário e redireciona se estiver acessando uma pasta não permitida
     if (tipoUsuario === "Administrador") {

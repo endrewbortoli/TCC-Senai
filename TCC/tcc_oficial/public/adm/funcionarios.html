@@ -8,48 +8,42 @@
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/css/funcionarios.css">
     <style>
-        /* Estilo da tabela */
+        /* Estilo da tabela e modal */
         .styled-table {
             width: 90%;
-            border-collapse: separate; /* Para permitir bordas arredondadas */
+            border-collapse: separate;
             border-spacing: 0;
             margin: 25px 30px;
             font-size: 0.9em;
             font-family: Arial, sans-serif;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            border-radius: 12px; /* Bordas arredondadas */
-            overflow: hidden; /* Para garantir que as bordas fiquem consistentes */
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        /* Cabeçalho da tabela */
         .styled-table thead tr {
             background-color: #7b7b7b;
             color: #ffffff;
             text-align: left;
         }
 
-        /* Células do cabeçalho e do corpo */
         .styled-table th, .styled-table td {
             padding: 12px 15px;
         }
 
-        /* Efeito de alternância nas linhas */
         .styled-table tbody tr:nth-of-type(even) {
             background-color: #f3f3f3;
         }
 
-        /* Última linha */
         .styled-table tbody tr:last-of-type {
             border-bottom: 2px solid #3a3a3a;
         }
 
-        /* Efeito de hover nas linhas */
         .styled-table tbody tr:hover {
             background-color: #dddddd;
             cursor: pointer;
         }
 
-        /* Ícone de edição (substitua os botões por ícones) */
         .styled-table td button {
             background: none;
             border: none;
@@ -57,7 +51,7 @@
         }
 
         .styled-table td button.edit-btn {
-            background-image: url('../../assets/img/edit-icon.svg'); /* Ícone de editar */
+            background-image: url('../../assets/img/edit-icon.svg');
             width: 20px;
             height: 20px;
             background-size: contain;
@@ -65,11 +59,88 @@
         }
 
         .styled-table td button.delete-btn {
-            background-image: url('../../assets/img/delete-icon.svg'); /* Ícone de deletar */
+            background-image: url('../../assets/img/delete-icon.svg');
             width: 20px;
             height: 20px;
             background-size: contain;
             background-repeat: no-repeat;
+        }
+
+        /* Estilo do Modal */
+        .modal {
+            display: none; /* Esconder o modal por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px; /* Limita a largura do modal */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilos do Formulário */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Espaçamento entre os campos */
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="checkbox"] {
+            margin-top: 10px;
+        }
+
+        button[type="submit"] {
+            background-color: #d21010;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #b51d1d;
         }
     </style>
 </head>
@@ -84,25 +155,20 @@
         </div>
 
         <div class="main">
-          <!-- Header -->
-          <div class="header">
-            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-            <button onclick="logout()">SAIR</button>
-            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
-            </div>            
-            <img src="../../assets/img/teste.png" alt="User Profile" />
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
+                    <button onclick="logout()">SAIR</button>
+                    <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+                </div>            
+                <img src="../../assets/img/teste.png" alt="User Profile" />
+            </div>
 
-          </div>
-
-
-            <!-- Botão para abrir o formulário, dropdown e barra de pesquisa -->
             <button class="open-button"><a href="novofuncionario.html">Cadastrar usuário</a></button>
 
-        <!-- Barra de pesquisa -->
-        <input type="text" class="search-bar" placeholder="Pesquisar..." />
+            <input type="text" class="search-bar" placeholder="Pesquisar..." />
 
-            <!-- Tabela para exibir os dados -->
-            <h2 style="margin-left: 30px;">Usuarios Registrados </h2>
+            <h2 style="margin-left: 30px;">Usuarios Registrados</h2>
             <table id="userTable" class="styled-table">
                 <thead>
                     <tr>
@@ -120,6 +186,30 @@
             </table>
         </div>
     </div>
+
+    <!-- Modal para edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Editar Usuário</h2>
+            <form id="editForm" >
+                <label for="editNif">NIF:</label>
+                <input type="text" id="editNif" required><br>
+                <label for="editName">Nome:</label>
+                <input type="text" id="editName" required><br>
+                <label for="editEmail">Email:</label>
+                <input type="email" id="editEmail" required><br>
+                <label for="editPassword">Senha:</label>
+                <input type="password" id="editPassword" required><br>
+                <input type="checkbox" id="showPassword"> Mostrar Senha
+                <label for="editLevel">Nível:</label>
+                <input type="text" id="editLevel" required><br>
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../../assets/js/verificacao.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -162,53 +252,67 @@
                     <td>${userData.senha}</td>
                     <td>${userData.tipoUsuario}</td>
                     <td>
-                        <button class="edit-btn" onclick="editUser('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><img src="../../assets/img/pen.png"></button>
+                        <button class="edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><img src="../../assets/img/pen.png"></button>
                         <button class="delete-btn" onclick="deleteUser('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
                     </td>
                 `;
-
                 userTable.appendChild(row);
             });
         }
 
-        // Função para editar usuário
-        window.editUser = async (id, currentNif, currentName, currentEmail, currentPassword, currentLevel) => {
-            const newNif = prompt("Novo NIF:", currentNif);
-            const newName = prompt("Novo Nome:", currentName);
-            const newEmail = prompt("Novo Email:", currentEmail);
-            const newPassword = prompt("Nova Senha:", currentPassword);
-            const newLevel = prompt("Novo Nível:", currentLevel);
+        // Função para abrir o modal com os dados do usuário
+        window.openModal = (id, nif, nome, email, senha, tipoUsuario) => {
+            document.getElementById("editNif").value = nif;
+            document.getElementById("editName").value = nome;
+            document.getElementById("editEmail").value = email;
+            document.getElementById("editPassword").value = senha;
+            document.getElementById("editLevel").value = tipoUsuario;
+            window.currentEditUserId = id;
 
-            if (newNif && newName && newEmail && newPassword && newLevel) {
-                try {
-                    const userDoc = doc(db, "users", id);
-                    await updateDoc(userDoc, { nif: newNif, nome: newName, email: newEmail, senha: newPassword, tipoUsuario: newLevel });
-                    alert("Usuário atualizado com sucesso!");
-                    loadUsers(); // Recarrega a tabela após atualizar
-                } catch (error) {
-                    console.error("Erro ao atualizar usuário: ", error);
-                }
-            }
+            document.getElementById("editModal").style.display = "block";
         };
 
-        // Função para excluir usuário
+        // Função para fechar o modal
+        window.closeModal = () => {
+            document.getElementById("editModal").style.display = "none";
+        };
+
+        // Função para deletar um usuário
         window.deleteUser = async (id) => {
-            if (confirm("Tem certeza que deseja deletar este usuário?")) {
-                try {
-                    await deleteDoc(doc(db, "users", id));
-                    alert("Usuário deletado com sucesso!");
-                    loadUsers(); // Recarrega a tabela após excluir
-                } catch (error) {
-                    console.error("Erro ao deletar usuário: ", error);
-                }
-            }
+            await deleteDoc(doc(db, "users", id));
+            loadUsers(); // Atualiza a tabela após a exclusão
         };
 
-        // Carrega os usuários ao carregar a página
-        loadUsers();
+        // Função para salvar as edições no usuário
+        document.getElementById("editForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const nif = document.getElementById("editNif").value;
+            const nome = document.getElementById("editName").value;
+            const email = document.getElementById("editEmail").value;
+            const senha = document.getElementById("editPassword").value;
+            const tipoUsuario = document.getElementById("editLevel").value;
+
+            const userRef = doc(db, "users", window.currentEditUserId);
+            await updateDoc(userRef, {
+                nif,
+                nome,
+                email,
+                senha,
+                tipoUsuario
+            });
+
+            closeModal(); // Fecha o modal após a edição
+            loadUsers(); // Atualiza a tabela
+        });
+
+        // Função para mostrar ou ocultar a senha
+        document.getElementById("showPassword").addEventListener("change", function() {
+            const passwordInput = document.getElementById("editPassword");
+            passwordInput.type = this.checked ? "text" : "password"; // Altera o tipo de input
+        });
+
+        loadUsers(); // Carrega os usuários na página
     </script>
-
-        <script src="../../assets/js/verificacao.js"></script>
-
 </body>
 </html>

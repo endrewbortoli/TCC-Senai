@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENAI - Ordens de Serviço</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-        <script src="../../assets/js/verificacao.js"></script>
-
+    <script src="../../assets/js/verificacao.js"></script>
     <style>
         * {
             margin: 0;
@@ -70,7 +68,7 @@
         .search-bar {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 20px;
+            /* margin-bottom: 20px; */
         }
         .search-bar input {
             width: 250px;
@@ -87,41 +85,81 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .search-bar .new-service-button {
+            background-color: #cd0e0e; /* Cor do botão para novos serviços */
+            margin-left: 10px; /* Espaço entre os botões */
         }
-        table th, table td {
-            padding: 15px;
+        .search-bar .new-service-button:hover {
+            background-color: #961b1b; /* Cor do botão para novos serviços */
+        }
+        .styled-table {
+            width: 90%;
+            border-collapse: separate;
+            border-spacing: 0;
+            /* margin: 25px 30px; */
+            align-content: center;
+            justify-content: center;
+            margin: auto;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .styled-table thead tr {
+            background-color: #7b7b7b;
+            color: #ffffff;
             text-align: left;
-            border-bottom: 1px solid #ddd;
         }
-        table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
         }
-        table td select, table td button {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 14px;
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
         }
-        table td button {
-            background-color: #6c757d;
-            color: white;
+
+        .styled-table tbody tr:hover {
+            background-color: #dddddd;
             cursor: pointer;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #3a3a3a;
+        }
+
+        /* Botões de ação como ícones */
+        .styled-table td button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .styled-table td button.edit-btn {
+            background-image: url('../../assets/img/edit-icon.svg');
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .styled-table td button.delete-btn {
+            background-image: url('../../assets/img/delete-icon.svg');
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
 <body>
 
 <header>
-        <img src="../../assets/img/whitesenailogo.svg" alt="Logo Senai" style="height: 85px;">    
-        <div class="profile">
-        <span>Bem vindo de volta!</span>
+    <img src="../../assets/img/whitesenailogo.svg" alt="Logo Senai" style="height: 85px;">    
+    <div class="profile">
+        <span id="userGreeting">Bem-vindo de volta, Anônimo!</span>
         <img src="../../assets/img/teste.png" alt="Profile Picture">
         <button onclick="logout()">Logout</button>
     </div>
@@ -129,21 +167,112 @@
 
 <div class="container">
     <div class="stats">
-        <div class="box blue">
-            ATRIBUÍDAS <br> 0
-        </div>
-        <div class="box red">
-            NÃO REALIZADAS <br> 0
+        <div class="add-service-btn">
         </div>
 
         <div class="search-bar">
             <input type="text" placeholder="Pesquisar">
             <button><img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/></button>
+            <button class="new-service-button" onclick="window.location.href='novoservicogeral.html'">Novo Serviço</button>
         </div>
-    
     </div>
+</div>
+
+            <!-- Tabela para exibir os dados -->
+            <h2 style="display: flex; justify-content: center; margin-bottom: 15px;">Suas ordens de serviços solicitadas</h2>
+            <table id="osTable" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Atribuído a</th>
+                        <th>Status</th>
+                        <th>Ambiente</th>
+                        <th>Data do Pedido</th>
+                        <th>Data Limite</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os dados serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
+
+
+<script src="../../assets/js/verificacao.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    // Inicialização do Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY", // Substitua por sua chave de API real
+        authDomain: "fir-crud-56c52.firebaseapp.com",
+        projectId: "fir-crud-56c52",
+        storageBucket: "fir-crud-56c52.appspot.com",
+        messagingSenderId: "906266562649",
+        appId: "1:906266562649:web:55742c6c6b67449857e148",
+        measurementId: "G-VN53GXMXM6",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Verifica se o nome do usuário está armazenado
+    const nomeUsuario = sessionStorage.getItem('nome');
+
+if (!nomeUsuario) {
+    console.warn("Nenhum nome de usuário encontrado no sessionStorage.");
+    document.querySelector('#userGreeting').textContent = "Bem-vindo de volta, Anônimo!";
+} else {
+    document.querySelector('#userGreeting').textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
+    console.log(`Carregando serviços para o usuário: ${nomeUsuario}`);
+    loadOrdensServico(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
+}
+
+
+async function loadOrdensServico(nomeUsuario) {
+    // Cria uma query para buscar ordens de serviço onde o campo 'criador' é igual ao nome do usuário logado
+    const q = query(collection(db, "ordemServicos"), where("criador", "==", nomeUsuario));
+
+    try {
+        const querySnapshot = await getDocs(q);
+        const osTable = document.querySelector("#osTable tbody");
+        osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+
+        // Itera pelos documentos filtrados e preenche a tabela
+        querySnapshot.forEach((doc) => {
+            const osData = doc.data();
+            const row = document.createElement("tr");
+
+            // Verifica se os campos estão vazios e substitui por "Não atribuído" e "Não aprovado" quando necessário
+            const atribuido = osData.atribuido ? osData.atribuido : "Não atribuído";
+            const status = osData.status ? osData.status : "Em analise";
+
+            row.innerHTML = `
+                <td>${osData.descricao}</td>
+                <td>${atribuido}</td>
+                <td>${status}</td>
+                <td>${osData.ambiente}</td>
+                <td>${osData.dataPedido}</td>
+                <td>${osData.dataLimite}</td>
+                <td>
+                    <button onclick="editOS('${doc.id}', '${osData.descricao}', '${atribuido}', '${status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}')">
+                        <img src="../../assets/img/pen.png" style='width:15px'>
+                    </button>
+                    <button onclick="deleteOS('${doc.id}')">
+                        <img src="../../assets/img/closeicon.webp" style='width:15px'>
+                    </button>
+                </td>
+            `;
+
+            osTable.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Erro ao carregar ordens de serviço: ", error);
+    }
+}
+
+</script>
 
 </body>
-        <script src="../../assets/js/verificacao.js"></script>
-
 </html>
