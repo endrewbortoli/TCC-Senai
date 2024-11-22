@@ -34,7 +34,7 @@ if (userData) {
             // Redireciona o usuário Geral caso tente acessar uma área de 'Administrador' ou 'Manutenção'
             window.location.href = "../../public/geral/geraldashboard.html";
         }
-    } else if (tipoUsuario === "Manutenção") {
+    } else if (tipoUsuario === "Trabalhador") {
         if (currentPath.includes("/adm/") || currentPath.includes("/geral/")) {
             // Redireciona o usuário de Manutenção caso tente acessar uma área de 'Administrador' ou 'Geral'
             window.location.href = "../../public/manutencao/manutencaodashboard.html";
