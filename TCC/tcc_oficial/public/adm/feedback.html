@@ -65,6 +65,22 @@
             background-size: contain;
             background-repeat: no-repeat;
         }
+
+        .page-header{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .novo-fed.btn{
+            padding: 10px 10px 10px 10px;
+            background-color: crimson;
+            text-decoration: none;
+            color: #ffffff;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -86,12 +102,14 @@
                     <button onclick="logout()">SAIR</button>
                     <h1 style="margin-left: 10px;">Visualização de Feedback</h1>
                 </div>            
-                <img src="../../assets/img/teste.png" alt="User Profile" />
             </div>
 
             <!-- Feedback Section -->
             <div class="feedback-container">
-                <h2 style="text-align: center;">Feedbacks Recebidos</h2>
+                <div class="page-header">
+                    <a href="novofeedback.html" class="novo-fed-btn">Novo feedback</a>
+                    <h2 style="text-align: center;">Feedbacks Recebidos</h2>
+                </div>
                 <table class="styled-table"> <!-- Adicionada a classe styled-table -->
                     <thead>
                         <tr>
