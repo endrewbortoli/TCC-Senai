@@ -266,78 +266,98 @@
                     <td>${userData.tipoUsuario}</td>
                     <td>
                         <button class= "edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><img src="../../assets/img/pen.png"></button>
-                       <button class = "delete-btn" onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
+                        <button class= "delete-btn" onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
                     </td>
                 `;
           userTable.appendChild(row);
         });
       }
 
-      // Função para abrir o modal com os dados do usuário
-      window.openModal = (id, nif, nome, email, senha, tipoUsuario) => {
+      // Função para excluir usuário
+      async function deleteOS(id) {
+        await deleteDoc(doc(db, "users", id));
+        loadUsers(); // Recarregar os dados após a exclusão
+      }
+
+      // Função para abrir o modal de edição
+      function openModal(id, nif, nome, email, senha, tipoUsuario) {
+        const modal = document.getElementById("editModal");
         document.getElementById("editNif").value = nif;
         document.getElementById("editName").value = nome;
         document.getElementById("editEmail").value = email;
         document.getElementById("editPassword").value = senha;
         document.getElementById("editLevel").value = tipoUsuario;
-        window.currentEditUserId = id;
+        modal.style.display = "block";
 
-        document.getElementById("editModal").style.display = "block";
-      };
-
-      // Função para fechar o modal
-      window.closeModal = () => {
-        document.getElementById("editModal").style.display = "none";
-      };
-
-      // Função para deletar um usuário
-      window.deleteUser = async (id) => {
-        await deleteDoc(doc(db, "users", id));
-        loadUsers(); // Atualiza a tabela após a exclusão
-      };
-
-      // Função para salvar as edições no usuário
-      document
-        .getElementById("editForm")
-        .addEventListener("submit", async (event) => {
+        // Salvar no Firestore
+        const form = document.getElementById("editForm");
+        form.onsubmit = async (event) => {
           event.preventDefault();
+          const newNif = document.getElementById("editNif").value;
+          const newName = document.getElementById("editName").value;
+          const newEmail = document.getElementById("editEmail").value;
+          const newPassword = document.getElementById("editPassword").value;
+          const newLevel = document.getElementById("editLevel").value;
 
-          const nif = document.getElementById("editNif").value;
-          const nome = document.getElementById("editName").value;
-          const email = document.getElementById("editEmail").value;
-          const senha = document.getElementById("editPassword").value;
-          const tipoUsuario = document.getElementById("editLevel").value;
-
-          const userRef = doc(db, "users", window.currentEditUserId);
+          const userRef = doc(db, "users", id);
           await updateDoc(userRef, {
-            nif,
-            nome,
-            email,
-            senha,
-            tipoUsuario,
+            nif: newNif,
+            nome: newName,
+            email: newEmail,
+            senha: newPassword,
+            tipoUsuario: newLevel,
           });
+          loadUsers(); // Recarregar os dados após a edição
+          closeModal(); // Fechar o modal
+        };
+      }
 
-          closeModal(); // Fecha o modal após a edição
-          loadUsers(); // Atualiza a tabela
-        });
+      // Fechar o modal
+      function closeModal() {
+        const modal = document.getElementById("editModal");
+        modal.style.display = "none";
+      }
 
-      // Função para mostrar ou ocultar a senha
-      document
-        .getElementById("showPassword")
-        .addEventListener("change", function () {
-          const passwordInput = document.getElementById("editPassword");
-          passwordInput.type = this.checked ? "text" : "password"; // Altera o tipo de input
-        });
-
-      loadUsers(); // Carrega os usuários na página
-window.deleteOS = async (id) => {
-        const confirmation = confirm("Tem certeza que deseja excluir este Usuario?");
-        if (confirmation) {
-            await deleteDoc(doc(db, "users", id));
-            loadUsers();
+      // Fechar o modal ao clicar fora dele
+      window.onclick = function (event) {
+        const modal = document.getElementById("editModal");
+        if (event.target === modal) {
+          closeModal();
         }
-    };
+      };
 
+      // Filtrando os usuários na tabela conforme a pesquisa
+      document.querySelector(".search-bar").addEventListener("input", async function () {
+        const searchTerm = this.value.toLowerCase();
+        const querySnapshot = await getDocs(collection(db, "users"));
+        const userTable = document.querySelector("#userTable tbody");
+        userTable.innerHTML = "";
+
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+          if (
+            userData.nif.toLowerCase().includes(searchTerm) ||
+            userData.nome.toLowerCase().includes(searchTerm) ||
+            userData.email.toLowerCase().includes(searchTerm)
+          ) {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td>${userData.nif}</td>
+                    <td>${userData.nome}</td>
+                    <td>${userData.email}</td>
+                    <td>${userData.senha}</td>
+                    <td>${userData.tipoUsuario}</td>
+                    <td>
+                        <button class= "edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><img src="../../assets/img/pen.png"></button>
+                        <button class= "delete-btn" onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
+                    </td>
+                `;
+            userTable.appendChild(row);
+          }
+        });
+      });
+
+      loadUsers();
     </script>
   </body>
 </html>
