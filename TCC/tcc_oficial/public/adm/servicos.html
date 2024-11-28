@@ -12,7 +12,7 @@
     <style>
         /* Estilo da tabela adaptado */
         .styled-table {
-            width: 90%;
+            width: 95%;
             border-collapse: separate;
             border-spacing: 0;
             margin: 25px 30px;
@@ -53,6 +53,10 @@
             cursor: pointer;
         }
 
+        #osTable > tbody > tr > td:nth-child(10){
+            display: flex;
+            flex-direction: row;
+        }
         .styled-table td button.edit-btn {
             background-image: url('../../assets/img/edit-icon.svg');
             width: 20px;
@@ -117,6 +121,11 @@
 
         label {
             font-weight: bold;
+        }
+
+        #osTable > tbody > tr > td > button.see-more > img{
+            width: 30px;
+            height: 30px;
         }
     </style>
 </head>
@@ -245,11 +254,14 @@
                 <td>${osData.dataLimite}</td>
                 <td>${osData.prioridade}</td>
                 <td>
-                    <button onclick="editOS('${doc.id}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                    <button onclick="editOS('${doc.id}', '${doc.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
                         <img src="../../assets/img/pen.png">
                     </button>
                     <button onclick="deleteOS('${doc.id}')">
                         <img src="../../assets/img/closeicon.webp">
+                    </button>
+                    <button onclick="" class="see-more">
+                        <img src="../../assets/img/search-icon.png">
                     </button>
                 </td>
             `;
@@ -258,9 +270,10 @@
         });
     }
 
-    window.editOS = (id, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
+    window.editOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
         currentEditingId = id; // Armazena o ID da ordem de serviço sendo editada
         document.getElementById("editOrdemId").value = id; // Define o ID no campo de texto (se necessário)
+        document.getElementById("editNome").value = nome;
         document.getElementById("editDescricao").value = descricao;
         document.getElementById("editCriador").value = criador;
         document.getElementById("editAtribuido").value = atribuido;
@@ -279,6 +292,7 @@
     document.getElementById("ordemServicoForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         
+        const nome = document.getElementById("editNome").value;
         const descricao = document.getElementById("editDescricao").value;
         const criador = document.getElementById("editCriador").value;
         const atribuido = document.getElementById("editAtribuido").value;
@@ -290,6 +304,7 @@
 
         // Atualiza o documento no Firestore
         await updateDoc(doc(db, "ordemServicos", currentEditingId), {
+            nome: nome,
             descricao: descricao,
             criador: criador,
             atribuido: atribuido,

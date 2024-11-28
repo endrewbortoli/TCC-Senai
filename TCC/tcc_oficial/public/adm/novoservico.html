@@ -60,7 +60,10 @@
         <div class="form-group">
           <label for="status">Status</label>
               <select id="status" name="status">
-                <option value="">Selecione</option>
+                <option value="" disabled selected>Selecione</option>
+                <option value="andamento">Em andamento</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="verificado">Verificado</option>
               </select>       
         </div>
 
@@ -173,14 +176,14 @@ const preencherUsuariosManutencao = async () => {
 
   try {
     // Consultar os usuários com tipoUsuario "Manutenção"
-    const q = query(collection(db, "users"), where("tipoUsuario", "==", "Manutenção"));
+    const q = query(collection(db, "users"), where("tipoUsuario", "==", "Trabalhador"));
     const querySnapshot = await getDocs(q);
 
     // Adicionar cada usuário ao campo de seleção
     querySnapshot.forEach((doc) => {
       const userData = doc.data();
       const option = document.createElement("option");
-      option.value = userData.nome; // ou use outro campo, como o ID do usuário
+      option.value = userData.nome;
       option.textContent = userData.nome;
       atribuidoSelect.appendChild(option);
     });
