@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Usuários</title>
+    <title>Formulário de Feedback</title>
 
     <link rel="stylesheet" href="../../assets/css/admdashboard.css">
     <link rel="stylesheet" href="../../assets/css/novofuncionario.css">
@@ -19,64 +19,51 @@
           <a href="feedback.html" class="active"> FEEDBACK</a> <!-- Link para a nova página -->
         </div>
 
-          <!-- Header -->
+        <!-- Header -->
         <div class="main">
-          <!-- Header -->
           <div class="header">
             <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-            <button onclick="logout()">SAIR</button>
-            <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
+              <button onclick="logout()">SAIR</button>
+              <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
             </div>            
-
           </div>
 
-
-          <!-- Formulário de Usuários -->
+          <!-- Formulário de Feedback -->
           <div class="form-container">
-            <h2>FORMULÁRIO DE USUÁRIOS</h2>
+            <h2>FORMULÁRIO DE FEEDBACK</h2>
 
             <div class="form-group">
-              <label for="nome">Nome Completo</label>
-              <input type="text" id="nome" name="nome" />
-            </div>
-
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" />
-            </div>
-
-            <div class="form-group">
-              <label for="senha">Senha</label>
-              <input type="password" id="senha" name="senha" />
-            </div>
-
-            <div class="form-group">
-              <label for="nif">NIF</label>
-              <input type="text" id="nif" name="nif" />
-            </div>
-
-            <div class="form-group">
-              <label for="tipoUsuario">Tipo de Usuário</label>
-              <select id="tipoUsuario" name="tipoUsuario">
-                <option value="" disabled selected>Selecione</option>
-                <option value="Administrador">Administrador</option>
-                <option value="Trabalhador">Manutenção</option>
-                <option value="Geral">Geral</option>
+              <label for="nomeos">Nome da Ordem de Serviço</label>
+              <select id="nomeos" name="nomeos" required>
+                <option value="" disabled selected>Selecione uma Ordem de Serviço Finalizada</option>
+                <!-- As opções serão preenchidas dinamicamente -->
               </select>
             </div>
 
-            <button type="button" id="submitData" class="submit-button">Criar Usuário</button>
+            <!-- Campo de upload de arquivo (imagem ou vídeo) -->
+            <div class="form-group">
+              <label for="arquivo">Foto ou Vídeo</label>
+              <input type="file" id="arquivo" name="arquivo" accept="image/*,video/*" />
+            </div>
+
+            <!-- Feedback do Usuário -->
+            <div class="form-group">
+              <label for="feedback">Comentários ou Avaliação</label>
+              <textarea id="feedback" name="feedback" placeholder="Deixe seu feedback aqui" required></textarea>
+            </div>
+
+            <button type="button" id="submitData" class="submit-button">Enviar Feedback</button>
+
+            <h3>Ordens de Serviço Finalizadas:</h3>
+            <ul id="finalizedOrdersList"></ul> <!-- Lista para exibir as ordens finalizadas -->
           </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import {
-          getFirestore,
-          addDoc,
-          collection
-        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
         // Configurações do Firebase
         const firebaseConfig = {
@@ -92,37 +79,74 @@
         // Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        // Função para adicionar usuário ao Firestore
+        // Função para adicionar feedback e upload de arquivo
         document.getElementById("submitData").addEventListener("click", async () => {
-            const nome = document.getElementById("nome").value;
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("senha").value;
-            const nif = document.getElementById("nif").value;
-            const tipoUsuario = document.getElementById("tipoUsuario").value;
+            const nomeos = document.getElementById("nomeos").value;
+            const feedback = document.getElementById("feedback").value;
+            const arquivo = document.getElementById("arquivo").files[0];
 
-            if (nome && email && senha && nif && tipoUsuario) {
+            if (nomeos && feedback) {
                 try {
-                    await addDoc(collection(db, "users"), {
-                        nome: nome,
-                        email: email,
-                        senha: senha,
-                        nif: nif,
-                        tipoUsuario: tipoUsuario
-                    });
-                    alert("Usuário cadastrado com sucesso!");
-        window.location.href = "../../public/adm/funcionarios.html";
+                    let fileUrl = '';
+                    if (arquivo) {
+                        // Cria uma referência ao arquivo no Firebase Storage
+                        const fileRef = ref(storage, `feedback/${arquivo.name}`);
 
+                        // Faz o upload do arquivo
+                        await uploadBytes(fileRef, arquivo);
+
+                        // Obtém a URL de download do arquivo
+                        fileUrl = await getDownloadURL(fileRef);
+                    }
+
+                    // Adiciona o feedback ao Firestore
+                    await addDoc(collection(db, "feedback"), {
+                        nomeos: nomeos,
+                        feedback: feedback,
+                        arquivoUrl: fileUrl  // Armazena a URL do arquivo, se houver
+                    });
+
+                    alert("Feedback enviado com sucesso!");
+                    window.location.href = "feedback.html";
                 } catch (error) {
-                    console.error("Erro ao adicionar usuário: ", error);
+                    console.error("Erro ao adicionar feedback: ", error);
+                    alert("Erro ao enviar feedback. Tente novamente.");
                 }
             } else {
                 alert("Por favor, preencha todos os campos!");
             }
         });
+
+        // Função para preencher o select com as ordens de serviço finalizadas
+        async function fetchFinalizedOrders() {
+            const ordersRef = collection(db, "ordemServicos");
+            const q = query(ordersRef, where("status", "==", "Finalizada"));
+            const querySnapshot = await getDocs(q);
+
+            const nomeosSelect = document.getElementById("nomeos");
+            nomeosSelect.innerHTML = ''; // Limpa o select antes de adicionar
+
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Selecione uma Ordem de Serviço Finalizada";
+            nomeosSelect.appendChild(defaultOption);
+
+            querySnapshot.forEach((doc) => {
+                const orderData = doc.data();
+                const option = document.createElement("option");
+                option.value = doc.id;  // Utiliza o ID do documento como valor
+                option.textContent = orderData.nome; // Supondo que o nome da ordem de serviço seja "nome"
+                nomeosSelect.appendChild(option);
+            });
+        }
+
+        // Chama a função para buscar as ordens de serviço finalizadas assim que a página carregar
+        window.onload = fetchFinalizedOrders;
+
     </script>
 
-        <script src="../../assets/js/verificacao.js"></script>
-
+    <script src="../../assets/js/verificacao.js"></script>
 </body>
 </html>
