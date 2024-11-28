@@ -40,6 +40,10 @@
       <div class="form-container">
         <h2>FORMULÁRIO DE SERVIÇOS</h2>
         <div class="form-group">
+          <label for="nome">Nome da Ordem de Serviço</label>
+          <input type="text" id="nome" name="nome" />
+        </div>
+        <div class="form-group">
           <label for="descricao">Descrição da Solicitação</label>
           <input type="text" id="descricao" name="descricao" />
         </div>
@@ -56,7 +60,10 @@
         <div class="form-group">
           <label for="status">Status</label>
               <select id="status" name="status">
-                <option value="">Selecione</option>
+                <option value="" disabled selected>Selecione</option>
+                <option value="andamento">Em andamento</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="verificado">Verificado</option>
               </select>       
         </div>
 
@@ -130,6 +137,7 @@
 
     // Função para adicionar ordem de serviço
     document.getElementById("submitData").addEventListener("click", async () => {
+      const nome = document.getElementById("nome").value;
       const descricao = document.getElementById("descricao").value;
       const criador = document.getElementById("criador").value;
       const atribuido = document.getElementById("atribuido").value;
@@ -142,6 +150,7 @@
 
       try {
         await addDoc(collection(db, "ordemServicos"), {
+          nome,
           descricao,
           criador,
           atribuido,
@@ -167,14 +176,14 @@ const preencherUsuariosManutencao = async () => {
 
   try {
     // Consultar os usuários com tipoUsuario "Manutenção"
-    const q = query(collection(db, "users"), where("tipoUsuario", "==", "Manutenção"));
+    const q = query(collection(db, "users"), where("tipoUsuario", "==", "Trabalhador"));
     const querySnapshot = await getDocs(q);
 
     // Adicionar cada usuário ao campo de seleção
     querySnapshot.forEach((doc) => {
       const userData = doc.data();
       const option = document.createElement("option");
-      option.value = userData.nome; // ou use outro campo, como o ID do usuário
+      option.value = userData.nome;
       option.textContent = userData.nome;
       atribuidoSelect.appendChild(option);
     });

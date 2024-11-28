@@ -6,6 +6,9 @@
     <title>Detalhes da Ordem de Serviço</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/detalhes.css">
+    <link rel="stylesheet" href="../../assets/css/manutencaoheader.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
 
@@ -28,12 +31,30 @@
 
 <script src="../../assets/js/verificacao.js"></script>
 <script>
-    // Carregar o header dinamicamente
+    // Função para carregar o header dinamicamente
     async function loadHeader() {
-        const response = await fetch('../../assets/html/header.html');
-        const headerHTML = await response.text();
-        document.getElementById('header-container').innerHTML = headerHTML;
+        try {
+            const response = await fetch('../../components/manutencaoheader.html?version=' + new Date().getTime());
+            const headerHTML = await response.text();
+            document.getElementById('header-container').innerHTML = headerHTML;
+
+            // Verifica se o nome do usuário está no sessionStorage e exibe a saudação
+            const nomeUsuario = sessionStorage.getItem('nome');
+            const userGreeting = document.querySelector('#userGreeting');
+
+            if (userGreeting) {
+                if (nomeUsuario) {
+                    userGreeting.textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
+                } else {
+                    userGreeting.textContent = "Bem-vindo de volta, Anônimo!";
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao carregar o header: ", error);
+        }
     }
+
+    // Carregar o header
     loadHeader();
 
     // Função de voltar

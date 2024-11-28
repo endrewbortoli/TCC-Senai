@@ -74,13 +74,19 @@
             gap: 30px;
         }
 
-        .novo-fed.btn{
-            padding: 10px 10px 10px 10px;
-            background-color: crimson;
+        .open-button{
+            padding: 15px 15px 15px 15px;
+            background-color: #900000;
+            border-radius: 10px;
+            border: none;
+            margin-left: 35px;
+        }
+        .open-button a{
             text-decoration: none;
             color: #ffffff;
-            border-radius: 10px;
         }
+
+
     </style>
 </head>
 <body>
@@ -104,12 +110,16 @@
                 </div>            
             </div>
 
-            <!-- Feedback Section -->
-            <div class="feedback-container">
-                <div class="page-header">
-                    <a href="novofeedback.html" class="novo-fed-btn">Novo feedback</a>
-                    <h2 style="text-align: center;">Feedbacks Recebidos</h2>
-                </div>
+        <button class="open-button">
+          <a href="novofeedback.html">Novo feedback</a>
+        </button>
+
+        <br>
+
+        <h2 style="text-align: left; margin-left: 30px;">Feedbacks Recebidos</h2>
+
+
+
                 <table class="styled-table"> <!-- Adicionada a classe styled-table -->
                     <thead>
                         <tr>

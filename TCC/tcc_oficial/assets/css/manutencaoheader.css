@@ -17,9 +17,25 @@ header .profile {
     align-items: center;
 }
 
-header .profile img {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-left: 10px;
+header .profile #userGreeting {
+    margin-right: 10px;
 }
+
+header .logout {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+header .logout i {
+    font-size: 25px; /* Tamanho do ícone */
+    width: 25px;
+    height: 25px;
+    margin-right: 5px; /* Espaçamento entre o ícone e o texto */
+}
+
+
