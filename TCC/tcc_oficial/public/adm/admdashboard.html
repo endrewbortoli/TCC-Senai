@@ -19,15 +19,27 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
+            margin: 10% auto;
+            padding: 30px;
             border: 1px solid #888;
             width: 80%;
             max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .close {
@@ -44,19 +56,35 @@
             cursor: pointer;
         }
 
-        .verMaisBtn{
-    padding: 10px 10px 10px 10px;
-    background-color: #d20505;
-    color: #ddd;
-    border-radius: 10px;
-    border-color: none;
-    border: none;
-  }
+        .verMaisBtn {
+            padding: 10px;
+            background-color: #d20505;
+            color: #fff;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-  .verMaisBtn:hover{
-    scale: 1.2;
-    background-color: #800202;
-  }
+        .verMaisBtn:hover {
+            scale: 1.1;
+            background-color: #800202;
+        }
+
+        .verMaisBtn:focus {
+            outline: none;
+        }
+
+        /* Outros estilos gerais */
+        .modal p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .modal h2 {
+            color: #d20505;
+        }
     </style>
 </head>
 <body>
@@ -204,87 +232,27 @@
                 const ordemServico = doc.data();
 
                 // Preenche o modal com os detalhes da ordem de serviço
-                document.getElementById("modalAmbiente").textContent = ordemServico.ambiente || "Sem ambiente";
-                document.getElementById("modalCriador").textContent = ordemServico.criador || "Desconhecido";
-                document.getElementById("modalDataLimite").textContent = ordemServico.dataLimite || "Sem data";
-                document.getElementById("modalDataPedido").textContent = ordemServico.dataPedido || "Sem data";
-                document.getElementById("modalDescricao").textContent = ordemServico.descricao || "Sem descrição";
-                document.getElementById("modalPrioridade").textContent = ordemServico.prioridade || "Normal";
-                document.getElementById("modalTipoSolicitacao").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
-
-                // Configura o status selecionado no select
-                const modalStatusSelect = document.getElementById("modalStatusSelect");
-                modalStatusSelect.value = ordemServico.status || "Indefinido";
+                document.getElementById("modalAmbiente").innerText = ordemServico.ambiente;
+                document.getElementById("modalCriador").innerText = ordemServico.criador;
+                document.getElementById("modalDataLimite").innerText = ordemServico.dataLimite;
+                document.getElementById("modalDataPedido").innerText = ordemServico.dataPedido;
+                document.getElementById("modalDescricao").innerText = ordemServico.descricao;
+                document.getElementById("modalPrioridade").innerText = ordemServico.prioridade;
+                document.getElementById("modalTipoSolicitacao").innerText = ordemServico.tipoSolicitacao;
 
                 // Exibe o modal
-                document.getElementById("detalhesModal").style.display = "block";
+                const modal = document.getElementById("detalhesModal");
+                modal.style.display = "block";
+
+                // Evento para fechar o modal
+                document.querySelector(".close").onclick = () => {
+                    modal.style.display = "none";
+                };
             });
-
-    // Adiciona evento ao botão de salvar status
-    document.getElementById("saveStatusButton").onclick = async function() {
-        const newStatus = document.getElementById("modalStatusSelect").value;
-
-        // Adiciona um alerta de confirmação
-        const confirmChange = window.confirm("Você realmente deseja alterar o status para '" + newStatus + "'?");
-
-        if (confirmChange) {
-            await updateOrdensServicosStatus(ordemId, newStatus);
-        }
-    };
-
         }
 
-        // Função para atualizar o status da ordem de serviço no Firestore
-        async function updateOrdensServicosStatus(ordemId, newStatus) {
-            const docRef = doc(db, "ordemServicos", ordemId);
-            await updateDoc(docRef, {
-                status: newStatus
-            });
-            // Fechar o modal após a atualização
-            document.getElementById("detalhesModal").style.display = "none";
-            // Recarregar as ordens de serviço para refletir a mudança
-            loadOrdensServicos();
-            countOrdensServicos();
-        }
-
-        // Função para contar ordens de serviço e atualizar contadores
-        async function countOrdensServicos() {
-            const statusCounts = {
-                "Não aprovado": 0,
-                "Em andamento": 0,
-                "Esperando Confirmação": 0
-            };
-
-            const q = query(collection(db, "ordemServicos"));
-            const querySnapshot = await getDocs(q);
-
-            querySnapshot.forEach((doc) => {
-                const ordemServico = doc.data();
-                if (statusCounts[ordemServico.status] !== undefined) {
-                    statusCounts[ordemServico.status]++;
-                }
-            });
-
-            document.getElementById("naoAtribuidosCount").textContent = statusCounts["Não aprovado"];
-            document.getElementById("emAndamentoCount").textContent = statusCounts["Em andamento"];
-            document.getElementById("esperandoConfirmacaoCount").textContent = statusCounts["Esperando Confirmação"];
-        }
-
-        // Chama as funções ao carregar a página
-        loadOrdensServicos();
-        countOrdensServicos();
-
-        // Função para fechar o modal
-        document.querySelector(".close").onclick = function() {
-            document.getElementById("detalhesModal").style.display = "none";
-        };
-
-        // Fecha o modal se o usuário clicar fora dele
-        window.onclick = function(event) {
-            if (event.target == document.getElementById("detalhesModal")) {
-                document.getElementById("detalhesModal").style.display = "none";
-            }
-        };
+        loadOrdensServicos(); // Chama a função para carregar as ordens de serviço na página
     </script>
 </body>
 </html>
+
