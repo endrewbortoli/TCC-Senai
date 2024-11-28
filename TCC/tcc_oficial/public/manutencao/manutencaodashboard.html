@@ -6,10 +6,13 @@
     <title>SENAI - Ordens de Serviço</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/manutencaodashboard.css">
+    <link rel="stylesheet" href="../../assets/css/manutencaoheader.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
 
-<div id="header-container"></div> <!-- Contêiner para carregar o header -->
+<div id="header-container"></div> 
 
 <div class="container">
     <div class="stats">
@@ -52,25 +55,26 @@
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     // Função para carregar o header de um arquivo externo
-    const carregarHeader = async () => {
-        try {
-            const response = await fetch('../../components/manutencaoheader.html');
-            const headerHtml = await response.text();
-            document.getElementById('header-container').innerHTML = headerHtml;
+const carregarHeader = async () => {
+    try {
+        const headerContainer = document.getElementById('header-container');
+        headerContainer.innerHTML = ''; // Limpa o conteúdo atual
+        const response = await fetch(`../../components/manutencaoheader.html?${new Date().getTime()}`);
+        const headerHtml = await response.text();
+        headerContainer.innerHTML = headerHtml;
 
-            // Após carregar o header, adicione o evento de logout
-            const nomeUsuario = sessionStorage.getItem('nome');
-            const userGreeting = document.querySelector('#userGreeting');
+        const nomeUsuario = sessionStorage.getItem('nome');
+        const userGreeting = document.querySelector('#userGreeting');
 
-            if (!nomeUsuario) {
-                userGreeting.textContent = "Bem-vindo de volta, Anônimo!";
-            } else {
-                userGreeting.textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
-            }
-        } catch (error) {
-            console.error("Erro ao carregar o header: ", error);
+        if (!nomeUsuario) {
+            userGreeting.textContent = "Bem-vindo de volta, Anônimo!";
+        } else {
+            userGreeting.textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
         }
-    };
+    } catch (error) {
+        console.error("Erro ao carregar o header: ", error);
+    }
+};
 
     carregarHeader();
 

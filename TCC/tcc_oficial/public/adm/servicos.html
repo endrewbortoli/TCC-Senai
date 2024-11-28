@@ -151,6 +151,7 @@
             <table id="osTable" class="styled-table">
                 <thead>
                     <tr>
+                        <th>Nome</th>
                         <th>Descrição</th>
                         <th>Solicitante</th>
                         <th>Atribuído a</th>
@@ -176,6 +177,8 @@
         <form id="ordemServicoForm">
             <label for="editOrdemId">ID da Ordem:</label>
             <input type="text" id="editOrdemId" required disabled><br>
+            <label for="editNome">Nome:</label>
+            <input type="text" id="editNome" required><br>
             <label for="editDescricao">Descrição:</label>
             <input type="text" id="editDescricao" required><br>
             <label for="editCriador">Criador:</label>
@@ -232,6 +235,7 @@
             const row = document.createElement("tr");
 
             row.innerHTML = `
+                <td>${osData.nome}</td>
                 <td>${osData.descricao}</td>
                 <td>${osData.criador}</td>
                 <td>${osData.atribuido}</td>
