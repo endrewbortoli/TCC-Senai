@@ -6,7 +6,7 @@
           const headerContainer = document.getElementById("header-container");
           headerContainer.innerHTML = ""; // Limpa o conteúdo atual
           const response = await fetch(
-            `../../components/geralheader.html?${new Date().getTime()}`
+            `../../components/admheader.html?${new Date().getTime()}`
           );
           const headerHtml = await response.text();
           headerContainer.innerHTML = headerHtml;
@@ -24,4 +24,8 @@
         }
       };
 
-      carregarHeader();
+carregarHeader();
+      
+
+//Header ADM
+ 
