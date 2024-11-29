@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes da Ordem de Serviço</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/detalhes.css">
-    <link rel="stylesheet" href="../../assets/css/manutencaoheader.css">
+    <link rel="stylesheet" href="{% static'css/detalhes.css'%}../../assets/css/detalhes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
 <body>
 
-<div id="header-container"></div> <!-- Local onde o header será carregado -->
 
 <div class="container">
     <div class="box">
@@ -30,89 +28,9 @@
 </div>
 
 <script src="../../assets/js/verificacao.js"></script>
-<script>
-    // Função para carregar o header dinamicamente
-    async function loadHeader() {
-        try {
-            const response = await fetch('../../components/manutencaoheader.html?version=' + new Date().getTime());
-            const headerHTML = await response.text();
-            document.getElementById('header-container').innerHTML = headerHTML;
 
-            // Verifica se o nome do usuário está no sessionStorage e exibe a saudação
-            const nomeUsuario = sessionStorage.getItem('nome');
-            const userGreeting = document.querySelector('#userGreeting');
-
-            if (userGreeting) {
-                if (nomeUsuario) {
-                    userGreeting.textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
-                } else {
-                    userGreeting.textContent = "Bem-vindo de volta, Anônimo!";
-                }
-            }
-        } catch (error) {
-            console.error("Erro ao carregar o header: ", error);
-        }
-    }
-
-    // Carregar o header
-    loadHeader();
-
-    // Função de voltar
-    function Voltar() {
-        window.history.back();
-    }
-</script>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-    // Inicialização do Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
-        authDomain: "fir-crud-56c52.firebaseapp.com",
-        projectId: "fir-crud-56c52",
-        storageBucket: "fir-crud-56c52.appspot.com",
-        messagingSenderId: "906266562649",
-        appId: "1:906266562649:web:55742c6c6b67449857e148",
-        measurementId: "G-VN53GXMXM6",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Obtendo a ordem de serviço do ID passado via URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const ordemId = urlParams.get('id');
-
-    if (ordemId) {
-        carregarOrdem(ordemId);
-    } else {
-        console.error("Nenhuma ordem de serviço foi selecionada.");
-    }
-
-    async function carregarOrdem(id) {
-        try {
-            const docRef = doc(db, "ordemServicos", id);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const servico = docSnap.data();
-                document.getElementById('ambiente').textContent = servico.ambiente;
-                document.getElementById('criador').textContent = servico.criador;
-                document.getElementById('dataLimite').textContent = servico.dataLimite;
-                document.getElementById('dataPedido').textContent = servico.dataPedido;
-                document.getElementById('descricao').textContent = servico.descricao;
-                document.getElementById('prioridade').textContent = servico.prioridade;
-                document.getElementById('status').textContent = servico.status;
-                document.getElementById('tipoSolicitacao').textContent = servico.tipoSolicitacao;
-            } else {
-                console.log("Nenhum dado encontrado!");
-            }
-        } catch (error) {
-            console.error("Erro ao carregar a ordem de serviço:", error);
-        }
-    }
 </script>
 
 </body>

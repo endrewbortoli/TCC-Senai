@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Usuários</title>
 
-    <link rel="stylesheet" href="../../assets/css/admdashboard.css">
-    <link rel="stylesheet" href="../../assets/css/novofuncionario.css">
+    <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
+    <link rel="stylesheet" href="{% static 'css/novofuncionario.css'%}">
 </head>
 <body>
     <div class="container">
@@ -70,59 +72,10 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import {
-          getFirestore,
-          addDoc,
-          collection
-        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-        // Configurações do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
-            authDomain: "fir-crud-56c52.firebaseapp.com",
-            projectId: "fir-crud-56c52",
-            storageBucket: "fir-crud-56c52.appspot.com",
-            messagingSenderId: "906266562649",
-            appId: "1:906266562649:web:55742c6c6b67449857e148",
-            measurementId: "G-VN53GXMXM6"
-        };
-
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Função para adicionar usuário ao Firestore
-        document.getElementById("submitData").addEventListener("click", async () => {
-            const nome = document.getElementById("nome").value;
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("senha").value;
-            const nif = document.getElementById("nif").value;
-            const tipoUsuario = document.getElementById("tipoUsuario").value;
-
-            if (nome && email && senha && nif && tipoUsuario) {
-                try {
-                    await addDoc(collection(db, "users"), {
-                        nome: nome,
-                        email: email,
-                        senha: senha,
-                        nif: nif,
-                        tipoUsuario: tipoUsuario
-                    });
-                    alert("Usuário cadastrado com sucesso!");
-        window.location.href = "../../pages/adm/funcionarios.html";
-
-                } catch (error) {
-                    console.error("Erro ao adicionar usuário: ", error);
-                }
-            } else {
-                alert("Por favor, preencha todos os campos!");
-            }
-        });
+    <script type="module" src="{% static 'js/novo-funcionario.js'%}">
     </script>
 
-        <script src="../../assets/js/verificacao.js"></script>
+        <script src="{% static 'js/verificacao.js'%}"></script>
 
 </body>
 </html>

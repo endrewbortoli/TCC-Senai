@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Usuários</title>
 
-    <link rel="stylesheet" href="../../assets/css/admdashboard.css" />
-    <link rel="stylesheet" href="../../assets/css/funcionarios.css" />
+    <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
+    <link rel="stylesheet" href="{% static 'css/funcionarios'%}" />
     <style>
       /* Estilo da tabela e modal */
       .styled-table {
