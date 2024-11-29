@@ -97,78 +97,7 @@
     </form>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
-    authDomain: "fir-crud-56c52.firebaseapp.com",
-    projectId: "fir-crud-56c52",
-    storageBucket: "fir-crud-56c52.appspot.com",
-    messagingSenderId: "906266562649",
-    appId: "1:906266562649:web:55742c6c6b67449857e148",
-    measurementId: "G-VN53GXMXM6",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const analytics = getAnalytics(app);
-
-const eyeOpenImg = "{% static 'img/eye-open.png' %}";
-const closedEyesImg = "{% static 'img/closeicon.webp' %}";
-const admDashboard = "/adm/admdashboard"; // Caminho correto para a página de administração
-
-document.getElementById("loginBtn").addEventListener("click", async (event) => {
-    event.preventDefault(); // Impede que o formulário seja enviado (e a página seja recarregada)
-    
-    const nif = document.getElementById("nif").value;
-    const senha = document.getElementById("senha").value;
-
-    try {
-        const userQuery = query(
-            collection(db, "users"),
-            where("nif", "==", nif),
-            where("senha", "==", senha)
-        );
-
-        const querySnapshot = await getDocs(userQuery);
-
-        if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-                const userData = doc.data();
-                const tipoUsuario = userData.tipoUsuario;
-                const nomeDoUsuario = userData.nome;
-
-                sessionStorage.setItem('userLogged', 'true');
-                sessionStorage.setItem('tipoUsuario', tipoUsuario);
-                sessionStorage.setItem('nome', nomeDoUsuario);
-
-                window.alert("Login bem-sucedido");
-                window.location.href = admDashboard;  // Redirecionamento para a página de admin
-            });
-        } else {
-            window.alert("NIF ou Senha inválidos");
-        }
-    } catch (error) {
-        console.error("Erro ao fazer login: ", error);
-    }
-});
-
-// Mostrar ou ocultar a senha
-const showPasswordBtn = document.getElementById("showPasswordBtn");
-const toggleIcon = document.getElementById("toggleIcon");
-
-showPasswordBtn.addEventListener("click", () => {
-    const senhaInput = document.getElementById("senha");
-    const isPasswordVisible = senhaInput.type === "text";
-    senhaInput.type = isPasswordVisible ? "password" : "text";
-
-    // Alternar entre ícones
-    toggleIcon.src = isPasswordVisible ? eyeOpenImg : closedEyesImg;
-});
-</script>
+    <script type="module" src="{% static 'js/login.js' %}"></script>
 
 </body>
 </html>

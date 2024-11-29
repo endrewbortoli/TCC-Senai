@@ -1,0 +1,12 @@
+            <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
+            <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
+            <a href="{% url 'funcionarios' %}">FEEDBACK</a>
+            <a href="{% url 'novo_feedback' %}">Novo Feedback</a>
+            <a href="{% url 'novo_funcionario' %}">Novo Funcionário</a>
+            <a href="{% url 'novo_servico_adm' %}">Novo Serviço ADM</a>
+            <a href="{% url 'servico' %}">SERVIÇOS</a>
+            <a href="{% url 'geral_dashboard' %}">Dashboard Geral</a>
+            <a href="{% url 'feedback_geral' %}">Feedback Geral</a>
+            <a href="{% url 'novo_servico_geral' %}">Novo Serviço Geral</a>
+            <a href="{% url 'manutencao_dashboard' %}">Dashboard Manutenção</a>
+            <a href="{% url 'detalhes' %}">Detalhes Manutenção</a>

@@ -47,3 +47,14 @@ if (userData) {
     // Se o usuário não estiver logado, redireciona para a página de login
     window.location.href = "/";
 }
+
+if (sessionStorage.getItem('userLogged') === 'true') {
+    const tipoUsuario = sessionStorage.getItem('tipoUsuario');
+    if (tipoUsuario === "Administrador") {
+        window.location.href = "/adm/admdashboard"; 
+    } else if (tipoUsuario === "Geral") {
+        window.location.href = "/geral/dashboard";
+    } else if (tipoUsuario === "Trabalhador") {
+        window.location.href = "/manutencao/dashboard";
+    }
+}
