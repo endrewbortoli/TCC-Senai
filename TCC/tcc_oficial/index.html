@@ -80,7 +80,7 @@
 <body>
     <div class="login-container">
         <div class="logo">
-            <img src="assets/img/logo.png" alt="Logo">
+            <img src="src/assets/img/logo.png" alt="Logo">
         </div>
         <h2>LOGIN</h2>
         <form id="loginForm">
@@ -88,7 +88,7 @@
             <div class="password-wrapper">
                 <input type="password" id="senha" class="input-field" placeholder="SENHA" required>
                 <button type="button" id="showPasswordBtn" class="toggle-password">
-                    <img id="toggleIcon" src="assets/img/eye-open.png" alt="Mostrar Senha" style="width: 30px; height: 30px;">
+                    <img id="toggleIcon" src="src/assets/img/eye-open.png" alt="Mostrar Senha" style="width: 30px; height: 30px;">
                 </button>
             </div>
             <button type="button" id="loginBtn" class="login-button">LOGIN</button>
@@ -138,7 +138,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
                 sessionStorage.setItem('nome', nomeDoUsuario); // Armazenar o nome do usuário
 
                 window.alert("Login bem-sucedido");
-                window.location.href = "public/adm/admdashboard.html";
+                window.location.href = "src/pages/adm/admdashboard.html";
             });
         } else {
             window.alert("NIF ou Senha inválidos");
@@ -158,7 +158,7 @@ showPasswordBtn.addEventListener("click", () => {
     senhaInput.type = isPasswordVisible ? "password" : "text";
 
     // Alternar entre ícones
-    toggleIcon.src = isPasswordVisible ? "assets/img/eye-open.png" : "assets/img/closed-eyes.png";
+    toggleIcon.src = isPasswordVisible ? "src/assets/img/eye-open.png" : "src/assets/img/closed-eyes.png";
 });
     </script>
 </body>

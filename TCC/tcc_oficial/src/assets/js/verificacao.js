@@ -27,17 +27,17 @@ if (userData) {
     if (tipoUsuario === "Administrador") {
         if (currentPath.includes("/geral/") || currentPath.includes("/manutencao/")) {
             // Redireciona o Administrador caso tente acessar uma área de 'Geral' ou 'Manutenção'
-            window.location.href = "../../public/adm/admdashboard.html";
+            window.location.href = "../../pages/adm/admdashboard.html";
         }
     } else if (tipoUsuario === "Geral") {
         if (currentPath.includes("/adm/") || currentPath.includes("/manutencao/")) {
             // Redireciona o usuário Geral caso tente acessar uma área de 'Administrador' ou 'Manutenção'
-            window.location.href = "../../public/geral/geraldashboard.html";
+            window.location.href = "../../pages/geral/geraldashboard.html";
         }
     } else if (tipoUsuario === "Trabalhador") {
         if (currentPath.includes("/adm/") || currentPath.includes("/geral/")) {
             // Redireciona o usuário de Manutenção caso tente acessar uma área de 'Administrador' ou 'Geral'
-            window.location.href = "../../public/manutencao/manutencaodashboard.html";
+            window.location.href = "../../pages/manutencao/manutencaodashboard.html";
         }
     } else {
         // Se o tipo de usuário não for reconhecido, redireciona para a página principal
