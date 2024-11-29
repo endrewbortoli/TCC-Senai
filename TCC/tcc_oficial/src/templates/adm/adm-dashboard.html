@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adm Dashboard</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
     <link rel="stylesheet" href="{% static 'css/modal.css'%}">
     <style>
@@ -16,24 +17,12 @@
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
-        <div class="sidebar">
-            <img src="{% static 'img/whitesenailogo.svg'%}" alt="SENAI Logo" />
-            <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
-            <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
-            <a href="{% url 'servico' %}">SERVIÇOS</a>
-            <a href="{% url 'feedback' %}">FEEDBACK</a>
-
-        </div>
+        {% include 'components/adm-sidebar.html' %}
   
         <!-- Main content -->
         <div class="main">
             <!-- Header -->
-            <div class="header">
-                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-                    <button onclick="logout()">SAIR</button>
-                    <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
-                </div>            
-            </div>
+            {% include 'components/adm-header.html' %}
   
             <!-- Status Section -->
             <div class="nicolas">
@@ -98,10 +87,9 @@
         </div>
     </div>
 
-    <script src="{% static 'js/verificacao.js' %}"></script>
+<script src="{% static 'js/verificacao.js' %}"></script>
+<script type="module" src="{% static 'js/adm-dashboard.js' %}"></script>
 
-
-    <script type="module" src="{% static 'js/adm-dashboard.js%}"></script>
 </body>
 </html>
 
