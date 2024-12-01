@@ -10,3 +10,5 @@
             <a href="{% url 'novo_servico_geral' %}">Novo Serviço Geral</a>
             <a href="{% url 'manutencao_dashboard' %}">Dashboard Manutenção</a>
             <a href="{% url 'detalhes' %}">Detalhes Manutenção</a>
+
+<link href="{% static 'css/output.css' %}" rel="stylesheet">

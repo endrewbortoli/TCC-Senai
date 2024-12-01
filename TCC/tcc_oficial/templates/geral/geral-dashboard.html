@@ -10,6 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link href="{% static 'css/geral-dashboard.css' %}" rel="stylesheet">
+
     <style>
 
     </style>
@@ -17,20 +20,7 @@
   <body>
     <div id="header-container"></div>
 
-    <div class="container">
-      <div class="stats">
-        <div class="add-service-btn"></div>
-
-        <div class="search-bar">
-          <button
-            class="new-service-button"
-            onclick="window.location.href='novoservicogeral.html'"
-          >
-            Novo Serviço
-          </button>
-        </div>
-      </div>
-    </div>
+    {% include 'components/geral-header.html' %}
 
     <!-- Tabela principal -->
     <h2 style="display: flex; justify-content: center; margin-bottom: 15px">
@@ -79,9 +69,9 @@
       Nenhum serviço finalizado encontrado.
     </p>
 
-    <script type="module" src="{% static' js/geral-dashboard'%}"></script>
+    <script type="module" src="{% static 'js/geral-dashboard.js'%}"></script>
 
-    <script type="module" src="{% static 'js/verificacao.js'%}"></script>
+    <!-- <script type="module" src="{% static 'js/verificacao.js'%}"></script> -->
 
   </body>
 </html>

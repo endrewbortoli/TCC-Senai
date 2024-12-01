@@ -9,26 +9,21 @@
 
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
     <link rel="stylesheet" href="{% static 'css/novofuncionario.css'%}">
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
-        <div class="sidebar">
-            <img src="{% static 'img/whitesenailogo.svg'%}" alt="SENAI Logo" />
-            <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
-            <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
-            <a href="{% url 'servico' %}">SERVIÇOS</a>
-            <a href="{% url 'feedback' %}">FEEDBACK</a>
-        </div>
+         <!-- Sidebar Menu -->
+        <!-- {% include 'components/adm-sidebar.html' %}
 
-        <!-- Header -->
-        <div class="main">
-          <div class="header">
-            <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-              <button onclick="logout()">SAIR</button>
-              <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
-            </div>            
-          </div>
+  
+         <!-- Main content -->
+         <div class="main">
+             <!-- Header -->
+             {% include 'components/adm-header.html' %}
+ 
 
           <!-- Formulário de Feedback -->
           <div class="form-container">
@@ -64,6 +59,6 @@
 
     <script type="module" src="{% static 'js/novo-feedback.js'%}"></script>
 
-    <script src="{%% static 'js/verificacao.js'}"></script>
+    <!-- <script src="{%% static 'js/verificacao.js'}"></script> -->
 </body>
 </html>

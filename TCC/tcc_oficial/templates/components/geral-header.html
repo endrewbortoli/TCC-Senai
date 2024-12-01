@@ -1,0 +1,14 @@
+{% load static %}
+
+<header class="bg-[#a81c1c] text-white p-4 flex justify-between items-center">
+    <!-- Logo Senai -->
+    <img src="{% static 'img/whitesenailogo.svg' %}" alt="Logo Senai" class="h-[85px]">
+
+    <!-- Profile section -->
+    <div class="profile flex items-center gap-4">
+        <span id="userGreeting" class="font-bold text-lg">Bem-vindo de volta, Anônimo!</span>
+        <button onclick="logout()" class="bg-[#ff4d4d] text-white p-2 rounded-lg flex items-center">
+            Logout
+        </button>
+    </div>
+</header>

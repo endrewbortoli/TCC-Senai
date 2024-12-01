@@ -1,17 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./templates/**/*.html", // Todos os templates HTML no diretório "templates"
-    "./static/js/**/*.js", // Scripts JavaScript na pasta "static/js"
+    './templates/**/*.html', // Caminho para seus templates do Django
+    './static/js/**/*.js',   // Caminho para seus arquivos JS (se houver)
   ],
   theme: {
-    extend: {
-      colors: {
-        gray: "#5D5D5D",
-        button: "#B91D32",
-        red: "#900000",
-      },
-    },
+    extend: {},
   },
   plugins: [],
-};
+}

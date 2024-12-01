@@ -8,6 +8,8 @@
     <title>Visualização de Feedback</title>
 
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
     <style>
         /* Estilo da tabela e modal */
         .styled-table {
@@ -93,23 +95,14 @@
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
-        <div class="sidebar">
-            <img src="../../assets/img/whitesenailogo.svg" alt="SENAI Logo" />
-            <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
-            <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
-            <a href="{% url 'servico' %}">SERVIÇOS</a>
-            <a href="{% url 'feedback' %}">FEEDBACK</a>
-        </div>
+        <!-- {% include 'components/adm-sidebar.html' %}
+
   
         <!-- Main content -->
         <div class="main">
             <!-- Header -->
-            <div class="header">
-                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-                    <button onclick="logout()">SAIR</button>
-                    <h1 style="margin-left: 10px;">Visualização de Feedback</h1>
-                </div>            
-            </div>
+            {% include 'components/adm-header.html' %}
+
 
         <button class="open-button">
             <a href="{% url 'novo_feedback' %}">Novo Feedback</a>
@@ -140,9 +133,7 @@
         </div>
     </div>
 
-    <script src="{% static'js/verificacao.js'%}"></script>
-
-    <script type="module" src="{% static'js/feedback-adm'%}">
-    </script>
+    <!-- <script src="{% static 'js/verificacao.js' %}"></script> -->
+    <script type="module" src="{% static 'js/feedback-adm.js'%}"></script>
 </body>
 </html>

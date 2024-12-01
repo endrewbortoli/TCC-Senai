@@ -8,7 +8,9 @@
     <title>Usuários</title>
 
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
-    <link rel="stylesheet" href="{% static 'css/funcionarios'%}" />
+    <link rel="stylesheet" href="{% static 'css/funcionarios.css'%}" />
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
     <style>
       /* Estilo da tabela e modal */
       .styled-table {
@@ -149,32 +151,15 @@
   </head>
   <body>
     <div class="container">
-      <!-- Sidebar Menu -->
-      <div class="sidebar">
-            <img src="{% static 'img/whitesenailogo.svg'%}" alt="SENAI Logo" />
-            <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
-            <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
-            <a href="{% url 'servico' %}">SERVIÇOS</a>
-            <a href="{% url 'feedback' %}">FEEDBACK</a>
-      </div>
+        <!-- Sidebar Menu -->
+        <!-- {% include 'components/adm-sidebar.html' %}
 
-      <div class="main">
-        <!-- Header -->
-        <div class="header">
-          <div
-            class="header-left"
-            style="
-              display: flex;
-              flex-direction: row;
-              justify-content: center;
-              align-items: center;
-              margin: 10px;
-            "
-          >
-            <button onclick="logout()">SAIR</button>
-            <h1 style="margin-left: 10px">Bem vindo de volta!</h1>
-          </div>
-        </div>
+  
+        <!-- Main content -->
+        <div class="main">
+            <!-- Header -->
+            {% include 'components/adm-header.html' %}
+
 
         <button class="open-button">
             <a href="{% url 'novo_funcionario' %}">Novo Funcionário</a>
@@ -223,9 +208,9 @@
       </div>
     </div>
 
-    <script src="{% static 'js/verificacao.js'%}"></script>
+    <!-- <script src="{% static 'js/verificacao.js'%}"></script> -->
 
-    <script type="module" src="{% static 'js/funcionarios'%}">
+    <script type="module" src="{% static 'js/funcionarios.js'%}">
     </script>
   </body>
 </html>

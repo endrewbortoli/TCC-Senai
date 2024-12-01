@@ -121,8 +121,8 @@
                     <td>${userData.senha}</td>
                     <td>${userData.tipoUsuario}</td>
                     <td>
-                        <button class= "edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><img src="../../assets/img/pen.png"></button>
-                        <button class= "delete-btn" onclick="deleteOS('${doc.id}')"><img src="../../assets/img/closeicon.webp"></button>
+                        <button class= "edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><img src="{% static 'img/pen.png'%}"></button>
+                        <button class= "delete-btn" onclick="deleteOS('${doc.id}')"><img src="{% static 'img/closeicon.webp'%}"></button>
                     </td>
                 `;
             userTable.appendChild(row);

@@ -32,29 +32,28 @@
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                <td>${osData.nome}</td>
-                <td>${osData.descricao}</td>
-                <td>${osData.criador}</td>
-                <td>${osData.atribuido}</td>
-                <td>${osData.status}</td>
-                <td>${osData.ambiente}</td>
-                <td>${osData.dataPedido}</td>
-                <td>${osData.dataLimite}</td>
-                <td>${osData.prioridade}</td>
-                <td>
-                    <button onclick="editOS('${doc.id}', '${doc.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                        <img src="../../assets/img/pen.png">
-                    </button>
-                    <button onclick="deleteOS('${doc.id}')">
-                        <img src="../../assets/img/closeicon.webp">
-                    </button>
-                    <button onclick="" class="see-more">
-                        <img src="../../assets/img/search-icon.png">
-                    </button>
-                </td>
-            `;
-
-            osTable.appendChild(row);
+            <td>${osData.nome}</td>
+            <td>${osData.descricao}</td>
+            <td>${osData.criador}</td>
+            <td>${osData.atribuido}</td>
+            <td>${osData.status}</td>
+            <td>${osData.ambiente}</td>
+            <td>${osData.dataPedido}</td>
+            <td>${osData.dataLimite}</td>
+            <td>${osData.prioridade}</td>
+            <td>
+                <button onclick="editOS('${doc.id}', '${doc.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                    <img src="{% static 'img/pen.png' %}"> <!-- Agora usando {% static %} -->
+                </button>
+                <button onclick="deleteOS('${doc.id}')">
+                    <img src="{% static 'img/closeicon.webp' %}"> <!-- Agora usando {% static %} -->
+                </button>
+                <button onclick="" class="see-more">
+                    <img src="{% static 'img/search-icon.png' %}"> <!-- Agora usando {% static %} -->
+                </button>
+            </td>
+        `;
+                    osTable.appendChild(row);
         });
     }
 

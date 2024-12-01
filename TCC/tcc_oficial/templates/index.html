@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENAI Login</title>
+    <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/loginpage.css' %}">
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
+    <style>
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="logo">
+        <img src="{% static 'img/logo.png' %}" alt="Logo">
+    </div>
+    <h2>LOGIN</h2>
+    <form method="POST" id="loginForm">
+        {% csrf_token %}
+        <input type="text" id="nif" name="nif" class="input-field" placeholder="NIF" required>
+        <div class="password-wrapper">
+            <input type="password" id="senha" name="senha" class="input-field" placeholder="SENHA" required>
+            <button type="button" id="showPasswordBtn" class="toggle-password">
+                <img id="toggleIcon" src="{% static 'img/eye-open.png' %}" alt="Mostrar Senha" style="width: 30px; height: 30px;">
+            </button>
+        </div>
+        <button type="submit" id="loginBtn" class="login-button">LOGIN</button>
+    </form>
+</div>
+
+    <script type="module" src="{% static 'js/login.js' %}"></script>
+
+</body>
+</html>

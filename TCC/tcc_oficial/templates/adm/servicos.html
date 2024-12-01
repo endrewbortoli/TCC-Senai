@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
     <link rel="stylesheet" href="{% static 'css/funcionarios.css'%}">
     <link rel="stylesheet" href="{% static 'css/servicos.css'%}">
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
 
     <style>
         /* Estilo da tabela adaptado */
@@ -60,7 +62,7 @@
             flex-direction: row;
         }
         .styled-table td button.edit-btn {
-            background-image: url('../../assets/img/edit-icon.svg');
+            background-image: url('{% static "img/pen.png" %}');
             width: 20px;
             height: 20px;
             background-size: contain;
@@ -68,7 +70,7 @@
         }
 
         .styled-table td button.delete-btn {
-            background-image: url('../../assets/img/delete-icon.svg');
+            background-image: url('{% static "img/closeicon.webp" %}');
             width: 20px;
             height: 20px;
             background-size: contain;
@@ -134,23 +136,12 @@
 <body>
     <div class="container">
         <!-- Sidebar Menu -->
-        <div class="sidebar">
-            <img src="{% static 'img/whitesenailogo.svg'%}" alt="SENAI Logo" />
-            <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
-            <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
-            <a href="{% url 'servico' %}">SERVIÇOS</a>
-            <a href="{% url 'feedback' %}">FEEDBACK</a>
-        </div>
+        <!-- {% include 'components/adm-sidebar.html' %} 
   
         <!-- Main content -->
         <div class="main">
             <!-- Header -->
-            <div class="header">
-                <div class="header-left" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 10px;">
-                    <button onclick="logout()">SAIR</button>
-                    <h1 style="margin-left: 10px;">Bem vindo de volta!</h1>
-                </div>            
-            </div>
+            {% include 'components/adm-header.html' %}
 
             <!-- Botão para abrir o formulário e barra de pesquisa -->
             <button class="open-button"><a href="{% url 'novo_servico_adm' %}">Cadastrar serviços</a></button>
@@ -180,40 +171,39 @@
         </div>
     </div>
 
-<div id="ordemServicoModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeOrdemServicoModal()">&times;</span>
-        <h2>Editar Ordem de Serviço</h2>
-        <form id="ordemServicoForm">
-            <label for="editOrdemId">ID da Ordem:</label>
-            <input type="text" id="editOrdemId" required disabled><br>
-            <label for="editNome">Nome:</label>
-            <input type="text" id="editNome" required><br>
-            <label for="editDescricao">Descrição:</label>
-            <input type="text" id="editDescricao" required><br>
-            <label for="editCriador">Criador:</label>
-            <input type="text" id="editCriador" required><br>
-            <label for="editAtribuido">Atribuído a:</label>
-            <input type="text" id="editAtribuido" required><br>
-            <label for="editStatus">Status:</label>
-            <input type="text" id="editStatus" required><br>
-            <label for="editAmbiente">Ambiente:</label>
-            <input type="text" id="editAmbiente" required><br>
-            <label for="editDataPedido">Data do Pedido:</label>
-            <input type="date" id="editDataPedido" required><br>
-            <label for="editDataLimite">Data Limite:</label>
-            <input type="date" id="editDataLimite" required><br>
-            <label for="editPrioridade">Prioridade:</label>
-            <input type="text" id="editPrioridade" required><br>
-            <button type="submit">Salvar</button>
-        </form>
+    <div id="ordemServicoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeOrdemServicoModal()">&times;</span>
+            <h2>Editar Ordem de Serviço</h2>
+            <form id="ordemServicoForm">
+                <label for="editOrdemId">ID da Ordem:</label>
+                <input type="text" id="editOrdemId" required disabled><br>
+                <label for="editNome">Nome:</label>
+                <input type="text" id="editNome" required><br>
+                <label for="editDescricao">Descrição:</label>
+                <input type="text" id="editDescricao" required><br>
+                <label for="editCriador">Criador:</label>
+                <input type="text" id="editCriador" required><br>
+                <label for="editAtribuido">Atribuído a:</label>
+                <input type="text" id="editAtribuido" required><br>
+                <label for="editStatus">Status:</label>
+                <input type="text" id="editStatus" required><br>
+                <label for="editAmbiente">Ambiente:</label>
+                <input type="text" id="editAmbiente" required><br>
+                <label for="editDataPedido">Data do Pedido:</label>
+                <input type="date" id="editDataPedido" required><br>
+                <label for="editDataLimite">Data Limite:</label>
+                <input type="date" id="editDataLimite" required><br>
+                <label for="editPrioridade">Prioridade:</label>
+                <input type="text" id="editPrioridade" required><br>
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script type="module" src="{% static 'js/servicos'%}">
-</script>
+    <script type="module" src="{% static 'js/servicos.js'%}"></script>
 
-    <script src="{% static 'js/verificacao.js'%}"></script>
+    <!-- <script src="{% static 'js/verificacao.js'%}"></script> -->
 
 </body>
 </html>

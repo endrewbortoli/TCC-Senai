@@ -23,7 +23,7 @@ def novoservico_adm(request):
     return render(request, 'adm/novo-servico.html')
 
 def servico(request):
-    return render(request, 'adm/servico.html')
+    return render(request, 'adm/servicos.html')
 
 def geral_dashboard(request):
     return render(request, 'geral/geral-dashboard.html')
