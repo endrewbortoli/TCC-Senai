@@ -12,13 +12,13 @@
     />
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <link href="{% static 'css/geral-dashboard.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
 
     </style>
   </head>
   <body>
-    <div id="header-container"></div>
 
     {% include 'components/geral-header.html' %}
 
@@ -69,9 +69,8 @@
       Nenhum serviço finalizado encontrado.
     </p>
 
-    <script type="module" src="{% static 'js/geral-dashboard.js'%}"></script>
-
-    <!-- <script type="module" src="{% static 'js/verificacao.js'%}"></script> -->
+    <script type="module" src="{% static 'js/geral-dashboard.js' %}"></script>
+    <script type="module" src="{% static 'js/verificacao.js' %}"></script>
 
   </body>
 </html>

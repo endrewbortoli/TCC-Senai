@@ -8,54 +8,47 @@ function logout() {
 }
 
 // Verifica se o usuário está logado
-if (sessionStorage.getItem('userLogged') === "true") {
-    console.log("Usuário logado");
+document.addEventListener("DOMContentLoaded", function() {
+    if (sessionStorage.getItem('userLogged') === "true") {
+        console.log("Usuário logado");
 
-    const nomeUsuario = sessionStorage.getItem('nome'); // Nome do usuário logado
-    const currentPath = window.location.pathname;
-    const tipoUsuario = sessionStorage.getItem('tipoUsuario'); // Tipo de usuário salvo no sessionStorage
-    
-    console.log("Nome do usuário:", nomeUsuario);
-    console.log("Tipo de usuário:", tipoUsuario);
-    console.log("Caminho atual:", currentPath);
+        const nomeUsuario = sessionStorage.getItem('nome'); // Nome do usuário logado
+        const currentPath = window.location.pathname; // Caminho da URL atual
+        const tipoUsuario = sessionStorage.getItem('tipoUsuario'); // Tipo de usuário salvo no sessionStorage
 
-    // Exemplo de definição de userData, caso seja necessário:
-    const userData = localStorage.getItem('userData'); // ou pegue o valor de algum lugar
+        console.log("Nome do usuário:", nomeUsuario);
+        console.log("Tipo de usuário:", tipoUsuario);
+        console.log("Caminho atual:", currentPath);
 
-    // Utilize userData depois de garantir que está definido corretamente
-    if (userData) {
-        console.log('Dados do usuário:', userData);
-    } else {
-        console.log('userData não foi definido corretamente');
-    }
-
-    // Verifica o tipo de usuário e redireciona se estiver acessando uma pasta não permitida
-    if (tipoUsuario === "Administrador") {
-        if (currentPath.includes("/geral/") || currentPath.includes("/manutencao/")) {
-            // Redireciona o Administrador caso tente acessar uma área de 'Geral' ou 'Manutenção'
-            console.log("Redirecionando Administrador para o Dashboard de Administração");
-            window.location.href = "/adm/admdashboard";
+        // Verifica se a variável 'userData' foi salva corretamente no localStorage
+        const userData = localStorage.getItem('userData');
+        if (userData) {
+            console.log('Dados do usuário:', userData);
+        } else {
+            console.log('userData não foi definido corretamente');
         }
-    } else if (tipoUsuario === "Geral") {
-        if (currentPath.includes("/adm/") || currentPath.includes("/manutencao/")) {
-            // Redireciona o usuário Geral caso tente acessar uma área de 'Administrador' ou 'Manutenção'
-            console.log("Redirecionando usuário Geral para o Dashboard Geral");
-            window.location.href = "/geral/geraldashboard";
-        }
-    } else if (tipoUsuario === "Trabalhador") {
-        if (currentPath.includes("/adm/") || currentPath.includes("/geral/")) {
-            // Redireciona o usuário de Manutenção caso tente acessar uma área de 'Administrador' ou 'Geral'
-            console.log("Redirecionando usuário de Manutenção para o Dashboard de Manutenção");
-            window.location.href = "/manutencao/manutencaodashboard";
+
+        // Aqui você pode adicionar lógicas adicionais de redirecionamento ou comportamentos
+        // Por exemplo, pode redirecionar para páginas específicas com base no tipo de usuário
+        if (tipoUsuario === "Administrador") {
+            // Se for um administrador, redireciona para o painel do admin
+            if (!currentPath.includes("/adm/")) {
+                window.location.href = "/adm/admdashboard";
+            }
+        } else if (tipoUsuario === "Geral") {
+            // Se for um usuário do tipo "Geral", redireciona para o painel geral
+            if (!currentPath.includes("/geral/")) {
+                window.location.href = "/geral/geraldashboard";
+            }
+        } else if (tipoUsuario === "Trabalhador") {
+            // Se for um trabalhador, redireciona para o painel de manutenção
+            if (!currentPath.includes("/manutencao/")) {
+                window.location.href = "/manutencao/manutencaodashboard";
+            }
         }
     } else {
-        // Se o tipo de usuário não for reconhecido, redireciona para a página principal
-        console.log("Tipo de usuário não reconhecido. Redirecionando para a página principal.");
-        window.location.href = "/"; // Ou página de login
+        // Se o usuário não estiver logado, redireciona para a página de login
+        console.log("Usuário não logado, redirecionando para o login.");
+        window.location.href = "/"; // Redireciona para a página de login
     }
-} else {
-    console.log("Usuário não logado, redirecionando para a página de login.");
-    // Se o usuário não estiver logado, redireciona para a página de login
-    window.location.href = "/"; // Página de login
-}
-
+});

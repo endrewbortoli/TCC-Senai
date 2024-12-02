@@ -22,6 +22,10 @@
     const db = getFirestore(app);
     let currentEditingId; // Variável para armazenar o ID da Ordem de Serviço que está sendo editada
 
+    const penImage = "{% static 'img/pen.png' %}";
+    const closeImage = "{% static 'img/closeicon.webp' %}";
+    const searchImage = "{% static 'img/search-icon.png' %}";
+
     async function loadOrdensServico() {
         const querySnapshot = await getDocs(collection(db, "ordemServicos"));
         const osTable = document.querySelector("#osTable tbody");
@@ -43,13 +47,13 @@
             <td>${osData.prioridade}</td>
             <td>
                 <button onclick="editOS('${doc.id}', '${doc.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                    <img src="{% static 'img/pen.png' %}"> <!-- Agora usando {% static %} -->
+                    <img src="penImage">
                 </button>
                 <button onclick="deleteOS('${doc.id}')">
-                    <img src="{% static 'img/closeicon.webp' %}"> <!-- Agora usando {% static %} -->
+                    <img src="closeImage">
                 </button>
                 <button onclick="" class="see-more">
-                    <img src="{% static 'img/search-icon.png' %}"> <!-- Agora usando {% static %} -->
+                    <img src="searchimage">
                 </button>
             </td>
         `;

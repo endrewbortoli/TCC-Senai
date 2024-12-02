@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
     <link rel="stylesheet" href="{% static 'css/novofuncionario.css'%}">
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
 <body>
@@ -24,41 +25,17 @@
              <!-- Header -->
              {% include 'components/adm-header.html' %}
  
-
-          <!-- Formulário de Feedback -->
-          <div class="form-container">
-            <h2>FORMULÁRIO DE FEEDBACK</h2>
-
-            <div class="form-group">
-              <label for="nomeos">Nome da Ordem de Serviço</label>
-              <select id="nomeos" name="nomeos" required>
-                <option value="" disabled selected>Selecione uma Ordem de Serviço Finalizada</option>
-                <!-- As opções serão preenchidas dinamicamente -->
-              </select>
-            </div>
-
-            <!-- Campo de upload de arquivo (imagem ou vídeo) -->
-            <div class="form-group">
-              <label for="arquivo">Foto ou Vídeo</label>
-              <input type="file" id="arquivo" name="arquivo" accept="image/*,video/*" />
-            </div>
-
-            <!-- Feedback do Usuário -->
-            <div class="form-group">
-              <label for="feedback">Comentários ou Avaliação</label>
-              <textarea id="feedback" name="feedback" placeholder="Deixe seu feedback aqui" required></textarea>
-            </div>
-
-            <button type="button" id="submitData" class="submit-button">Enviar Feedback</button>
-
-            <h3>Ordens de Serviço Finalizadas:</h3>
-            <ul id="finalizedOrdersList"></ul> <!-- Lista para exibir as ordens finalizadas -->
-          </div>
-        </div>
+             <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.as_p }}  <!-- Renderiza o formulário -->
+              <button type="submit">Enviar</button>
+          </form>
+      
     </div>
+
 
     <script type="module" src="{% static 'js/novo-feedback.js'%}"></script>
 
-    <!-- <script src="{%% static 'js/verificacao.js'}"></script> -->
+    <script src="{%% static 'js/verificacao.js'}"></script>
 </body>
 </html>

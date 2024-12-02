@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/admdashboard.css'%}">
     <link rel="stylesheet" href="{% static 'css/novofuncionario.css'%}">
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 
     <style>
@@ -18,40 +19,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Roboto', sans-serif;
-        }
-        body {
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #a81c1c;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header h1 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        header .profile {
-            display: flex;
-            align-items: center;
-        }
-        header .profile img {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-left: 10px;
-        }
-        .container {
-            padding: 0px 20px 20px 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .container h2 {
-            text-align: center;
-            margin-bottom: 20px;
         }
         .form-container {
             background-color: white;
@@ -94,14 +61,8 @@
     </style>
 </head>
 <body>
-    <header>
+    {% include 'components/geral-header.html' %}
 
-        <img src="{% static 'img/whitesenailogo.svg'%} alt="Logo Senai" style="height: 85px;">
-        <div class="profile">
-            <span id="userGreeting">Anônimo!</span>
-            <button onclick="logout()">Logout</button>
-        </div>
-    </header>
         <!-- Botão de Voltar -->
     <button onclick="history.back()" style="margin: 20px; padding: 10px; background-color: #ff4d4d; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Voltar

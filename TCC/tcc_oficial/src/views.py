@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import FeedbackForm
 
 def index(request):
     return render(request, 'index.html')
@@ -39,3 +40,13 @@ def manutencao_dashboard(request):
 
 def detalhes(request):
     return render(request, 'manutencao/detalhes.html')
+
+def feedback_view(request):
+    if request.method == 'POST':  # Quando o formulário for enviado
+        form = FeedbackForm(request.POST, request.FILES)  # Inclua arquivos enviados
+        if form.is_valid():
+            form.save()  # Salva no banco de dados
+            return redirect('success')  # Redireciona para uma página de sucesso
+    else:
+        form = FeedbackForm()  # Formulário vazio para exibir na página
+    return render(request, 'adm/novo-feedback.html', {'form': form})
