@@ -46,7 +46,8 @@ def feedback_view(request):
         form = FeedbackForm(request.POST, request.FILES)  # Inclua arquivos enviados
         if form.is_valid():
             form.save()  # Salva no banco de dados
-            return redirect('success')  # Redireciona para uma página de sucesso
+            return redirect('feedback_adm')  # Redireciona para uma página de sucesso
     else:
         form = FeedbackForm()  # Formulário vazio para exibir na página
     return render(request, 'adm/novo-feedback.html', {'form': form})
+

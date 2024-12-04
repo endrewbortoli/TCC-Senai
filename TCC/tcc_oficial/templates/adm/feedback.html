@@ -94,9 +94,9 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="sideright">
         <!-- Sidebar Menu -->
-        <!-- {% include 'components/adm-sidebar.html' %}
+        {% include 'components/adm-sidebar.html' %}
 
   
         <!-- Main content -->
@@ -126,15 +126,36 @@
                             <th>Data</th>
                         </tr>
                     </thead>
-                    <tbody id="feedbackTableBody">
-                        <!-- Os feedbacks serão inseridos aqui via JavaScript -->
+                    <tbody>
+                        {% for feedback in feedbacks %}
+                        <tr>
+                            <td>{{ feedback.usuario.nome }}</td> <!-- Ajuste conforme o campo do modelo -->
+                            <td>{{ feedback.descricao }}</td>
+                            <td>{{ feedback.avaliacao }}</td>
+                            <td>
+                                {% if feedback.video %}
+                                <a href="{{ feedback.video.url }}" target="_blank">Ver Vídeo</a>
+                                {% else %}
+                                Não disponível
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if feedback.imagem %}
+                                <img src="{{ feedback.imagem.url }}" alt="Imagem" style="width: 100px; height: auto;">
+                                {% else %}
+                                Não disponível
+                                {% endif %}
+                            </td>
+                            <td>{{ feedback.data_criacao|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
-                </table>
+                                    </table>
             </div>
         </div>
     </div>
 
     <script src="{% static 'js/verificacao.js' %}"></script>
-    <script type="module" src="{% static 'js/feedback-adm.js'%}"></script>
+    <!-- <script type="module" src="{% static 'js/feedback-adm.js'%}"></script> -->
 </body>
 </html>
