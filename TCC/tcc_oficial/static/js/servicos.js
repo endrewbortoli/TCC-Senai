@@ -47,7 +47,7 @@
             <td>${osData.prioridade}</td>
             <td>
                 <button onclick="editOS('${doc.id}', '${doc.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                    <img src="penImage">
+                    <i class="fas fa-times"></i>
                 </button>
                 <button onclick="deleteOS('${doc.id}')">
                     <img src="closeImage">
