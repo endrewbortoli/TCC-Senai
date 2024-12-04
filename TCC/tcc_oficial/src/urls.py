@@ -6,7 +6,6 @@ urlpatterns = [
     path('', views.index, name='index'),  # Rota inicial
 
     path('feedback/', feedback_view, name='feedback'),  # URL para acessar o formulário
-    path('success/', lambda request: render(request, 'success.html'), name='success'),  # Página de sucesso
 
     # Rotas para a parte de Administração
     path('adm/admdashboard', views.adm_dashboard, name='adm_dashboard'),  # Rota para o painel de administração

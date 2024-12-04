@@ -15,25 +15,21 @@
 </head>
 <body>
     <div class="sideright">
-        <!-- Sidebar Menu -->
         {% include 'components/adm-sidebar.html' %}
 
-  
-         <!-- Main content -->
-         <div class="main">
-             <!-- Header -->
+           <div class="main">
              {% include 'components/adm-header.html' %}
  
              <form method="post" enctype="multipart/form-data">
-              {% csrf_token %}
-              {{ form.as_p }}  <!-- Renderiza o formulário -->
-              <button type="submit">Enviar</button>
-          </form>
+                {% csrf_token %}
+                {{ form.as_p }} 
+
+                <button type="submit">Enviar</button>
+            </form>
       
     </div>
 
 
-    <script type="module" src="{% static 'js/novo-feedback.js'%}"></script>
 
     <script src="{%% static 'js/verificacao.js'}"></script>
 </body>
