@@ -207,7 +207,7 @@
                 <label for="editStatus">Status:</label>
                 <input type="text" id="editStatus" required><br>
                 <label for="editAmbiente">Ambiente:</label>
-                <input type="text" id="editAmbiente" required><br>
+                <input type="text" id="editStatus" required><br>
                 <label for="tipoSolicitacao">Tipo da Solicitação</label>
                 <select id="tipoSolicitacao" name="tipoSolicitacao">
                   <option value="" disabled selected>Selecione</option>
@@ -220,7 +220,6 @@
                   <option value="Instalacao">Instalação de Novos Equipamentos</option>
                   <option value="Compras">Solicitação de Compras ou Estoque</option>
                 </select>
-
   
                 <label for="editDataPedido">Data do Pedido:</label>
                 <input type="date" id="editDataPedido" required><br>
@@ -258,47 +257,6 @@
     const db = getFirestore(app);
     let currentEditingId; // Variável para armazenar o ID da Ordem de Serviço que está sendo editada
 
-<<<<<<< HEAD
-        async function loadOrdensServico() {
-            const querySnapshot = await getDocs(collection(db, "ordemServicos"));
-            const osTable = document.querySelector("#osTable tbody");
-            osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
-        }
-async function loadOrdensServico() {
-    const querySnapshot = await getDocs(collection(db, "ordemServicos"));
-    const osTable = document.querySelector("#osTable tbody");
-    osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
-
-    querySnapshot.forEach((doc) => {
-        const osData = doc.data();  // Aqui você acessa os dados corretamente
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${osData.nome}</td>
-            <td>${osData.descricao}</td>
-            <td>${osData.criador}</td>
-            <td>${osData.atribuido}</td>
-            <td>${osData.status}</td>
-            <td>${osData.ambiente}</td>
-            <td>${osData.dataPedido}</td>
-            <td>${osData.dataLimite}</td>
-            <td>${osData.prioridade}</td>
-            <td>
-                <button onclick="editOS('${doc.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                    <i class="fas fa-pen"></i>
-                </button>
-                <button onclick="deleteOS('${doc.id}')">
-                    <i class="fas fa-times"></i>
-                </button>
-                <button onclick="" class="see-more">
-                    <i class="fas fa-search"></i>
-                </button>
-            </td>
-        `;
-        osTable.appendChild(row);
-    });
-}
-=======
     const penImage = "{% static 'img/pen.png' %}";
     const closeImage = "{% static 'img/closeicon.webp' %}";
     const searchImage = "{% static 'img/search-icon.png' %}";
@@ -382,7 +340,6 @@ async function loadOrdensServico() {
             dataLimite: dataLimite,
             prioridade: prioridade,
         });
->>>>>>> parent of 472d85f (marcha)
 
         closeOrdemServicoModal();
         loadOrdensServico();
