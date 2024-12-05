@@ -20,17 +20,21 @@
            <div class="main">
              {% include 'components/adm-header.html' %}
  
-             <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }} 
+                 <!-- Formulário de feedback -->
+    <form action="{% url 'feedback' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Exibe o formulário com todos os campos -->
+        <div>
+            <button type="submit">Enviar</button>
+        </div>
+    </form>
 
-                <button type="submit">Enviar</button>
-            </form>
-      
     </div>
 
+        <!-- Voltar à página anterior -->
+    <a href="javascript:history.back()">Voltar</a>
 
 
-    <script src="{%% static 'js/verificacao.js'}"></script>
+    <script src="{% static 'js/verificacao.js' %}"></script>
 </body>
 </html>
