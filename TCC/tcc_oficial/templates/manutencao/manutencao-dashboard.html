@@ -51,8 +51,100 @@
 </div>
 
 <script src="{% static 'js/verificacao.js'%}"></script>
-<script type="module" src="{% static 'js/manutencao-dashboard'%}">
+<script type="module" src="{% static 'js/manutencao-dashboard.js'%}">
 </script>
 
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    // Inicialização do Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+        authDomain: "fir-crud-56c52.firebaseapp.com",
+        projectId: "fir-crud-56c52",
+        storageBucket: "fir-crud-56c52.appspot.com",
+        messagingSenderId: "906266562649",
+        appId: "1:906266562649:web:55742c6c6b67449857e148",
+        measurementId: "G-VN53GXMXM6",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Função para carregar serviços atribuídos
+    const carregarServicosAtribuidos = async (nomeUsuario) => {
+        const tabelaServicos = document.getElementById("tabelaServicos");
+        tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
+
+        try {
+            // Consulta para buscar serviços com o campo "atribuido" igual ao nome do usuário
+            const q = query(collection(db, "ordemServicos"), where("atribuido", "==", nomeUsuario));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                tabelaServicos.innerHTML = `<tr><td colspan="5">Nenhum serviço atribuído.</td></tr>`;
+                return;
+            }
+
+            // Preenche a tabela com os dados filtrados
+            querySnapshot.forEach((doc) => {
+                const servico = doc.data();
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${servico.descricao}</td>
+                    <td>${servico.dataLimite}</td>
+                    <td>${servico.prioridade}</td>
+                    <td>${servico.status}</td>
+                    <td><button class="ver-mais" onclick="window.location.href='detalhes.html?id=${doc.id}'">VER MAIS</button></td>
+                `;
+                tabelaServicos.appendChild(tr);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar os serviços atribuídos: ", error);
+            tabelaServicos.innerHTML = `<tr><td colspan="5">Erro ao carregar serviços.</td></tr>`;
+        }
+    };
+
+    // Função para pesquisar ordens de serviço
+    window.pesquisar = function() { // Torna a função acessível no escopo global
+        const queryInput = document.getElementById('searchInput').value.toLowerCase();
+        const tabelaServicos = document.getElementById("tabelaServicos");
+        const linhas = tabelaServicos.getElementsByTagName("tr");
+
+        for (let i = 0; i < linhas.length; i++) {
+            const cols = linhas[i].getElementsByTagName("td");
+            let found = false;
+
+            // Verifica se a linha contém o texto pesquisado
+            for (let j = 0; j < cols.length - 1; j++) { // -1 para não incluir a coluna do botão "VER MAIS"
+                if (cols[j]) {
+                    const textoColuna = cols[j].textContent.toLowerCase();
+                    if (textoColuna.includes(queryInput)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            // Mostra ou oculta a linha
+            linhas[i].style.display = found ? "" : "none";
+        }
+    }
+
+
+    // Verifica se o nome do usuário está armazenado
+    const nomeUsuario = sessionStorage.getItem('nome');
+
+    if (!nomeUsuario) {
+        console.warn("Nenhum nome de usuário encontrado no sessionStorage.");
+        document.querySelector('#userGreeting').textContent = "Bem-vindo de volta, Anônimo!";
+    } else {
+        document.querySelector('#userGreeting').textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
+        console.log(`Carregando serviços para o usuário: ${nomeUsuario}`);
+        carregarServicosAtribuidos(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
+    }
+</script>
 </body>
 </html>

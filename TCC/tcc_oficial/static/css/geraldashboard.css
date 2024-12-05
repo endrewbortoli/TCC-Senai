@@ -71,7 +71,12 @@
       }
       .search-bar .new-service-button {
         background-color: #cd0e0e;
-        margin-left: 30px;
+        padding: 20px 20px 20px 20px;
+      }
+      
+      body > div.search-bar > a{
+        padding: 20px 20px 20px 20px;
+        color: white;
       }
       .search-bar .new-service-button:hover {
         background-color: #961b1b;

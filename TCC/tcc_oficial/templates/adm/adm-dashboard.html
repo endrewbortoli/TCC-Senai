@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{% static 'css/modal.css'%}">
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 </head>
 <body>
     <div class="side-right">
@@ -35,7 +34,7 @@
                     </div>
                     <div class="status-box">
                         <h2>ESPERANDO CONFIRMAÇÃO</h2>
-                        <span id="esperandoConfirmacaoCount">0</span>
+                        <span id="emAnaliseCount">0</span>
                     </div>
                 </div>
   
@@ -62,7 +61,7 @@
         </div>
     </div>
 
-    <!-- Modal para exibir detalhes -->
+    <!-- Modal para exibir detalhes gerais -->
     <div id="detalhesModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -75,7 +74,7 @@
             <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
             <p><strong>Status:</strong> 
                 <select id="modalStatusSelect">
-                    <option value="Não aprovado">Não aprovado</option>
+                    <option value="Não atribuído">Não aprovado</option>
                     <option value="Em andamento">Em andamento</option>
                     <option value="Esperando Confirmação">Esperando Confirmação</option>
                 </select>
@@ -84,9 +83,200 @@
             <button id="saveStatusButton">Salvar Status</button>
         </div>
     </div>
-<script src="{% static 'js/verificacao.js' %}"></script>
-<script type="module" src="{% static 'js/adm-dashboard.js' %}"></script> 
+
+    <!-- Modal para Análise -->
+    <div id="analiseModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Detalhes da Ordem de Serviço - Análise</h2>
+            <p><strong>Ambiente:</strong> <span id="modalAmbienteAnalise"></span></p>
+            <p><strong>Criador:</strong> <span id="modalCriadorAnalise"></span></p>
+            <p><strong>Data Limite:</strong> <span id="modalDataLimiteAnalise"></span></p>
+            <p><strong>Data do Pedido:</strong> <span id="modalDataPedidoAnalise"></span></p>
+            <p><strong>Descrição:</strong> <span id="modalDescricaoAnalise"></span></p>
+            <p><strong>Prioridade:</strong> <span id="modalPrioridadeAnalise"></span></p>
+            <p><strong>Status:</strong> <span id="modalStatusAnalise"></span></p>
+            <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacaoAnalise"></span></p>
+            <button id="aprovarButton">Aprovar</button>
+            <button id="recusarButton">Recusar</button>
+        </div>
+    </div>
+
+<script type="module" src="{% static 'js/verificacao.js' %}"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, getDocs, collection, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+        authDomain: "fir-crud-56c52.firebaseapp.com",
+        projectId: "fir-crud-56c52",
+        storageBucket: "fir-crud-56c52.appspot.com",
+        messagingSenderId: "906266562649",
+        appId: "1:906266562649:web:55742c6c6b67449857e148",
+        measurementId: "G-VN53GXMXM6",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Função para preencher a tabela com dados de Firestore filtrados por status
+    async function loadOrdensServicos() {
+        const q = query(collection(db, "ordemServicos"), where("status", "in", ["Não atribuído", "Em andamento", "Em análise"]));
+        const querySnapshot = await getDocs(q);
+        const tableBody = document.getElementById("ordemServicosTableBody");
+
+        tableBody.innerHTML = ""; // Limpa o conteúdo da tabela
+
+        querySnapshot.forEach((doc) => {
+            const ordemServico = doc.data();
+            const row = document.createElement("tr");
+
+            // Verifica o status para decidir o texto do botão
+            const buttonLabel = ordemServico.status === "Em análise" ? "ANALISAR" : "VER MAIS";
+
+            row.innerHTML = `
+                <td>${ordemServico.nome || "Sem nome"}</td>
+                <td>${ordemServico.criador || "Desconhecido"}</td>
+                <td>${ordemServico.dataLimite || "Sem data"}</td>
+                <td>${ordemServico.prioridade || "Normal"}</td>
+                <td>${ordemServico.status || "Indefinido"}</td>
+                <td><button class="verMaisBtn" data-id="${doc.id}">${buttonLabel}</button></td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+        // Adiciona evento de clique aos botões "VER MAIS" ou "ANALISAR"
+        document.querySelectorAll(".verMaisBtn").forEach((button) => {
+            button.addEventListener("click", (event) => {
+                const ordemId = event.target.getAttribute("data-id");
+                if (event.target.textContent === "ANALISAR") {
+                    showAnaliseModal(ordemId); // Abre o modal de análise
+                } else {
+                    showOrdemServicoDetails(ordemId); // Abre o modal de detalhes
+                }
+            });
+        });
+    }
+
+    // Função para exibir os detalhes da ordem de serviço no modal
+    async function showOrdemServicoDetails(ordemId) {
+        const docRef = collection(db, "ordemServicos");
+        const docSnapshot = await getDocs(query(docRef, where("__name__", "==", ordemId)));
+
+        docSnapshot.forEach((doc) => {
+            const ordemServico = doc.data();
+
+            // Preenche o modal com os detalhes da ordem de serviço
+            document.getElementById("modalAmbiente").textContent = ordemServico.ambiente || "Sem ambiente";
+            document.getElementById("modalCriador").textContent = ordemServico.criador || "Desconhecido";
+            document.getElementById("modalDataLimite").textContent = ordemServico.dataLimite || "Sem data";
+            document.getElementById("modalDataPedido").textContent = ordemServico.dataPedido || "Sem data";
+            document.getElementById("modalDescricao").textContent = ordemServico.descricao || "Sem descrição";
+            document.getElementById("modalPrioridade").textContent = ordemServico.prioridade || "Normal";
+            document.getElementById("modalTipoSolicitacao").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
+
+            // Exibe o modal
+            document.getElementById("detalhesModal").style.display = "block";
+        });
+
+        // Evento para salvar status
+        document.getElementById("saveStatusButton").onclick = async function() {
+            const newStatus = document.getElementById("modalStatusSelect").value;
+            await updateOrdensServicosStatus(ordemId, newStatus);
+        };
+    }
+
+    // Função para exibir o modal de análise
+    async function showAnaliseModal(ordemId) {
+        const docRef = collection(db, "ordemServicos");
+        const docSnapshot = await getDocs(query(docRef, where("__name__", "==", ordemId)));
+
+        docSnapshot.forEach((doc) => {
+            const ordemServico = doc.data();
+
+            // Preenche o modal com os detalhes da ordem de serviço
+            document.getElementById("modalAmbienteAnalise").textContent = ordemServico.ambiente || "Sem ambiente";
+            document.getElementById("modalCriadorAnalise").textContent = ordemServico.criador || "Desconhecido";
+            document.getElementById("modalDataLimiteAnalise").textContent = ordemServico.dataLimite || "Sem data";
+            document.getElementById("modalDataPedidoAnalise").textContent = ordemServico.dataPedido || "Sem data";
+            document.getElementById("modalDescricaoAnalise").textContent = ordemServico.descricao || "Sem descrição";
+            document.getElementById("modalPrioridadeAnalise").textContent = ordemServico.prioridade || "Normal";
+            document.getElementById("modalStatusAnalise").textContent = ordemServico.status || "Indefinido";
+            document.getElementById("modalTipoSolicitacaoAnalise").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
+
+            // Exibe o modal
+            document.getElementById("analiseModal").style.display = "block";
+
+            // Eventos para aprovar ou recusar
+            document.getElementById("aprovarButton").onclick = async function() {
+                await updateOrdensServicosStatus(ordemId, "Não atribuído");
+                document.getElementById("analiseModal").style.display = "none";
+                loadOrdensServicos();
+                countOrdensServicos();
+            };
+
+            document.getElementById("recusarButton").onclick = async function() {
+                await updateOrdensServicosStatus(ordemId, "Cancelado");
+                document.getElementById("analiseModal").style.display = "none";
+                loadOrdensServicos();
+                countOrdensServicos();
+            };
+        });
+    }
+
+    // Função para atualizar o status da ordem de serviço
+    async function updateOrdensServicosStatus(ordemId, newStatus) {
+        const docRef = doc(db, "ordemServicos", ordemId);
+        await updateDoc(docRef, { status: newStatus });
+    }
+
+    // Função para contar ordens de serviço e atualizar contadores
+    async function countOrdensServicos() {
+        const statusCounts = {
+            "Não atribuído": 0,
+            "Em andamento": 0,
+            "Em análise": 0
+        };
+
+        const q = query(collection(db, "ordemServicos"));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+            const ordemServico = doc.data();
+            if (statusCounts[ordemServico.status] !== undefined) {
+                statusCounts[ordemServico.status]++;
+            }
+        });
+
+        document.getElementById("naoAtribuidosCount").textContent = statusCounts["Não atribuído"];
+        document.getElementById("emAndamentoCount").textContent = statusCounts["Em andamento"];
+        document.getElementById("emAnaliseCount").textContent = statusCounts["Em análise"];
+    }
+
+    // Chama as funções ao carregar a página
+    loadOrdensServicos();
+    countOrdensServicos();
+
+    // Função para fechar o modal
+    document.querySelectorAll(".close").forEach((closeButton) => {
+        closeButton.onclick = function() {
+            document.querySelectorAll(".modal").forEach((modal) => {
+                modal.style.display = "none";
+            });
+        };
+    });
+
+    // Fecha o modal se o usuário clicar fora dele
+    window.onclick = function(event) {
+        if (event.target.classList.contains("modal")) {
+            document.querySelectorAll(".modal").forEach((modal) => {
+                modal.style.display = "none";
+            });
+        }
+    };
+</script>
 
 </body>
 </html>
-

@@ -53,7 +53,7 @@
           prioridade,
         });
         window.alert("Ordem de Serviço Adicionada");
-                window.location.href = "../../pages/adm/servicos.html";
+                window.location.href = "{% url 'funcionarios' %}";
 
       } catch (error) {
         console.error("Erro ao adicionar ordem de serviço: ", error);
