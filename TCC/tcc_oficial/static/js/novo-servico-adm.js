@@ -53,7 +53,7 @@
           prioridade,
         });
         window.alert("Ordem de Serviço Adicionada");
-                window.location.href = "{% url 'servico' %}";
+                window.history.back();
 
       } catch (error) {
         console.error("Erro ao adicionar ordem de serviço: ", error);

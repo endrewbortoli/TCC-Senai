@@ -431,6 +431,57 @@ window.closeViewOrdemServicoModal = () => {
     document.getElementById("viewOrdemServicoModal").style.display = "none";
 };
 
+
+document.querySelector(".search-bar").addEventListener("input", async function () {
+    const searchTerm = this.value.toLowerCase();
+    const querySnapshot = await getDocs(collection(db, "ordemServicos"));
+    const osTable = document.querySelector("#osTable tbody");
+    osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+
+    querySnapshot.forEach((doc) => {
+        const osData = doc.data();
+        
+        // Filtra as ordens de serviço com base nos dados
+        if (
+            osData.nome.toLowerCase().includes(searchTerm) ||
+            osData.descricao.toLowerCase().includes(searchTerm) ||
+            osData.criador.toLowerCase().includes(searchTerm) ||
+            osData.atribuido.toLowerCase().includes(searchTerm) ||
+            osData.status.toLowerCase().includes(searchTerm) ||
+            osData.ambiente.toLowerCase().includes(searchTerm) ||
+            osData.dataPedido.toLowerCase().includes(searchTerm) ||
+            osData.dataLimite.toLowerCase().includes(searchTerm) ||
+            osData.prioridade.toLowerCase().includes(searchTerm)
+        ) {
+            // Se o valor digitado for encontrado, cria a linha da tabela
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${osData.nome}</td>
+                <td>${osData.descricao}</td>
+                <td>${osData.criador}</td>
+                <td>${osData.atribuido}</td>
+                <td>${osData.status}</td>
+                <td>${osData.ambiente}</td>
+                <td>${osData.dataPedido}</td>
+                <td>${osData.dataLimite}</td>
+                <td>${osData.prioridade}</td>
+                <td>
+                    <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button onclick="deleteOS('${doc.id}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button onclick="viewOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}', '${osData.tipoSolicitacao}')">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </td>
+            `;
+            osTable.appendChild(row);
+        }
+    });
+});
+
     </script>
 
     <script src="{% static 'js/verificacao.js' %}"></script>
