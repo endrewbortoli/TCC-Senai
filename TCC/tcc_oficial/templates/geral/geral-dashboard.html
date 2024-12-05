@@ -75,6 +75,7 @@ form input, form select, form button {
     <table id="osTable" class="styled-table">
       <thead>
         <tr>
+          <th>Nome</th>
           <th>Descrição</th>
           <th>Atribuído a</th>
           <th>Status</th>
@@ -101,6 +102,7 @@ form input, form select, form button {
     <table id="osFinalizadasTable" class="styled-table">
       <thead>
         <tr>
+          <th>Nome</th>
           <th>Descrição</th>
           <th>Atribuído a</th>
           <th>Status</th>
@@ -122,6 +124,10 @@ form input, form select, form button {
     <span class="close-btn">&times;</span>
     <h2>Editar Ordem de Serviço</h2>
     <form id="editForm">
+            
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" name="nome" required />
+
       <label for="descricao">Descrição</label>
       <input type="text" id="descricao" name="descricao" required />
 
@@ -208,6 +214,7 @@ form input, form select, form button {
         const status = osData.status && osData.status !== "Cancelado" ? osData.status : "Em análise";
 
         row.innerHTML = `
+          <td>${osData.nome}</td>
           <td>${osData.descricao}</td>
           <td>${atribuido}</td>
           <td>${status}</td>
@@ -257,6 +264,7 @@ form input, form select, form button {
         const osData = docSnapshot.data();
 
         // Preencher o modal com as informações da ordem de serviço
+         document.getElementById("nome").value = osData.nome;
         document.getElementById("descricao").value = osData.descricao;
         document.getElementById("atribuido").value = osData.atribuido || "Não atribuído";
         document.getElementById("status").value = osData.status;
@@ -284,6 +292,8 @@ form input, form select, form button {
           e.preventDefault();
 
           const updatedOS = {
+            
+            nome: document.getElementById("nome").value,
             descricao: document.getElementById("descricao").value,
             atribuido: document.getElementById("atribuido").value,
             status: document.getElementById("status").value,
@@ -349,6 +359,7 @@ async function loadOrdensFinalizadas(nomeUsuario) {
           : "Não atribuído";
 
         row.innerHTML = `
+        <td>${osData.nome}</td>
           <td>${osData.descricao}</td>
           <td>${atribuido}</td>
           <td>${osData.status}</td>
