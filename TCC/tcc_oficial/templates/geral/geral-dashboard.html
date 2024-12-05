@@ -15,6 +15,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
+      /* Estilos do modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+}
+
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+form input, form select, form button {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  box-sizing: border-box;
+}
 
     </style>
   </head>
@@ -73,163 +115,257 @@
       Nenhum serviço finalizado encontrado.
     </p>
 
-    <script type="module" src="{% static 'js/verificacao.js' %}"></script>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        query,
-        where,
-        getDocs,
-        deleteDoc,
-        doc
-      } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+<!-- Modal para edição -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Editar Ordem de Serviço</h2>
+    <form id="editForm">
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao" name="descricao" required />
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY", // Substitua por sua chave de API real
-        authDomain: "fir-crud-56c52.firebaseapp.com",
-        projectId: "fir-crud-56c52",
-        storageBucket: "fir-crud-56c52.appspot.com",
-        messagingSenderId: "906266562649",
-        appId: "1:906266562649:web:55742c6c6b67449857e148",
-        measurementId: "G-VN53GXMXM6",
-      };
+      <label for="atribuido">Atribuído a</label>
+      <input type="text" id="atribuido" name="atribuido" required />
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="Finalizado">Finalizado</option>
+        <option value="Em análise">Em análise</option>
+        <option value="Cancelado">Cancelado</option>
+      </select>
 
-      const nomeUsuario = sessionStorage.getItem("nome");
+      <label for="ambiente">Ambiente</label>
+      <input type="text" id="ambiente" name="ambiente" required />
 
-      if (!nomeUsuario) {
-        document.querySelector("#userGreeting").textContent =
-          "Bem-vindo de volta, Anônimo!";
-      } else {
-        document.querySelector(
-          "#userGreeting"
-        ).textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
-        loadOrdensServico(nomeUsuario);
-        loadOrdensFinalizadas(nomeUsuario); // Carrega os serviços finalizados
-      }
+      <label for="dataLimite">Data Limite</label>
+      <input type="date" id="dataLimite" name="dataLimite" required />
 
-      async function loadOrdensServico(nomeUsuario) {
-        const q = query(
-          collection(db, "ordemServicos"),
-          where("criador", "==", nomeUsuario)
-        );
+      <button type="submit">Salvar alterações</button>
+    </form>
+  </div>
+</div>
 
-        try {
-          const querySnapshot = await getDocs(q);
-          const osTable = document.querySelector("#osTable tbody");
-          osTable.innerHTML = "";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    deleteDoc,
+    doc,
+    getDoc,
+    updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-          querySnapshot.forEach((doc) => {
-            const osData = doc.data();
-            const row = document.createElement("tr");
-            const atribuido = osData.atribuido
-              ? osData.atribuido
-              : "Não atribuído";
-            const status = osData.status ? osData.status : "Em análise";
+  const firebaseConfig = {
+    apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY", // Substitua por sua chave de API real
+    authDomain: "fir-crud-56c52.firebaseapp.com",
+    projectId: "fir-crud-56c52",
+    storageBucket: "fir-crud-56c52.appspot.com",
+    messagingSenderId: "906266562649",
+    appId: "1:906266562649:web:55742c6c6b67449857e148",
+    measurementId: "G-VN53GXMXM6",
+  };
 
-            row.innerHTML = `
-                    <td>${osData.descricao}</td>
-                    <td>${atribuido}</td>
-                    <td>${status}</td>
-                    <td>${osData.ambiente}</td>
-                    <td>${osData.dataPedido}</td>
-                    <td>${osData.dataLimite}</td>
-                    <td>
-                        <button class="editOSButton" data-id="${doc.id}">
-                            <i class="fas fa-pen"></i>
-                        </button>
-                        <button class="deleteOSButton" data-id="${doc.id}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </td>
-                `;
-            osTable.appendChild(row);
-          });
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-          // Adicionar eventos de clique aos botões de editar e excluir
-          const editButtons = document.querySelectorAll('.editOSButton');
-          editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-              editOS(button.getAttribute('data-id'));
-            });
-          });
+  const nomeUsuario = sessionStorage.getItem("nome");
 
-          const deleteButtons = document.querySelectorAll('.deleteOSButton');
-          deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-              deleteOS(button.getAttribute('data-id'));
-            });
-          });
+  if (!nomeUsuario) {
+    document.querySelector("#userGreeting").textContent =
+      "Bem-vindo de volta, Anônimo!";
+  } else {
+    document.querySelector(
+      "#userGreeting"
+    ).textContent = `Bem-vindo de volta, ${nomeUsuario}!`;
+    loadOrdensServico(nomeUsuario);
+    loadOrdensFinalizadas(nomeUsuario); // Carrega os serviços finalizados
+  }
 
-        } catch (error) {
-          console.error("Erro ao buscar ordens de serviço:", error);
-        }
-      }
+  async function loadOrdensServico(nomeUsuario) {
+    const q = query(
+      collection(db, "ordemServicos"),
+    where("criador", "==", nomeUsuario),
+        where("status", "in", ["Finalizado", "Cancelado"]) // Aqui ajustamos para incluir os status Finalizado ou Cancelado
 
-      async function loadOrdensFinalizadas(nomeUsuario) {
-        const q = query(
-          collection(db, "ordemServicos"),
-          where("criador", "==", nomeUsuario),
-          where("status", "==", "Finalizado")
-        );
+    );
 
-        try {
-          const querySnapshot = await getDocs(q);
-          const osFinalizadasTable = document.querySelector(
-            "#osFinalizadasTable tbody"
-          );
-          const noFinalizadosMessage = document.getElementById("noFinalizados");
-          osFinalizadasTable.innerHTML = "";
+    try {
+      const querySnapshot = await getDocs(q);
+      const osTable = document.querySelector("#osTable tbody");
+      osTable.innerHTML = "";
 
-          if (querySnapshot.empty) {
-            noFinalizadosMessage.style.display = "block"; // Mostra a mensagem se não houver serviços finalizados
-          } else {
-            noFinalizadosMessage.style.display = "none"; // Esconde a mensagem caso existam serviços finalizados
+      querySnapshot.forEach((doc) => {
+        const osData = doc.data();
+        const row = document.createElement("tr");
+        const atribuido = osData.atribuido
+          ? osData.atribuido
+          : "Não atribuído";
+        const status = osData.status && osData.status !== "Cancelado" ? osData.status : "Em análise";
 
-            querySnapshot.forEach((doc) => {
-              const osData = doc.data();
-              const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${osData.descricao}</td>
+          <td>${atribuido}</td>
+          <td>${status}</td>
+          <td>${osData.ambiente}</td>
+          <td>${osData.dataPedido}</td>
+          <td>${osData.dataLimite}</td>
+          <td>
+            <button class="editOSButton" data-id="${doc.id}">
+              <i class="fas fa-pen"></i>
+            </button>
+            <button class="deleteOSButton" data-id="${doc.id}">
+              <i class="fas fa-times"></i>
+            </button>
+          </td>
+        `;
+        osTable.appendChild(row);
+      });
 
-              row.innerHTML = `
-                        <td>${osData.descricao}</td>
-                        <td>${osData.atribuido}</td>
-                        <td>${osData.status}</td>
-                        <td>${osData.ambiente}</td>
-                        <td>${osData.dataPedido}</td>
-                        <td>${osData.dataLimite}</td>
-                    `;
-              osFinalizadasTable.appendChild(row);
-            });
+      // Adicionar eventos de clique aos botões de editar e excluir
+      const editButtons = document.querySelectorAll('.editOSButton');
+      editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          editOS(button.getAttribute('data-id'));
+        });
+      });
+
+      const deleteButtons = document.querySelectorAll('.deleteOSButton');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          deleteOS(button.getAttribute('data-id'));
+        });
+      });
+
+    } catch (error) {
+      console.error("Erro ao buscar ordens de serviço:", error);
+    }
+  }
+
+  function editOS(id) {
+    const modal = document.getElementById("editModal");
+    const closeBtn = document.querySelector(".close-btn");
+
+    // Buscar a ordem de serviço no Firestore
+    const osRef = doc(db, "ordemServicos", id);
+    getDoc(osRef).then((docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const osData = docSnapshot.data();
+
+        // Preencher o modal com as informações da ordem de serviço
+        document.getElementById("descricao").value = osData.descricao;
+        document.getElementById("atribuido").value = osData.atribuido || "Não atribuído";
+        document.getElementById("status").value = osData.status;
+        document.getElementById("ambiente").value = osData.ambiente;
+        document.getElementById("dataLimite").value = osData.dataLimite;
+
+        // Exibir o modal
+        modal.style.display = "block";
+
+        // Quando o usuário fechar o modal
+        closeBtn.onclick = function () {
+          modal.style.display = "none";
+        };
+
+        // Quando o usuário clicar fora do modal, ele será fechado
+        window.onclick = function (event) {
+          if (event.target === modal) {
+            modal.style.display = "none";
           }
-        } catch (error) {
-          console.error("Erro ao buscar ordens de serviço finalizadas:", error);
-        }
-      }
+        };
 
-      function editOS(id) {
-        window.location.href = `editarServico.html?id=${id}`;
-      }
+        // Atualizar os dados ao submeter o formulário
+        const form = document.getElementById("editForm");
+        form.onsubmit = function (e) {
+          e.preventDefault();
 
-      function deleteOS(id) {
-        if (confirm("Tem certeza que deseja excluir esta ordem de serviço?")) {
-          deleteDoc(doc(db, "ordemServicos", id))
+          const updatedOS = {
+            descricao: document.getElementById("descricao").value,
+            atribuido: document.getElementById("atribuido").value,
+            status: document.getElementById("status").value,
+            ambiente: document.getElementById("ambiente").value,
+            dataLimite: document.getElementById("dataLimite").value,
+          };
+
+          // Atualizar a ordem de serviço no Firestore
+          updateDoc(osRef, updatedOS)
             .then(() => {
-              alert("Ordem de serviço excluída com sucesso!");
+              alert("Ordem de serviço atualizada com sucesso!");
+              modal.style.display = "none";
               location.reload();
             })
             .catch((error) => {
-              console.error("Erro ao excluir a ordem de serviço:", error);
+              console.error("Erro ao atualizar a ordem de serviço:", error);
             });
-        }
+        };
+      } else {
+        console.log("Ordem de serviço não encontrada");
       }
+    }).catch((error) => {
+      console.error("Erro ao buscar a ordem de serviço:", error);
+    });
+  }
 
+  function deleteOS(id) {
+    if (confirm("Tem certeza que deseja excluir esta ordem de serviço?")) {
+      deleteDoc(doc(db, "ordemServicos", id))
+        .then(() => {
+          alert("Ordem de serviço excluída com sucesso!");
+          location.reload();
+        })
+        .catch((error) => {
+          console.error("Erro ao excluir a ordem de serviço:", error);
+        });
+    }
+  }
 
+async function loadOrdensFinalizadas(nomeUsuario) {
+  const q = query(
+    collection(db, "ordemServicos"),
+    where("criador", "==", nomeUsuario),
+    where("status", "in", ["Finalizado", "Cancelado"]) // Carregar apenas as ordens com status Finalizado ou Cancelado
+  );
 
-    </script>
+  try {
+    const querySnapshot = await getDocs(q);
+    const osFinalizadasTable = document.querySelector("#osFinalizadasTable tbody");
+    osFinalizadasTable.innerHTML = ""; // Limpar a tabela antes de adicionar as novas ordens
+
+    if (querySnapshot.empty) {
+      document.getElementById("noFinalizados").style.display = "block"; // Mostrar mensagem de nenhum serviço encontrado
+    } else {
+      document.getElementById("noFinalizados").style.display = "none"; // Esconder a mensagem se houver serviços
+
+      querySnapshot.forEach((doc) => {
+        const osData = doc.data();
+        const row = document.createElement("tr");
+
+        const atribuido = osData.atribuido
+          ? osData.atribuido
+          : "Não atribuído";
+
+        row.innerHTML = `
+          <td>${osData.descricao}</td>
+          <td>${atribuido}</td>
+          <td>${osData.status}</td>
+          <td>${osData.ambiente}</td>
+          <td>${osData.dataPedido}</td>
+          <td>${osData.dataLimite}</td>
+        `;
+        osFinalizadasTable.appendChild(row);
+      });
+    }
+
+  } catch (error) {
+    console.error("Erro ao buscar ordens de serviço finalizadas:", error);
+  }
+}
+
+</script>
+
   </body>
 </html>
