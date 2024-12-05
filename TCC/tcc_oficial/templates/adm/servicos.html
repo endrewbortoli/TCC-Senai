@@ -207,7 +207,7 @@
                 <label for="editStatus">Status:</label>
                 <input type="text" id="editStatus" required><br>
                 <label for="editAmbiente">Ambiente:</label>
-                <input type="text" id="editStatus" required><br>
+                <input type="text" id="editAmbiente" required><br>
                 <label for="tipoSolicitacao">Tipo da Solicitação</label>
                 <select id="tipoSolicitacao" name="tipoSolicitacao">
                   <option value="" disabled selected>Selecione</option>
@@ -220,6 +220,7 @@
                   <option value="Instalacao">Instalação de Novos Equipamentos</option>
                   <option value="Compras">Solicitação de Compras ou Estoque</option>
                 </select>
+
   
                 <label for="editDataPedido">Data do Pedido:</label>
                 <input type="date" id="editDataPedido" required><br>
@@ -261,16 +262,16 @@
     const closeImage = "{% static 'img/closeicon.webp' %}";
     const searchImage = "{% static 'img/search-icon.png' %}";
 
-    async function loadOrdensServico() {
-        const querySnapshot = await getDocs(collection(db, "ordemServicos"));
-        const osTable = document.querySelector("#osTable tbody");
-        osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+async function loadOrdensServico() {
+    const querySnapshot = await getDocs(collection(db, "ordemServicos"));
+    const osTable = document.querySelector("#osTable tbody");
+    osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
 
-        querySnapshot.forEach((doc) => {
-            const osData = doc.data();
-            const row = document.createElement("tr");
+    querySnapshot.forEach((doc) => {
+        const osData = doc.data();  // Aqui você acessa os dados corretamente
+        const row = document.createElement("tr");
 
-            row.innerHTML = `
+        row.innerHTML = `
             <td>${osData.nome}</td>
             <td>${osData.descricao}</td>
             <td>${osData.criador}</td>
@@ -281,7 +282,7 @@
             <td>${osData.dataLimite}</td>
             <td>${osData.prioridade}</td>
             <td>
-                <button onclick="editOS('${doc.id}', '${doc.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                <button onclick="editOS('${doc.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
                     <i class="fas fa-pen"></i>
                 </button>
                 <button onclick="deleteOS('${doc.id}')">
@@ -292,9 +293,11 @@
                 </button>
             </td>
         `;
-                    osTable.appendChild(row);
-        });
-    }
+        osTable.appendChild(row);
+    });
+}
+
+
 
     window.editOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
         currentEditingId = id; // Armazena o ID da ordem de serviço sendo editada
