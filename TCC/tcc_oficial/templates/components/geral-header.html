@@ -8,6 +8,16 @@
     <div class="profile flex items-center gap-4">
         <span id="userGreeting" class="font-bold text-lg">Bem-vindo de volta, Anônimo!</span>
         <button onclick="logout()" class="logout bg-[#ff4d4d] text-white p-2 rounded-lg flex items-center">
+         <script>// Função de logout
+function logout() {
+    sessionStorage.removeItem('userLogged');
+    sessionStorage.removeItem('tipoUsuario');
+    sessionStorage.removeItem('nome'); // Se você também estiver armazenando o nome do usuário
+    console.log("Usuário deslogado");
+    window.location.href = "/"; }// Redireciona para a página de login
+
+</script>
+
             <i class="fas fa-sign-out-alt"></i>
         </button>
 
