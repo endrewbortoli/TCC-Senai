@@ -6,11 +6,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENAI Login</title>
-    <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
     <link rel="stylesheet" href="{% static 'css/loginpage.css' %}">
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
+        /* Estilo do botão de mostrar/ocultar senha */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        #showPasswordBtn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        #toggleIcon {
+            font-size: 24px;  /* Reduzindo o tamanho do ícone */
+            color: #888;      /* Cor do ícone */
+        }
+
+        #toggleIcon:hover {
+            color: #333;      /* Cor do ícone ao passar o mouse */
+        }
     </style>
 </head>
 <body>
@@ -25,14 +50,30 @@
         <div class="password-wrapper">
             <input type="password" id="senha" name="senha" class="input-field" placeholder="SENHA" required>
             <button type="button" id="showPasswordBtn" class="toggle-password">
-                <img id="toggleIcon" src="{% static 'img/eye-open.png' %}" alt="Mostrar Senha" style="width: 30px; height: 30px;">
+                <i id="toggleIcon" class="fas fa-eye"></i>
             </button>
         </div>
         <button type="submit" id="loginBtn" class="login-button">LOGIN</button>
     </form>
 </div>
 
-    <script type="module" src="{% static 'js/login.js' %}"></script>
+<script type="module" src="{% static 'js/login.js' %}"></script>
+<script type="module">
+    // Mostrar ou ocultar a senha
+    const showPasswordBtn = document.getElementById("showPasswordBtn");
+    const toggleIcon = document.getElementById("toggleIcon");
 
+    showPasswordBtn.addEventListener("click", () => {
+        const senhaInput = document.getElementById("senha");
+        const isPasswordVisible = senhaInput.type === "text";
+        senhaInput.type = isPasswordVisible ? "password" : "text";
+
+        // Alternar entre ícones
+        toggleIcon.classList.toggle("fa-eye"); // Ícone de olho aberto
+        toggleIcon.classList.toggle("fa-eye-slash"); // Ícone de olho fechado
+    });
+</script>
+
+<script type="" src=""></script>
 </body>
 </html>
