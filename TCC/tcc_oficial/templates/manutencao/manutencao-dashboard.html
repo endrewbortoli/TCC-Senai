@@ -18,10 +18,10 @@
     <div class="container">
     <div class="stats">
         <div class="box blue">
-            ATRIBUÍDAS <br> 0
+            ATRIBUÍDAS <br> <span id="AtribuidosCount">0</span>
         </div>
         <div class="box red">
-            NÃO REALIZADAS <br> 0
+            EM ANDAMENTO <br> <span id="EmAndamentoCount">0</span>
         </div>
 
         <div class="search-bar">
@@ -76,6 +76,7 @@
     const carregarServicosAtribuidos = async (nomeUsuario) => {
         const tabelaServicos = document.getElementById("tabelaServicos");
         tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
+        let contadorAtribuidos = 0; // Variável para contar os serviços atribuídos ao usuário
 
         try {
             // Consulta para buscar serviços com o campo "atribuido" igual ao nome do usuário
@@ -84,6 +85,7 @@
 
             if (querySnapshot.empty) {
                 tabelaServicos.innerHTML = `<tr><td colspan="5">Nenhum serviço atribuído.</td></tr>`;
+                document.getElementById("AtribuidosCount").textContent = 0; // Exibe 0 se não houver serviços atribuídos
                 return;
             }
 
@@ -100,7 +102,13 @@
                     <td><button class="ver-mais" onclick="window.location.href='detalhes.html?id=${doc.id}'">VER MAIS</button></td>
                 `;
                 tabelaServicos.appendChild(tr);
+
+                contadorAtribuidos++; // Incrementa o contador de serviços atribuídos ao usuário
             });
+
+            // Atualiza o contador de serviços atribuídos no frontend
+            document.getElementById("AtribuidosCount").textContent = contadorAtribuidos;
+
         } catch (error) {
             console.error("Erro ao carregar os serviços atribuídos: ", error);
             tabelaServicos.innerHTML = `<tr><td colspan="5">Erro ao carregar serviços.</td></tr>`;
@@ -145,6 +153,42 @@
         console.log(`Carregando serviços para o usuário: ${nomeUsuario}`);
         carregarServicosAtribuidos(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
     }
+
+
+     // Função para contar ordens de serviço e atualizar contadores
+    async function countOrdensServicos() {
+        const statusCounts = {
+            "Não atribuído": 0,
+            "Em andamento": 0,
+        };
+
+        const q = query(collection(db, "ordemServicos"));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+            const ordemServico = doc.data();
+            if (statusCounts[ordemServico.status] !== undefined) {
+                statusCounts[ordemServico.status]++;
+            }
+        });
+
+        document.getElementById("AtribuidosCount").textContent = statusCounts["Não atribuído"];
+        document.getElementById("EmAndamentoCount").textContent = statusCounts["Em andamento"];
+    }
+ 
+    // Chama as funções ao carregar a página
+    loadOrdensServicos();
+    countOrdensServicos();
+
+     // Função para fechar o modal
+    document.querySelectorAll(".close").forEach((closeButton) => {
+        closeButton.onclick = function() {
+            document.querySelectorAll(".modal").forEach((modal) => {
+                modal.style.display = "none";
+            });
+        };
+    });
+
 </script>
 </body>
 </html>
