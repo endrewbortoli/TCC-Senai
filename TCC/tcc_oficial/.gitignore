@@ -1,6 +1,6 @@
             <a href="{% url 'adm_dashboard' %}">INÍCIO</a>
             <a href="{% url 'funcionarios' %}">FUNCIONÁRIOS</a>
-            <a href="{% url 'funcionarios' %}">FEEDBACK</a>
+            <a href="{% url 'feedback' %}">FEEDBACK</a>
             <a href="{% url 'novo_feedback' %}">Novo Feedback</a>
             <a href="{% url 'novo_funcionario' %}">Novo Funcionário</a>
             <a href="{% url 'novo_servico_adm' %}">Novo Serviço ADM</a>

@@ -19,11 +19,17 @@
 
            <div class="main">
              {% include 'components/adm-header.html' %}
- 
+
                  <!-- Formulário de feedback -->
-    <form action="{% url 'feedback' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}  <!-- Exibe o formulário com todos os campos -->
+    <form id="feedback-form" action="{% url 'feedback' %}" method="POST" enctype="multipart/form-data">
+        
+        <!-- Campo para selecionar imagem -->
+        <div>
+            <label for="image-file">Escolha uma imagem para enviar:</label>
+            <input type="file" id="image-file" name="image" accept="image/*">
+        </div>
+
+
         <div>
             <button type="submit">Enviar</button>
         </div>
@@ -34,7 +40,58 @@
         <!-- Voltar à página anterior -->
     <a href="javascript:history.back()">Voltar</a>
 
-
     <script src="{% static 'js/verificacao.js' %}"></script>
+
+    <script>
+        // Substitua pela sua chave API do ImgBB
+        const apiKey = '63738a634e425ed56ae1d607ba242a8e'; // Coloque sua chave API do ImgBB aqui
+
+        document.getElementById('feedback-form').addEventListener('submit', function(event) {
+            event.preventDefault();  // Impede o envio imediato do formulário
+
+            const fileInput = document.getElementById('image-file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Por favor, selecione uma imagem!');
+                return;
+            }
+
+            // Cria o FormData com a imagem
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Envia a imagem para o ImgBB usando Fetch API
+            fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const imageUrl = data.data.url;  // Obtém o link da imagem carregada
+
+                    // Adiciona o link da imagem ao formulário como um campo oculto
+                    const imageUrlField = document.createElement('input');
+                    imageUrlField.type = 'hidden';
+                    imageUrlField.name = 'image_url';  // Nome do campo de imagem
+                    imageUrlField.value = imageUrl;
+
+                    // Adiciona o campo de URL da imagem ao formulário
+                    document.getElementById('feedback-form').appendChild(imageUrlField);
+
+                    // Agora, envia o formulário
+                    document.getElementById('feedback-form').submit();
+                } else {
+                    alert('Erro ao enviar a imagem. Tente novamente!');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao fazer o upload da imagem:', error);
+                alert('Erro ao fazer o upload da imagem. Tente novamente!');
+            });
+        });
+    </script>
+
 </body>
 </html>
