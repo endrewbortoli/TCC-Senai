@@ -231,6 +231,18 @@
         </div>
     </div>
 
+    <!-- Modal de Visualizar Ordem de Serviço -->
+<div id="viewOrdemServicoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeViewOrdemServicoModal()">&times;</span>
+        <h2>Detalhes da Ordem de Serviço</h2>
+        <div id="viewOrdemServicoDetails">
+            <!-- Os detalhes serão preenchidos aqui via JavaScript -->
+        </div>
+    </div>
+</div>
+
+
     <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import {
@@ -270,28 +282,28 @@ async function loadOrdensServico() {
             const osData = doc.data();
             const row = document.createElement("tr");
 
-        row.innerHTML = `
-            <td>${osData.nome}</td>
-            <td>${osData.descricao}</td>
-            <td>${osData.criador}</td>
-            <td>${osData.atribuido}</td>
-            <td>${osData.status}</td>
-            <td>${osData.ambiente}</td>
-            <td>${osData.dataPedido}</td>
-            <td>${osData.dataLimite}</td>
-            <td>${osData.prioridade}</td>
-            <td>
-                <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                    <i class="fas fa-pen"></i>
-                </button>
-                <button onclick="deleteOS('${doc.id}')">
-                    <i class="fas fa-times"></i>
-                </button>
-                <button onclick="" class="see-more">
-                    <i class="fas fa-search"></i>
-                </button>
-            </td>
-        `;
+row.innerHTML = `
+    <td>${osData.nome}</td>
+    <td>${osData.descricao}</td>
+    <td>${osData.criador}</td>
+    <td>${osData.atribuido}</td>
+    <td>${osData.status}</td>
+    <td>${osData.ambiente}</td>
+    <td>${osData.dataPedido}</td>
+    <td>${osData.dataLimite}</td>
+    <td>${osData.prioridade}</td>
+    <td>
+        <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+            <i class="fas fa-pen"></i>
+        </button>
+        <button onclick="deleteOS('${doc.id}')">
+            <i class="fas fa-times"></i>
+        </button>
+        <button onclick="viewOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}', '${osData.tipoSolicitacao}')">
+            <i class="fas fa-search"></i>
+        </button>
+    </td>
+`;
                     osTable.appendChild(row);
         });
     }
@@ -389,6 +401,35 @@ document.getElementById("exportBtn").addEventListener("click", () => {
     // Geração do arquivo Excel
     XLSX.writeFile(wb, "ordens_servico.xlsx");
 });
+
+
+// Função para abrir o modal de visualização de detalhes
+window.viewOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade, tipoSolicitacao) => {
+    const modal = document.getElementById("viewOrdemServicoModal");
+    const detailsContainer = document.getElementById("viewOrdemServicoDetails");
+
+    // Preencher os detalhes no modal
+    detailsContainer.innerHTML = `
+        <p><strong>Nome:</strong> ${nome}</p>
+        <p><strong>Descrição:</strong> ${descricao}</p>
+        <p><strong>Criador:</strong> ${criador}</p>
+        <p><strong>Atribuído a:</strong> ${atribuido}</p>
+        <p><strong>Status:</strong> ${status}</p>
+        <p><strong>Ambiente:</strong> ${ambiente}</p>
+        <p><strong>Data do Pedido:</strong> ${dataPedido}</p>
+        <p><strong>Data Limite:</strong> ${dataLimite}</p>
+        <p><strong>Prioridade:</strong> ${prioridade}</p>
+        <p><strong>Tipo de Solicitação:</strong> ${tipoSolicitacao}</p>
+    `;
+
+    // Exibir o modal
+    modal.style.display = "block";
+};
+
+// Função para fechar o modal de visualização
+window.closeViewOrdemServicoModal = () => {
+    document.getElementById("viewOrdemServicoModal").style.display = "none";
+};
 
     </script>
 

@@ -14,11 +14,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const analytics = getAnalytics(app);
-
-const eyeOpenImg = "{% static 'img/eye-open.png' %}";
-const closedEyesImg = "{% static 'img/closeicon.webp' %}";
-const admDashboard = "/adm/admdashboard"; // Caminho correto para a página de administração
 
 document.getElementById("loginBtn").addEventListener("click", async (event) => {
     event.preventDefault(); // Impede que o formulário seja enviado (e a página seja recarregada)
@@ -71,15 +66,3 @@ document.getElementById("loginBtn").addEventListener("click", async (event) => {
     }
 });
 
-// Mostrar ou ocultar a senha
-const showPasswordBtn = document.getElementById("showPasswordBtn");
-const toggleIcon = document.getElementById("toggleIcon");
-
-showPasswordBtn.addEventListener("click", () => {
-    const senhaInput = document.getElementById("senha");
-    const isPasswordVisible = senhaInput.type === "text";
-    senhaInput.type = isPasswordVisible ? "password" : "text";
-
-    // Alternar entre ícones
-    toggleIcon.src = isPasswordVisible ? eyeOpenImg : closedEyesImg;
-});
