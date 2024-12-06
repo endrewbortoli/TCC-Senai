@@ -62,27 +62,35 @@
     </div>
 
     <!-- Modal para exibir detalhes gerais -->
-    <div id="detalhesModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Detalhes da Ordem de Serviço</h2>
-            <p><strong>Ambiente:</strong> <span id="modalAmbiente"></span></p>
-            <p><strong>Criador:</strong> <span id="modalCriador"></span></p>
-            <p><strong>Data Limite:</strong> <span id="modalDataLimite"></span></p>
-            <p><strong>Data do Pedido:</strong> <span id="modalDataPedido"></span></p>
-            <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
-            <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
-            <p><strong>Status:</strong> 
-                <select id="modalStatusSelect">
-                    <option value="Não atribuído">Não aprovado</option>
-                    <option value="Em andamento">Em andamento</option>
-                    <option value="Esperando Confirmação">Esperando Confirmação</option>
-                </select>
-            </p>
-            <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacao"></span></p>
-            <button id="saveStatusButton">Salvar Status</button>
-        </div>
+<!-- Modal para exibir detalhes gerais -->
+<div id="detalhesModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Detalhes da Ordem de Serviço</h2>
+        <p><strong>Ambiente:</strong> <span id="modalAmbiente"></span></p>
+        <p><strong>Criador:</strong> <span id="modalCriador"></span></p>
+        <p><strong>Data Limite:</strong> <span id="modalDataLimite"></span></p>
+        <p><strong>Data do Pedido:</strong> <span id="modalDataPedido"></span></p>
+        <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
+        <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
+        <p><strong>Status:</strong>
+            <select id="modalStatusSelect">
+                <option value="Em andamento">Em andamento</option>
+                <option value="Esperando Confirmação">Esperando Confirmação</option>
+                <option value="Esperando Confirmação">Esperando Confirmação</option>
+            </select>
+        </p>
+        <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacao"></span></p>
+
+        <!-- Adicionado campo para editar "Atribuído a" -->
+        <p><strong>Atribuído a:</strong> 
+            <input type="text" id="modalAtribuido" placeholder="Digite o nome do responsável">
+        </p>
+
+        <button id="saveStatusButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Status</button>
+        <button id="saveAtribuidoButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Atribuído a</button>
     </div>
+</div>
 
     <!-- Modal para Análise -->
     <div id="analiseModal" class="modal">
@@ -97,12 +105,13 @@
             <p><strong>Prioridade:</strong> <span id="modalPrioridadeAnalise"></span></p>
             <p><strong>Status:</strong> <span id="modalStatusAnalise"></span></p>
             <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacaoAnalise"></span></p>
-            <button id="aprovarButton">Aprovar</button>
-            <button id="recusarButton">Recusar</button>
+            <button id="aprovarButton" style="padding: 25px; background-color: #900000; margin-right: 15px; border-radius: 15px; color: white;">Aprovar</button>
+            <button id="recusarButton" style="padding: 25px; background-color: #900000; border-radius: 15px; color: white;">Recusar</button>
         </div>
     </div>
 
 <script type="module" src="{% static 'js/verificacao.js' %}"></script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getFirestore, getDocs, collection, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
@@ -161,32 +170,52 @@
     }
 
     // Função para exibir os detalhes da ordem de serviço no modal
-    async function showOrdemServicoDetails(ordemId) {
-        const docRef = collection(db, "ordemServicos");
-        const docSnapshot = await getDocs(query(docRef, where("__name__", "==", ordemId)));
+// Função para exibir os detalhes da ordem de serviço no modal
+async function showOrdemServicoDetails(ordemId) {
+    const docRef = collection(db, "ordemServicos");
+    const docSnapshot = await getDocs(query(docRef, where("__name__", "==", ordemId)));
 
-        docSnapshot.forEach((doc) => {
-            const ordemServico = doc.data();
+    docSnapshot.forEach((doc) => {
+        const ordemServico = doc.data();
 
-            // Preenche o modal com os detalhes da ordem de serviço
-            document.getElementById("modalAmbiente").textContent = ordemServico.ambiente || "Sem ambiente";
-            document.getElementById("modalCriador").textContent = ordemServico.criador || "Desconhecido";
-            document.getElementById("modalDataLimite").textContent = ordemServico.dataLimite || "Sem data";
-            document.getElementById("modalDataPedido").textContent = ordemServico.dataPedido || "Sem data";
-            document.getElementById("modalDescricao").textContent = ordemServico.descricao || "Sem descrição";
-            document.getElementById("modalPrioridade").textContent = ordemServico.prioridade || "Normal";
-            document.getElementById("modalTipoSolicitacao").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
+        // Preenche o modal com os detalhes da ordem de serviço
+        document.getElementById("modalAmbiente").textContent = ordemServico.ambiente || "Sem ambiente";
+        document.getElementById("modalCriador").textContent = ordemServico.criador || "Desconhecido";
+        document.getElementById("modalDataLimite").textContent = ordemServico.dataLimite || "Sem data";
+        document.getElementById("modalDataPedido").textContent = ordemServico.dataPedido || "Sem data";
+        document.getElementById("modalDescricao").textContent = ordemServico.descricao || "Sem descrição";
+        document.getElementById("modalPrioridade").textContent = ordemServico.prioridade || "Normal";
+        document.getElementById("modalTipoSolicitacao").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
 
-            // Exibe o modal
-            document.getElementById("detalhesModal").style.display = "block";
-        });
+        // Preenche o campo "Atribuído a" com o valor atual
+        document.getElementById("modalAtribuido").value = ordemServico.atribuido || "Sem responsável";
 
-        // Evento para salvar status
-        document.getElementById("saveStatusButton").onclick = async function() {
-            const newStatus = document.getElementById("modalStatusSelect").value;
-            await updateOrdensServicosStatus(ordemId, newStatus);
-        };
-    }
+        // Exibe o modal
+        document.getElementById("detalhesModal").style.display = "block";
+    });
+
+    // Evento para salvar status
+    document.getElementById("saveStatusButton").onclick = async function() {
+        const newStatus = document.getElementById("modalStatusSelect").value;
+        await updateOrdensServicosStatus(ordemId, newStatus);
+    };
+
+    // Evento para salvar "Atribuído a"
+    document.getElementById("saveAtribuidoButton").onclick = async function() {
+        const newAtribuido = document.getElementById("modalAtribuido").value;
+        await updateOrdensServicosAtribuido(ordemId, newAtribuido);
+    };
+}
+
+// Função para atualizar o campo "Atribuído a" no Firestore
+async function updateOrdensServicosAtribuido(ordemId, newAtribuido) {
+    const docRef = doc(db, "ordemServicos", ordemId);
+    await updateDoc(docRef, { atribuido: newAtribuido });
+
+    // Fechar o modal após a atualização
+    document.getElementById("detalhesModal").style.display = "none";
+    loadOrdensServico();  // Atualiza a lista de ordens de serviço
+}
 
     // Função para exibir o modal de análise
     async function showAnaliseModal(ordemId) {
@@ -276,6 +305,11 @@
             });
         }
     };
+
+    function logout() {
+        console.log("Logout realizado");
+    }
+
 </script>
 
 </body>
