@@ -120,11 +120,11 @@ form input, form select, form button {
 
 <!-- Modal para edição -->
 <div id="editModal" class="modal">
-  <div class="modal-content">
+  <div class="modal-content"  style="border-radius: 15px;">
     <span class="close-btn">&times;</span>
     <h2>Editar Ordem de Serviço</h2>
+    <br>
     <form id="editForm">
-            
       <label for="nome">Nome</label>
       <input type="text" id="nome" name="nome" required />
 
@@ -135,11 +135,7 @@ form input, form select, form button {
       <input type="text" id="atribuido" name="atribuido" required />
 
       <label for="status">Status</label>
-      <select id="status" name="status">
-        <option value="Finalizado">Finalizado</option>
-        <option value="Em análise">Em análise</option>
-        <option value="Cancelado">Cancelado</option>
-      </select>
+      <input type="text" id="statusDisplay" name="status" readonly /> <!-- Usar readonly para não ser editado -->
 
       <label for="ambiente">Ambiente</label>
       <input type="text" id="ambiente" name="ambiente" required />
@@ -147,7 +143,7 @@ form input, form select, form button {
       <label for="dataLimite">Data Limite</label>
       <input type="date" id="dataLimite" name="dataLimite" required />
 
-      <button type="submit">Salvar alterações</button>
+      <button type="submit" style="padding: 20px; background-color: #900000; color: white; border-radius: 15px;">Salvar alterações</button>
     </form>
   </div>
 </div>
@@ -196,7 +192,7 @@ form input, form select, form button {
     const q = query(
       collection(db, "ordemServicos"),
     where("criador", "==", nomeUsuario),
-        where("status", "in", ["Finalizado", "Cancelado"]) // Aqui ajustamos para incluir os status Finalizado ou Cancelado
+        // where("status", "in", ["Finalizado", "Cancelado"]) // Aqui ajustamos para incluir os status Finalizado ou Cancelado
 
     );
 
@@ -254,72 +250,74 @@ form input, form select, form button {
   }
 
   function editOS(id) {
-    const modal = document.getElementById("editModal");
-    const closeBtn = document.querySelector(".close-btn");
+  const modal = document.getElementById("editModal");
+  const closeBtn = document.querySelector(".close-btn");
 
-    // Buscar a ordem de serviço no Firestore
-    const osRef = doc(db, "ordemServicos", id);
-    getDoc(osRef).then((docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const osData = docSnapshot.data();
+  // Buscar a ordem de serviço no Firestore
+  const osRef = doc(db, "ordemServicos", id);
+  getDoc(osRef).then((docSnapshot) => {
+    if (docSnapshot.exists()) {
+      const osData = docSnapshot.data();
 
-        // Preencher o modal com as informações da ordem de serviço
-         document.getElementById("nome").value = osData.nome;
-        document.getElementById("descricao").value = osData.descricao;
-        document.getElementById("atribuido").value = osData.atribuido || "Não atribuído";
-        document.getElementById("status").value = osData.status;
-        document.getElementById("ambiente").value = osData.ambiente;
-        document.getElementById("dataLimite").value = osData.dataLimite;
+      // Preencher o modal com as informações da ordem de serviço
+      document.getElementById("nome").value = osData.nome;
+      document.getElementById("descricao").value = osData.descricao;
+      document.getElementById("atribuido").value = osData.atribuido || "Não atribuído";
+      
+      // Preencher o campo de status, mas tornar o campo readonly
+      const statusDisplay = document.getElementById("statusDisplay");
+      statusDisplay.value = osData.status; // Exibir o status, mas sem permitir edição
 
-        // Exibir o modal
-        modal.style.display = "block";
+      document.getElementById("ambiente").value = osData.ambiente;
+      document.getElementById("dataLimite").value = osData.dataLimite;
 
-        // Quando o usuário fechar o modal
-        closeBtn.onclick = function () {
+      // Exibir o modal
+      modal.style.display = "block";
+
+      // Quando o usuário fechar o modal
+      closeBtn.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      // Quando o usuário clicar fora do modal, ele será fechado
+      window.onclick = function (event) {
+        if (event.target === modal) {
           modal.style.display = "none";
+        }
+      };
+
+      // Atualizar os dados ao submeter o formulário
+      const form = document.getElementById("editForm");
+      form.onsubmit = function (e) {
+        e.preventDefault();
+
+        const updatedOS = {
+          nome: document.getElementById("nome").value,
+          descricao: document.getElementById("descricao").value,
+          atribuido: document.getElementById("atribuido").value,
+          status: osData.status, // Mantém o status atual (não editável)
+          ambiente: document.getElementById("ambiente").value,
+          dataLimite: document.getElementById("dataLimite").value,
         };
 
-        // Quando o usuário clicar fora do modal, ele será fechado
-        window.onclick = function (event) {
-          if (event.target === modal) {
+        // Atualizar a ordem de serviço no Firestore
+        updateDoc(osRef, updatedOS)
+          .then(() => {
+            alert("Ordem de serviço atualizada com sucesso!");
             modal.style.display = "none";
-          }
-        };
-
-        // Atualizar os dados ao submeter o formulário
-        const form = document.getElementById("editForm");
-        form.onsubmit = function (e) {
-          e.preventDefault();
-
-          const updatedOS = {
-            
-            nome: document.getElementById("nome").value,
-            descricao: document.getElementById("descricao").value,
-            atribuido: document.getElementById("atribuido").value,
-            status: document.getElementById("status").value,
-            ambiente: document.getElementById("ambiente").value,
-            dataLimite: document.getElementById("dataLimite").value,
-          };
-
-          // Atualizar a ordem de serviço no Firestore
-          updateDoc(osRef, updatedOS)
-            .then(() => {
-              alert("Ordem de serviço atualizada com sucesso!");
-              modal.style.display = "none";
-              location.reload();
-            })
-            .catch((error) => {
-              console.error("Erro ao atualizar a ordem de serviço:", error);
-            });
-        };
-      } else {
-        console.log("Ordem de serviço não encontrada");
-      }
-    }).catch((error) => {
-      console.error("Erro ao buscar a ordem de serviço:", error);
-    });
-  }
-
+            location.reload();
+          })
+          .catch((error) => {
+            console.error("Erro ao atualizar a ordem de serviço:", error);
+          });
+      };
+    } else {
+      console.log("Ordem de serviço não encontrada");
+    }
+  }).catch((error) => {
+    console.error("Erro ao buscar a ordem de serviço:", error);
+  });
+}
   function deleteOS(id) {
     if (confirm("Tem certeza que deseja excluir esta ordem de serviço?")) {
       deleteDoc(doc(db, "ordemServicos", id))
