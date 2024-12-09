@@ -84,7 +84,9 @@
 
         <!-- Adicionado campo para editar "Atribuído a" -->
         <p><strong>Atribuído a:</strong> 
-            <input type="text" id="modalAtribuido" placeholder="Digite o nome do responsável">
+            <select id="modalAtribuido">
+                <!-- Opções serão preenchidas dinamicamente -->
+            </select>
         </p>
 
         <button id="saveStatusButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Status</button>
@@ -131,7 +133,7 @@
 
     // Função para preencher a tabela com dados de Firestore filtrados por status
     async function loadOrdensServicos() {
-        const q = query(collection(db, "ordemServicos"), where("status", "in", ["Não atribuído", "Em andamento", "Em análise"]));
+        const q = query(collection(db, "ordemServicos"), where("status", "in", ["Não atribuído", "Em andamento", "Em análise", "Atribuído"]));
         const querySnapshot = await getDocs(q);
         const tableBody = document.getElementById("ordemServicosTableBody");
 
@@ -169,7 +171,38 @@
         });
     }
 
-    // Função para exibir os detalhes da ordem de serviço no modal
+// Função para exibir os detalhes da ordem de serviço no modal
+// Função para buscar e preencher os usuários de "Trabalhador"
+const preencherUsuariosManutencao = async () => {
+    const atribuidoSelect = document.getElementById("modalAtribuido");
+
+    try {
+        // Consultar os usuários com tipoUsuario "Trabalhador"
+        const q = query(collection(db, "users"), where("tipoUsuario", "==", "Trabalhador"));
+        const querySnapshot = await getDocs(q);
+
+        // Limpa as opções do select antes de preencher
+        atribuidoSelect.innerHTML = "";
+
+        // Adicionar uma opção padrão para o select
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Selecione um trabalhador";
+        atribuidoSelect.appendChild(defaultOption);
+
+        // Adicionar cada usuário ao campo de seleção
+        querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            const option = document.createElement("option");
+            option.value = userData.nome;
+            option.textContent = userData.nome;
+            atribuidoSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Erro ao buscar usuários de Trabalhador: ", error);
+    }
+};
+
 // Função para exibir os detalhes da ordem de serviço no modal
 async function showOrdemServicoDetails(ordemId) {
     const docRef = collection(db, "ordemServicos");
@@ -188,35 +221,41 @@ async function showOrdemServicoDetails(ordemId) {
         document.getElementById("modalTipoSolicitacao").textContent = ordemServico.tipoSolicitacao || "Sem tipo";
 
         // Preenche o campo "Atribuído a" com o valor atual
-        document.getElementById("modalAtribuido").value = ordemServico.atribuido || "Sem responsável";
+        document.getElementById("modalAtribuido").value = ordemServico.atribuido || "";
 
         // Exibe o modal
         document.getElementById("detalhesModal").style.display = "block";
     });
 
-    // Evento para salvar status
-    document.getElementById("saveStatusButton").onclick = async function() {
-        const newStatus = document.getElementById("modalStatusSelect").value;
-        await updateOrdensServicosStatus(ordemId, newStatus);
-    };
+    // Preenche o select com os trabalhadores
+    preencherUsuariosManutencao();
 
     // Evento para salvar "Atribuído a"
     document.getElementById("saveAtribuidoButton").onclick = async function() {
         const newAtribuido = document.getElementById("modalAtribuido").value;
-        await updateOrdensServicosAtribuido(ordemId, newAtribuido);
+        if (newAtribuido) {  // Apenas salva se o "Atribuído a" não estiver vazio
+            await updateOrdensServicosAtribuido(ordemId, newAtribuido);
+        } else {
+            alert("Por favor, selecione um trabalhador.");
+        }
     };
 }
 
-// Função para atualizar o campo "Atribuído a" no Firestore
+// Função para atualizar o campo "Atribuído a" no Firestore e alterar o status para "Atribuído"
 async function updateOrdensServicosAtribuido(ordemId, newAtribuido) {
     const docRef = doc(db, "ordemServicos", ordemId);
-    await updateDoc(docRef, { atribuido: newAtribuido });
+    
+    // Atualiza o campo "Atribuído a" e altera o status para "Atribuído"
+    await updateDoc(docRef, {
+        atribuido: newAtribuido,
+        status: "Atribuído"  // Altera o status para "Atribuído"
+    });
 
     // Fechar o modal após a atualização
     document.getElementById("detalhesModal").style.display = "none";
-    loadOrdensServico();  // Atualiza a lista de ordens de serviço
+    loadOrdensServicos();  // Atualiza a lista de ordens de serviço
+    countOrdensServicos();  // Atualiza os contadores de status
 }
-
     // Função para exibir o modal de análise
     async function showAnaliseModal(ordemId) {
         const docRef = collection(db, "ordemServicos");

@@ -10,53 +10,101 @@
     <link rel="stylesheet" href="{% static 'css/manutencaodashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <style>
+        /* Estilo para o modal */
+        .modal {
+            display: none; /* Modal começa oculto */
+            position: fixed; /* Fixa o modal na tela */
+            z-index: 1; /* Coloca o modal sobre outros elementos */
+            left: 0;
+            top: 0;
+            width: 100%; /* Tela inteira */
+            height: 100%; /* Tela inteira */
+            overflow: auto; /* Se necessário, adiciona rolagem */
+            background-color: rgba(0, 0, 0, 0.4); /* Fundo translúcido */
+        }
 
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Ajuste o tamanho conforme necessário */
+            max-width: 600px; /* Limita a largura máxima */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
     {% include 'components/manutencao-header.html' %}
     <div class="centerbd" style="display: flex; flex-direction: column; margin: 30px;">
-    <div class="stats">
-        <div class="box blue">
-            ATRIBUÍDAS <br> <span id="AtribuidosCount">0</span>
-        </div>
-        <div class="box red">
-            EM ANDAMENTO <br> <span id="EmAndamentoCount">0</span>
-        </div>
+        <div class="stats">
+            <div class="box blue">
+                ATRIBUÍDAS <br> <span id="AtribuidosCount">0</span>
+            </div>
+            <div class="box red">
+                EM ANDAMENTO <br> <span id="EmAndamentoCount">0</span>
+            </div>
 
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="pesquisar()">
-            <div class="icon">
-                <img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="pesquisar()">
+                <div class="icon">
+                    <img src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"/>
+                </div>
             </div>
         </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Data Limite</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    <th>Detalhes</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaServicos">
+                <tr>
+                    <td colspan="5">Carregando ordens de serviço...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Data Limite</th>
-                <th>Prioridade</th>
-                <th>Status</th>
-                <th>Detalhes</th>
-            </tr>
-        </thead>
-        <tbody id="tabelaServicos">
-            <tr>
-                <td colspan="5">Carregando ordens de serviço...</td>
-            </tr>
-        </tbody>
-    </table>
+<!-- Modal de Detalhes -->
+<div id="servicoModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Detalhes da Ordem de Serviço</h2>
+        <p id="modalDescricao"></p>
+        <p><strong>Data Limite:</strong> <span id="modalDataLimite"></span></p>
+        <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
+        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        <p><strong>Observações:</strong> <span id="modalObservacoes"></span></p>
+        <button id="finalizarButton" class="finalizar">Finalizar OS</button> <!-- Botão para finalizar a OS -->
+    </div>
 </div>
 
 <script src="{% static 'js/verificacao.js'%}"></script>
-<script type="module" src="{% static 'js/manutencao-dashboard.js'%}">
-</script>
 
 <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     // Inicialização do Firebase
     const firebaseConfig = {
@@ -77,6 +125,7 @@
         const tabelaServicos = document.getElementById("tabelaServicos");
         tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
         let contadorAtribuidos = 0; // Variável para contar os serviços atribuídos ao usuário
+        let contadorEmAndamento = 0; // Variável para contar os serviços em andamento
 
         try {
             // Consulta para buscar serviços com o campo "atribuido" igual ao nome do usuário
@@ -86,28 +135,47 @@
             if (querySnapshot.empty) {
                 tabelaServicos.innerHTML = `<tr><td colspan="5">Nenhum serviço atribuído.</td></tr>`;
                 document.getElementById("AtribuidosCount").textContent = 0; // Exibe 0 se não houver serviços atribuídos
+                document.getElementById("EmAndamentoCount").textContent = 0; // Exibe 0 se não houver serviços em andamento
                 return;
             }
 
             // Preenche a tabela com os dados filtrados
             querySnapshot.forEach((doc) => {
                 const servico = doc.data();
+
+                // Exclui ordens de serviço com status "Cancelado" ou "Encerrado"
+                if (servico.status === "Cancelado" || servico.status === "Encerrado") {
+                    return; // Ignora este serviço
+                }
+
                 const tr = document.createElement("tr");
+
+                let statusButton = "";
+                if (servico.status === "Atribuído") {
+                    statusButton = `<button class="confirmar" onclick="confirmarEmAndamento('${doc.id}')"><i class="fas fa-check"></i> Confirmar</button>`;
+                } else {
+                    statusButton = `<button class="ver-mais" onclick="mostrarDetalhes('${doc.id}')">VER MAIS</button>`;
+                }
 
                 tr.innerHTML = `
                     <td>${servico.descricao}</td>
                     <td>${servico.dataLimite}</td>
                     <td>${servico.prioridade}</td>
                     <td>${servico.status}</td>
-                    <td><button class="ver-mais" onclick="window.location.href='detalhes.html?id=${doc.id}'">VER MAIS</button></td>
+                    <td>${statusButton}</td>
                 `;
                 tabelaServicos.appendChild(tr);
 
                 contadorAtribuidos++; // Incrementa o contador de serviços atribuídos ao usuário
+
+                if (servico.status === "Em andamento") {
+                    contadorEmAndamento++; // Incrementa o contador de serviços em andamento
+                }
             });
 
-            // Atualiza o contador de serviços atribuídos no frontend
+            // Atualiza os contadores no frontend
             document.getElementById("AtribuidosCount").textContent = contadorAtribuidos;
+            document.getElementById("EmAndamentoCount").textContent = contadorEmAndamento;
 
         } catch (error) {
             console.error("Erro ao carregar os serviços atribuídos: ", error);
@@ -115,32 +183,81 @@
         }
     };
 
-    // Função para pesquisar ordens de serviço
-    window.pesquisar = function() { // Torna a função acessível no escopo global
-        const queryInput = document.getElementById('searchInput').value.toLowerCase();
-        const tabelaServicos = document.getElementById("tabelaServicos");
-        const linhas = tabelaServicos.getElementsByTagName("tr");
+// Função para exibir detalhes da ordem de serviço no modal
+window.mostrarDetalhes = async function(id) {
+    const modal = document.getElementById("servicoModal");
+    const descricao = document.getElementById("modalDescricao");
+    const dataLimite = document.getElementById("modalDataLimite");
+    const prioridade = document.getElementById("modalPrioridade");
+    const status = document.getElementById("modalStatus");
+    const observacoes = document.getElementById("modalObservacoes");
+    const finalizarButton = document.getElementById("finalizarButton");
 
-        for (let i = 0; i < linhas.length; i++) {
-            const cols = linhas[i].getElementsByTagName("td");
-            let found = false;
+    // Recupera os dados da ordem de serviço
+    const docRef = doc(db, "ordemServicos", id);
+    const docSnap = await getDoc(docRef);
 
-            // Verifica se a linha contém o texto pesquisado
-            for (let j = 0; j < cols.length - 1; j++) { // -1 para não incluir a coluna do botão "VER MAIS"
-                if (cols[j]) {
-                    const textoColuna = cols[j].textContent.toLowerCase();
-                    if (textoColuna.includes(queryInput)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
+    if (docSnap.exists()) {
+        const servico = docSnap.data();
+        descricao.textContent = servico.descricao;
+        dataLimite.textContent = servico.dataLimite;
+        prioridade.textContent = servico.prioridade;
+        status.textContent = servico.status;
+        observacoes.textContent = servico.observacoes || "Sem observações";
 
-            // Mostra ou oculta a linha
-            linhas[i].style.display = found ? "" : "none";
+        // Mostrar o botão "Finalizar OS" apenas se o status for "Em andamento"
+        if (servico.status === "Em andamento") {
+            finalizarButton.style.display = "block"; // Exibe o botão
+        } else {
+            finalizarButton.style.display = "none"; // Esconde o botão
         }
-    }
 
+        // Exibe o modal
+        modal.style.display = "block"; 
+
+        // Evento de clique para finalizar a OS
+        finalizarButton.onclick = async function() {
+            try {
+                // Atualiza o status da ordem de serviço para "Concluído"
+                await updateDoc(docRef, {
+                    status: "Concluído"
+                });
+
+                // Fecha o modal após a atualização
+                modal.style.display = "none";
+
+                // Recarrega os serviços atribuídos
+                carregarServicosAtribuidos(sessionStorage.getItem('nome'));
+            } catch (error) {
+                console.error("Erro ao finalizar a ordem de serviço:", error);
+            }
+        };
+    } else {
+        console.log("Ordem de serviço não encontrada!");
+    }
+}
+
+    // Função para confirmar que a ordem está em andamento
+    window.confirmarEmAndamento = async function(id) {
+        try {
+            const docRef = doc(db, "ordemServicos", id);
+            await updateDoc(docRef, {
+                status: "Em andamento"
+            });
+
+            // Após atualizar o status, recarrega os serviços
+            carregarServicosAtribuidos(sessionStorage.getItem('nome'));
+        } catch (error) {
+            console.error("Erro ao atualizar o status da ordem de serviço:", error);
+        }
+    };
+
+    // Função para fechar o modal
+    document.querySelectorAll(".close").forEach((closeButton) => {
+        closeButton.onclick = function() {
+            document.getElementById("servicoModal").style.display = "none";
+        };
+    });
 
     // Verifica se o nome do usuário está armazenado
     const nomeUsuario = sessionStorage.getItem('nome');
@@ -154,40 +271,30 @@
         carregarServicosAtribuidos(nomeUsuario); // Carrega serviços atribuídos ao usuário logado
     }
 
+        // Função para pesquisar ordens de serviço
+        window.pesquisar = function() { 
+        const queryInput = document.getElementById('searchInput').value.toLowerCase();
+        const tabelaServicos = document.getElementById("tabelaServicos");
+        const linhas = tabelaServicos.getElementsByTagName("tr");
 
-     // Função para contar ordens de serviço e atualizar contadores
-    async function countOrdensServicos() {
-        const statusCounts = {
-            "Não atribuído": 0,
-            "Em andamento": 0,
-        };
+        for (let i = 0; i < linhas.length; i++) {
+            const cols = linhas[i].getElementsByTagName("td");
+            let found = false;
 
-        const q = query(collection(db, "ordemServicos"));
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach((doc) => {
-            const ordemServico = doc.data();
-            if (statusCounts[ordemServico.status] !== undefined) {
-                statusCounts[ordemServico.status]++;
+            for (let j = 0; j < cols.length - 1; j++) {
+                if (cols[j]) {
+                    const textoColuna = cols[j].textContent.toLowerCase();
+                    if (textoColuna.includes(queryInput)) {
+                        found = true;
+                        break;
+                    }
+                }
             }
-        });
 
-        document.getElementById("AtribuidosCount").textContent = statusCounts["Não atribuído"];
-        document.getElementById("EmAndamentoCount").textContent = statusCounts["Em andamento"];
-    }
- 
-    // Chama as funções ao carregar a página
-    loadOrdensServicos();
-    countOrdensServicos();
+            linhas[i].style.display = found ? "" : "none";
+        }
+    };
 
-     // Função para fechar o modal
-    document.querySelectorAll(".close").forEach((closeButton) => {
-        closeButton.onclick = function() {
-            document.querySelectorAll(".modal").forEach((modal) => {
-                modal.style.display = "none";
-            });
-        };
-    });
 
 </script>
 </body>

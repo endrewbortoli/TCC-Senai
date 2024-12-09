@@ -151,6 +151,23 @@
             <input type="hidden" id="status" name="status" value="Em análise">
         </div>
         <div class="form-group">
+            <label for="blocoManutenção">Em qual bloco há necessidade de manutenção?</label>
+            <img src="{% static 'img/blocosenai.png' %}" alt="Imagem de Manutenção" class="imagem-manutenção">
+            <select id="blocoManutenção" name="blocoManutenção">
+                <option value="" disabled selected>Selecione</option>
+                <option value="blocoA0">Bloco A0</option>
+                <option value="blocoA1">Bloco A1</option>
+                <option value="blocoB0">Bloco B0</option>
+                <option value="blocoB1">Bloco B1</option>
+                <option value="blocoC0">Bloco C0</option>
+                <option value="blocoC1">Bloco C1</option>
+                <option value="blocoD0">Bloco D0</option>
+                <option value="blocoE0">Bloco E0</option>
+                <option value="blocoF0">Bloco F0</option>
+                <option value="blocoG0">Bloco G0</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label for="ambiente">Ambiente</label>
             <input type="text" id="ambiente" name="ambiente" />
         </div>
@@ -161,6 +178,17 @@
                 <option value="Preventiva">Preventiva</option>
                 <option value="Manutencao">Manutenção</option>
                 <option value="Geral">Programada</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="categoria">Categoria do Serviço</label>
+            <select id="categoria" name="categoria">
+                <option value="" disabled selected>Selecione</option>
+                <option value="Elétrica">Elétrica</option>
+                <option value="Hidráulica">Hidráulica</option>
+                <option value="Pintura">Pintura</option>
+                <option value="Refrigeração">Refrigeração</option>
+                <option value="Outros">Outros</option>
             </select>
         </div>
         <div class="form-group">
@@ -215,19 +243,27 @@
             document.getElementById('criador').value = nomeUsuario; // Define o nome do usuário no campo "Solicitante"
         }
 
+        // Função para gerar o número ID aleatório de 4 casas
+        function generateRandomID() {
+            return Math.floor(1000 + Math.random() * 9000); // Gera um número aleatório entre 1000 e 9999
+        }
+
         // Função para adicionar ordem de serviço
         document.getElementById('submitData').addEventListener('click', async () => {
             const nome = document.getElementById("nome").value;
             const descricao = document.getElementById("descricao").value;
             const criador = document.getElementById("criador").value;
-            const status = document.getElementById("status").value; // Aqui está a correção
+            const status = document.getElementById("status").value; 
             const ambiente = document.getElementById("ambiente").value;
             const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
+            const categoria = document.getElementById("categoria").value;
             const dataPedido = document.getElementById("dataPedido").value;
             const dataLimite = document.getElementById("dataLimite").value;
             const prioridade = document.getElementById("prioridade").value;
+            const numeroID = generateRandomID(); // Gerar número ID
+            const dataEncerrado = ''; // Inicializa como vazio
 
-            if (!descricao || !criador || !ambiente || !tipoSolicitacao || !dataPedido || !dataLimite || !prioridade) {
+            if (!descricao || !criador || !ambiente || !tipoSolicitacao || !dataPedido || !dataLimite || !prioridade || !categoria) {
                 alert("Por favor, preencha todos os campos obrigatórios.");
                 return;
             }
@@ -240,9 +276,12 @@
                     status: status,
                     ambiente: ambiente,
                     tipoSolicitacao: tipoSolicitacao,
+                    categoria: categoria, // Adiciona a categoria ao banco de dados
                     dataPedido: dataPedido,
                     dataLimite: dataLimite,
                     prioridade: prioridade,
+                    numeroID: numeroID, // Envia o número ID
+                    dataEncerrado: dataEncerrado, // Envia o valor vazio
                 });
 
                 alert("Ordem de serviço criada com sucesso!");

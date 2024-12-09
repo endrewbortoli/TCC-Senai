@@ -12,19 +12,16 @@
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-
 </head>
 <body>
         <div class="sideright">
         <!-- Sidebar Menu -->
         {% include 'components/adm-sidebar.html' %}
 
-  
         <!-- Main content -->
         <div class="main">
         <!-- Header -->
         {% include 'components/adm-header.html' %}
-
 
       <!-- Formulário de Serviços -->
       <div class="form-container">
@@ -41,22 +38,22 @@
           <label for="criador">Solicitante</label>
           <input type="text" id="criador" name="criador"/>
         </div>
-           <div class="form-group">
-          <label for="criador">Em qual bloco há necessidade de manutenção?</label>
-                 <img src="{% static 'img/blocosenai.png' %}" alt="Imagem de Manutenção" class="imagem-manutenção">
-                 <select id="blocoManutenção" name="blocoManutenção">
-                <option value="" disabled selected>Selecione</option>
-                <option value="blocoA0">Bloco A0</option>
-                <option value="blocoA1">Bloco A1</option>
-                <option value="blocoB0">Bloco B0</option>
-                <option value="blocoB1">Bloco B1</option>
-                <option value="blocoC0">Bloco C0</option>
-                <option value="blocoC1">Bloco C1</option>
-                <option value="blocoD0">Bloco D0</option>
-                <option value="blocoE0">Bloco E0</option>
-                <option value="blocoF0">Bloco F0</option>
-                <option value="blocoG0">Bloco G0</option>
-              </select>
+        <div class="form-group">
+          <label for="blocoManutenção">Em qual bloco há necessidade de manutenção?</label>
+          <img src="{% static 'img/blocosenai.png' %}" alt="Imagem de Manutenção" class="imagem-manutenção">
+          <select id="blocoManutenção" name="blocoManutenção">
+            <option value="" disabled selected>Selecione</option>
+            <option value="blocoA0">Bloco A0</option>
+            <option value="blocoA1">Bloco A1</option>
+            <option value="blocoB0">Bloco B0</option>
+            <option value="blocoB1">Bloco B1</option>
+            <option value="blocoC0">Bloco C0</option>
+            <option value="blocoC1">Bloco C1</option>
+            <option value="blocoD0">Bloco D0</option>
+            <option value="blocoE0">Bloco E0</option>
+            <option value="blocoF0">Bloco F0</option>
+            <option value="blocoG0">Bloco G0</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="atribuido">Atribuído a</label>
@@ -66,10 +63,10 @@
         </div>
         <div class="form-group">
           <label for="status">Status</label>
-              <select id="status" name="status">
-                <option value="" disabled selected>Selecione</option>
-                <option value="Em análise">Em análise</option>
-              </select>       
+          <select id="status" name="status">
+            <option value="" disabled selected>Selecione</option>
+            <option value="Em análise">Em análise</option>
+          </select>       
         </div>
 
         <div class="form-group">
@@ -78,18 +75,29 @@
         </div>
 
         <div class="form-group">
-            <label for="tipoSolicitacao">Tipo da Solicitação</label>
-              <select id="tipoSolicitacao" name="tipoSolicitacao">
-                <option value="" disabled selected>Selecione</option>
-                <option value="ObrasReformas">Obras e Reformas</option>
-                <option value="ManutencaoCorretiva">Manutenção Corretiva</option>
-                <option value="ManutencaoCorretiva">Manutenção Preventiva</option>
-                <option value="Geral">Programada</option>
-                <option value="Limpeza">Limpeza</option>
-                <option value="Calibracao">Calibração de Equipamentos</option>
-                <option value="Instalacao">Instalação de Novos Equipamentos</option>
-                <option value="Compras">Solicitação de Compras ou Estoque</option>
-              </select>
+          <label for="tipoSolicitacao">Tipo da Solicitação</label>
+          <select id="tipoSolicitacao" name="tipoSolicitacao">
+            <option value="" disabled selected>Selecione</option>
+            <option value="ObrasReformas">Obras e Reformas</option>
+            <option value="ManutencaoCorretiva">Manutenção Corretiva</option>
+            <option value="ManutencaoPreventiva">Manutenção Preventiva</option>
+            <option value="Geral">Programada</option>
+            <option value="Limpeza">Limpeza</option>
+            <option value="Calibracao">Calibração de Equipamentos</option>
+            <option value="Instalacao">Instalação de Novos Equipamentos</option>
+            <option value="Compras">Solicitação de Compras ou Estoque</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="categoriaServico">Categoria do Serviço</label>
+          <select id="categoriaServico" name="categoriaServico">
+            <option value="" disabled selected>Selecione</option>
+            <option value="Instalacao">Instalação</option>
+            <option value="Reparo">Reparo</option>
+            <option value="Revisao">Revisão</option>
+            <option value="Outros">Outros</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -102,13 +110,13 @@
         </div>
 
         <div class="form-group">
-              <label for="prioridade">Prioridade</label>
-              <select id="prioridade" name="prioridade">
-                <option value="" disabled selected>Selecione</option>
-                <option value="Baixa">Baixa</option>
-                <option value="Media">Média</option>
-                <option value="Alta">Alta</option>
-              </select>
+          <label for="prioridade">Prioridade</label>
+          <select id="prioridade" name="prioridade">
+            <option value="" disabled selected>Selecione</option>
+            <option value="Baixa">Baixa</option>
+            <option value="Media">Média</option>
+            <option value="Alta">Alta</option>
+          </select>
         </div>
 
         <button type="button" id="submitData" class="submit-button">CRIAR ODS</button>
@@ -116,10 +124,116 @@
     </div>
 
   <!-- Firebase Firestore Script -->
-  <script type="module" src="{% static 'js/novo-servico-adm.js'%}"></script>
-  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      addDoc,
+      collection,
+      getDocs,
+      doc,
+      deleteDoc,
+      updateDoc,
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+      authDomain: "fir-crud-56c52.firebaseapp.com",
+      projectId: "fir-crud-56c52",
+      storageBucket: "fir-crud-56c52.appspot.com",
+      messagingSenderId: "906266562649",
+      appId: "1:906266562649:web:55742c6c6b67449857e148",
+      measurementId: "G-VN53GXMXM6",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const analytics = getAnalytics(app);
+
+    // Função para buscar e preencher os usuários de "Manutenção"
+    const preencherUsuariosManutencao = async () => {
+      const atribuidoSelect = document.getElementById("atribuido");
+
+      try {
+        // Consultar os usuários com tipoUsuario "Manutenção"
+        const q = query(collection(db, "users"), where("tipoUsuario", "==", "Trabalhador"));
+        const querySnapshot = await getDocs(q);
+
+        // Adicionar cada usuário ao campo de seleção
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+          const option = document.createElement("option");
+          option.value = userData.nome;
+          option.textContent = userData.nome;
+          atribuidoSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Erro ao buscar usuários de Manutenção: ", error);
+      }
+    };
+
+    // Chamar a função ao carregar a página
+    document.addEventListener("DOMContentLoaded", preencherUsuariosManutencao);
+
+    // Função para gerar o número ID aleatório de 4 casas
+    function generateRandomID() {
+      return Math.floor(1000 + Math.random() * 9000); // Gera um número aleatório entre 1000 e 9999
+    }
+
+    // Função para adicionar ordem de serviço
+    document.getElementById('submitData').addEventListener('click', async () => {
+      const nome = document.getElementById("nome").value;
+      const descricao = document.getElementById("descricao").value;
+      const criador = document.getElementById("criador").value;
+      const status = document.getElementById("status").value; 
+      const ambiente = document.getElementById("ambiente").value;
+      const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
+      const categoriaServico = document.getElementById("categoriaServico").value;
+      const blocoManutencao = document.getElementById("blocoManutenção").value;
+      const atribuido = document.getElementById("atribuido").value;
+      const dataPedido = document.getElementById("dataPedido").value;
+      const dataLimite = document.getElementById("dataLimite").value;
+      const prioridade = document.getElementById("prioridade").value;
+      
+      const numeroID = generateRandomID(); // Gerar número ID
+      const dataEncerrado = ''; // Inicializa como vazio
+
+      if (!descricao || !criador || !ambiente || !tipoSolicitacao || !categoriaServico || !dataPedido || !dataLimite || !prioridade || !blocoManutencao) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
+      }
+
+      try {
+        const docRef = await addDoc(collection(db, "ordemServicos"), {
+          nome: nome,
+          descricao: descricao,
+          criador: criador,
+          status: status,
+          ambiente: ambiente,
+          tipoSolicitacao: tipoSolicitacao,
+          categoriaServico: categoriaServico, // Adiciona a categoria do serviço
+          blocoManutencao: blocoManutencao, // Adiciona o bloco de manutenção
+          atribuido: atribuido, // Adiciona o atribuído a
+          dataPedido: dataPedido,
+          dataLimite: dataLimite,
+          prioridade: prioridade,
+          numeroID: numeroID, // Envia o número ID
+          dataEncerrado: dataEncerrado, // Envia o valor vazio
+        });
+
+        alert("Ordem de serviço criada com sucesso!");
+        window.location.href = "{% url 'servico' %}"; // Redirecionamento para dashboard
+
+        document.querySelector(".form-container").reset(); // Limpa o formulário
+      } catch (e) {
+        console.error("Erro ao adicionar documento: ", e);
+      }
+    });
+  </script>
+
   <script src="{% static 'js/verificacao.js'%}"></script>
 
 </body>
-
 </html>

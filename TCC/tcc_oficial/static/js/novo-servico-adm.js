@@ -25,42 +25,6 @@
     const db = getFirestore(app);
     const analytics = getAnalytics(app);
 
-
-    // Função para adicionar ordem de serviço
-    document.getElementById("submitData").addEventListener("click", async () => {
-      const nome = document.getElementById("nome").value;
-      const descricao = document.getElementById("descricao").value;
-      const criador = document.getElementById("criador").value;
-      const atribuido = document.getElementById("atribuido").value;
-      const status = document.getElementById("status").value;
-      const ambiente = document.getElementById("ambiente").value;
-      const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
-      const dataLimite = document.getElementById("dataLimite").value;
-      const dataPedido = document.getElementById("dataPedido").value;
-      const prioridade = document.getElementById("prioridade").value;
-
-      try {
-        await addDoc(collection(db, "ordemServicos"), {
-          nome,
-          descricao,
-          criador,
-          atribuido,
-          status,
-          ambiente,
-          tipoSolicitacao,
-          dataLimite,
-          dataPedido,
-          prioridade,
-        });
-        window.alert("Ordem de Serviço Adicionada");
-                window.history.back();
-
-      } catch (error) {
-        console.error("Erro ao adicionar ordem de serviço: ", error);
-      }
-    });
-
-
 // Função para buscar e preencher os usuários de "Manutenção"
 const preencherUsuariosManutencao = async () => {
   const atribuidoSelect = document.getElementById("atribuido");
@@ -87,3 +51,55 @@ const preencherUsuariosManutencao = async () => {
 document.addEventListener("DOMContentLoaded", preencherUsuariosManutencao);
 
 
+// Função para gerar o número ID aleatório de 4 casas
+function generateRandomID() {
+  return Math.floor(1000 + Math.random() * 9000); // Gera um número aleatório entre 1000 e 9999
+}
+
+// Função para adicionar ordem de serviço
+document.getElementById('submitData').addEventListener('click', async () => {
+  const nome = document.getElementById("nome").value;
+  const descricao = document.getElementById("descricao").value;
+  const criador = document.getElementById("criador").value;
+  const status = document.getElementById("status").value; 
+  const ambiente = document.getElementById("ambiente").value;
+  const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
+  const blocoManutencao = document.getElementById("blocoManutenção").value;
+  const atribuicao = document.getElementById("atribuido").value;
+  const dataPedido = document.getElementById("dataPedido").value;
+  const dataLimite = document.getElementById("dataLimite").value;
+  const prioridade = document.getElementById("prioridade").value;
+  
+  const numeroID = generateRandomID(); // Gerar número ID
+  const dataEncerrado = ''; // Inicializa como vazio
+
+  if (!descricao || !criador || !ambiente || !tipoSolicitacao || !dataPedido || !dataLimite || !prioridade || !blocoManutencao) {
+    alert("Por favor, preencha todos os campos obrigatórios.");
+    return;
+  }
+
+  try {
+    const docRef = await addDoc(collection(db, "ordemServicos"), {
+      nome: nome,
+      descricao: descricao,
+      criador: criador,
+      status: status,
+      ambiente: ambiente,
+      tipoSolicitacao: tipoSolicitacao,
+      blocoManutencao: blocoManutencao, // Adiciona o bloco de manutenção
+      atribuicao: atribuicao, // Adiciona o atribuído a
+      dataPedido: dataPedido,
+      dataLimite: dataLimite,
+      prioridade: prioridade,
+      numeroID: numeroID, // Envia o número ID
+      dataEncerrado: dataEncerrado, // Envia o valor vazio
+    });
+
+    alert("Ordem de serviço criada com sucesso!");
+    window.location.href = "{% url 'geral_dashboard' %}"; // Redirecionamento para dashboard
+
+    document.querySelector(".form-container").reset(); // Limpa o formulário
+  } catch (e) {
+    console.error("Erro ao adicionar documento: ", e);
+  }
+});
