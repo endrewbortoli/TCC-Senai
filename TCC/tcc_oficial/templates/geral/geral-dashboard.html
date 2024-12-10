@@ -132,7 +132,7 @@ form input, form select, form button {
       <input type="text" id="descricao" name="descricao" required />
 
       <label for="atribuido">Atribuído a</label>
-      <input type="text" id="atribuido" name="atribuido" required />
+      <input type="text" id="atribuido" name="atribuido" readonly />
 
       <label for="status">Status</label>
       <input type="text" id="statusDisplay" name="status" readonly /> <!-- Usar readonly para não ser editado -->
@@ -147,6 +147,36 @@ form input, form select, form button {
     </form>
   </div>
 </div>
+
+
+<!-- Modal para confirmar conclusão -->
+<div id="confirmCompletionModal" class="modal">
+  <div class="modal-content" style="border-radius: 15px;">
+    <span class="close-btn">&times;</span>
+    <h2><strong>Confirmar Conclusão</strong></h2>
+    <br>
+    <form id="completionForm">
+      <label for="feedback">Feedback</label>
+        <br>
+      <textarea id="feedback" name="feedback" required style="border: black 1px solid; width: 100%; border-radius: 10px;"></textarea>
+        <br>
+      <label for="rating">Avaliação (0 a 5)</label>
+      <select id="rating" name="rating" required style="border: black 1px solid; width: 100%; border-radius: 10px;">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+
+      <button type="submit" style="padding: 15px; background-color: #900000; color: white; border-radius: 15px;">
+        Confirmar Conclusão
+      </button>
+    </form>
+  </div>
+</div>
+
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -189,47 +219,64 @@ form input, form select, form button {
   }
 
   async function loadOrdensServico(nomeUsuario) {
-    const q = query(
-      collection(db, "ordemServicos"),
-    where("criador", "==", nomeUsuario),
-        // where("status", "in", ["Finalizado", "Cancelado"]) // Aqui ajustamos para incluir os status Finalizado ou Cancelado
+  const q = query(
+    collection(db, "ordemServicos"),
+    where("criador", "==", nomeUsuario)
+  );
 
-    );
+  try {
+    const querySnapshot = await getDocs(q);
+    const osTable = document.querySelector("#osTable tbody");
+    osTable.innerHTML = "";
 
-    try {
-      const querySnapshot = await getDocs(q);
-      const osTable = document.querySelector("#osTable tbody");
-      osTable.innerHTML = "";
+    querySnapshot.forEach((doc) => {
+      const osData = doc.data();
+      const atribuido = osData.atribuido ? osData.atribuido : "Não atribuído";
 
-      querySnapshot.forEach((doc) => {
-        const osData = doc.data();
-        const row = document.createElement("tr");
-        const atribuido = osData.atribuido
-          ? osData.atribuido
-          : "Não atribuído";
-        const status = osData.status && osData.status !== "Cancelado" ? osData.status : "Em análise";
+      // Condição para filtrar "Finalizado" e "Cancelado"
+      if (osData.status === "Finalizado") {
+        return; // Ignorar esta ordem de serviço se o status for "Finalizado"
+      }
 
-        row.innerHTML = `
-          <td>${osData.nome}</td>
-          <td>${osData.descricao}</td>
-          <td>${atribuido}</td>
-          <td>${status}</td>
-          <td>${osData.ambiente}</td>
-          <td>${osData.dataPedido}</td>
-          <td>${osData.dataLimite}</td>
-          <td>
+      // Atribui o status correto, com "Em análise" como fallback
+      const status = osData.status && osData.status !== "Cancelado" ? osData.status : "Em análise";
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${osData.nome}</td>
+        <td>${osData.descricao}</td>
+        <td>${atribuido}</td>
+        <td>${status}</td>
+        <td>${osData.ambiente}</td>
+        <td>${osData.dataPedido}</td>
+        <td>${osData.dataLimite}</td>
+        <td style="align-items: center; display: flex; flex-direction: row; gap: 15px; justify-content: center;">
+          ${osData.status === 'Concluído' ? `
+            <button class="confirmCompletionButton" data-id="${doc.id}" style="color: red;">
+              Confirmar Conclusão
+            </button>
+          ` : `
             <button class="editOSButton" data-id="${doc.id}">
               <i class="fas fa-pen"></i>
             </button>
             <button class="deleteOSButton" data-id="${doc.id}">
               <i class="fas fa-times"></i>
             </button>
-          </td>
-        `;
-        osTable.appendChild(row);
+          `}
+        </td>
+      `;
+      osTable.appendChild(row);
+
+      // Adicionar eventos de clique para "Confirmar Conclusão"
+      const confirmCompletionButtons = document.querySelectorAll('.confirmCompletionButton');
+      confirmCompletionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          openCompletionModal(button.getAttribute('data-id'));
+        });
       });
 
-      // Adicionar eventos de clique aos botões de editar e excluir
+      // Adicionar eventos de clique para editar e excluir
       const editButtons = document.querySelectorAll('.editOSButton');
       editButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -243,11 +290,59 @@ form input, form select, form button {
           deleteOS(button.getAttribute('data-id'));
         });
       });
-
-    } catch (error) {
-      console.error("Erro ao buscar ordens de serviço:", error);
-    }
+    });
+  } catch (error) {
+    console.error("Erro ao buscar ordens de serviço:", error);
   }
+}
+
+// Função para abrir o modal de confirmação de conclusão
+function openCompletionModal(id) {
+  const modal = document.getElementById("confirmCompletionModal");
+  const closeBtn = document.querySelector(".close-btn");
+
+  // Exibir o modal
+  modal.style.display = "block";
+
+  // Fechar o modal ao clicar na "X"
+  closeBtn.onclick = function () {
+    modal.style.display = "none";
+  };
+
+  // Fechar o modal ao clicar fora
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // Lógica para atualizar a ordem de serviço com feedback e avaliação
+  const form = document.getElementById("completionForm");
+  form.onsubmit = function (e) {
+    e.preventDefault();
+
+    const feedback = document.getElementById("feedback").value;
+    const rating = document.getElementById("rating").value;
+
+    const updatedOS = {
+      feedback: feedback,
+      rating: rating,
+      status: 'Finalizado', // Atualiza o status para "Finalizado"
+    };
+
+    // Atualizar a ordem de serviço no Firestore
+    const osRef = doc(db, "ordemServicos", id);
+    updateDoc(osRef, updatedOS)
+      .then(() => {
+        alert("Ordem de serviço finalizada com sucesso!");
+        modal.style.display = "none";
+        location.reload();
+      })
+      .catch((error) => {
+        console.error("Erro ao atualizar a ordem de serviço:", error);
+      });
+  };
+}
 
   function editOS(id) {
   const modal = document.getElementById("editModal");

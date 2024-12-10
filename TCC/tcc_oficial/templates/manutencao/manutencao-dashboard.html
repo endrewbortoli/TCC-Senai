@@ -88,15 +88,24 @@
 
 <!-- Modal de Detalhes -->
 <div id="servicoModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="border-radius: 15px;">
         <span class="close">&times;</span>
-        <h2>Detalhes da Ordem de Serviço</h2>
-        <p id="modalDescricao"></p>
+        <h2><strong>Detalhes da Ordem de Serviço</strong></h2>
+        <br>
+        <p><strong>Número ID:</strong> <span id="modalNumeroID"></span></p>
+        <p><strong>Nome:</strong> <span id="modalNome"></span></p>
+        <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
+        <p><strong>Criador:</strong> <span id="modalCriador"></span></p>
+        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        <p><strong>Ambiente:</strong> <span id="modalAmbiente"></span></p>
+        <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacao"></span></p>
+        <p><strong>Categoria:</strong> <span id="modalCategoria"></span></p>
+        <p><strong>Data do Pedido:</strong> <span id="modalDataPedido"></span></p>
         <p><strong>Data Limite:</strong> <span id="modalDataLimite"></span></p>
         <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
-        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
-        <p><strong>Observações:</strong> <span id="modalObservacoes"></span></p>
-        <button id="finalizarButton" class="finalizar">Finalizar OS</button> <!-- Botão para finalizar a OS -->
+        <p><strong>Bloco de Manutenção:</strong> <span id="modalBlocoManutencao"></span></p>
+        <br>
+        <button id="finalizarButton" class="finalizar" style="padding: 15px; border-radius: 10px; background-color: #900000; color: white; width: 100%;">Finalizar OS</button> <!-- Botão para finalizar a OS -->
     </div>
 </div>
 
@@ -120,77 +129,83 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Função para carregar serviços atribuídos
-    const carregarServicosAtribuidos = async (nomeUsuario) => {
-        const tabelaServicos = document.getElementById("tabelaServicos");
-        tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
-        let contadorAtribuidos = 0; // Variável para contar os serviços atribuídos ao usuário
-        let contadorEmAndamento = 0; // Variável para contar os serviços em andamento
+// Função para carregar serviços atribuídos
+const carregarServicosAtribuidos = async (nomeUsuario) => {
+    const tabelaServicos = document.getElementById("tabelaServicos");
+    tabelaServicos.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
+    let contadorAtribuidos = 0; // Variável para contar os serviços atribuídos ao usuário
+    let contadorEmAndamento = 0; // Variável para contar os serviços em andamento
 
-        try {
-            // Consulta para buscar serviços com o campo "atribuido" igual ao nome do usuário
-            const q = query(collection(db, "ordemServicos"), where("atribuido", "==", nomeUsuario));
-            const querySnapshot = await getDocs(q);
+    try {
+        // Consulta para buscar serviços com o campo "atribuido" igual ao nome do usuário
+        const q = query(collection(db, "ordemServicos"), where("atribuido", "==", nomeUsuario));
+        const querySnapshot = await getDocs(q);
 
-            if (querySnapshot.empty) {
-                tabelaServicos.innerHTML = `<tr><td colspan="5">Nenhum serviço atribuído.</td></tr>`;
-                document.getElementById("AtribuidosCount").textContent = 0; // Exibe 0 se não houver serviços atribuídos
-                document.getElementById("EmAndamentoCount").textContent = 0; // Exibe 0 se não houver serviços em andamento
-                return;
+        if (querySnapshot.empty) {
+            tabelaServicos.innerHTML = `<tr><td colspan="5">Nenhum serviço atribuído.</td></tr>`;
+            document.getElementById("AtribuidosCount").textContent = 0; // Exibe 0 se não houver serviços atribuídos
+            document.getElementById("EmAndamentoCount").textContent = 0; // Exibe 0 se não houver serviços em andamento
+            return;
+        }
+
+        // Preenche a tabela com os dados filtrados
+        querySnapshot.forEach((doc) => {
+            const servico = doc.data();
+
+            // Exclui ordens de serviço com status "Cancelado", "Encerrado" ou "Finalizado"
+            if (servico.status === "Cancelado" || servico.status === "Encerrado" || servico.status === "Finalizado") {
+                return; // Ignora este serviço
             }
 
-            // Preenche a tabela com os dados filtrados
-            querySnapshot.forEach((doc) => {
-                const servico = doc.data();
+            const tr = document.createElement("tr");
 
-                // Exclui ordens de serviço com status "Cancelado" ou "Encerrado"
-                if (servico.status === "Cancelado" || servico.status === "Encerrado") {
-                    return; // Ignora este serviço
-                }
+            let statusButton = "";
+            if (servico.status === "Atribuído") {
+                statusButton = `<button class="confirmar" onclick="confirmarEmAndamento('${doc.id}')"><i class="fas fa-check"></i> Confirmar</button>`;
+            } else {
+                statusButton = `<button class="ver-mais" onclick="mostrarDetalhes('${doc.id}')">VER MAIS</button>`;
+            }
 
-                const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${servico.descricao}</td>
+                <td>${servico.dataLimite}</td>
+                <td>${servico.prioridade}</td>
+                <td>${servico.status}</td>
+                <td>${statusButton}</td>
+            `;
+            tabelaServicos.appendChild(tr);
 
-                let statusButton = "";
-                if (servico.status === "Atribuído") {
-                    statusButton = `<button class="confirmar" onclick="confirmarEmAndamento('${doc.id}')"><i class="fas fa-check"></i> Confirmar</button>`;
-                } else {
-                    statusButton = `<button class="ver-mais" onclick="mostrarDetalhes('${doc.id}')">VER MAIS</button>`;
-                }
+            contadorAtribuidos++; // Incrementa o contador de serviços atribuídos ao usuário
 
-                tr.innerHTML = `
-                    <td>${servico.descricao}</td>
-                    <td>${servico.dataLimite}</td>
-                    <td>${servico.prioridade}</td>
-                    <td>${servico.status}</td>
-                    <td>${statusButton}</td>
-                `;
-                tabelaServicos.appendChild(tr);
+            if (servico.status === "Em andamento") {
+                contadorEmAndamento++; // Incrementa o contador de serviços em andamento
+            }
+        });
 
-                contadorAtribuidos++; // Incrementa o contador de serviços atribuídos ao usuário
+        // Atualiza os contadores no frontend
+        document.getElementById("AtribuidosCount").textContent = contadorAtribuidos;
+        document.getElementById("EmAndamentoCount").textContent = contadorEmAndamento;
 
-                if (servico.status === "Em andamento") {
-                    contadorEmAndamento++; // Incrementa o contador de serviços em andamento
-                }
-            });
+    } catch (error) {
+        console.error("Erro ao carregar os serviços atribuídos: ", error);
+        tabelaServicos.innerHTML = `<tr><td colspan="5">Erro ao carregar serviços.</td></tr>`;
+    }
+};
 
-            // Atualiza os contadores no frontend
-            document.getElementById("AtribuidosCount").textContent = contadorAtribuidos;
-            document.getElementById("EmAndamentoCount").textContent = contadorEmAndamento;
-
-        } catch (error) {
-            console.error("Erro ao carregar os serviços atribuídos: ", error);
-            tabelaServicos.innerHTML = `<tr><td colspan="5">Erro ao carregar serviços.</td></tr>`;
-        }
-    };
-
-// Função para exibir detalhes da ordem de serviço no modal
-window.mostrarDetalhes = async function(id) {
+    window.mostrarDetalhes = async function(id) {
     const modal = document.getElementById("servicoModal");
+    const numeroID = document.getElementById("modalNumeroID");
+    const nome = document.getElementById("modalNome");
     const descricao = document.getElementById("modalDescricao");
+    const criador = document.getElementById("modalCriador");
+    const status = document.getElementById("modalStatus");
+    const ambiente = document.getElementById("modalAmbiente");
+    const tipoSolicitacao = document.getElementById("modalTipoSolicitacao");
+    const categoria = document.getElementById("modalCategoria");
+    const dataPedido = document.getElementById("modalDataPedido");
     const dataLimite = document.getElementById("modalDataLimite");
     const prioridade = document.getElementById("modalPrioridade");
-    const status = document.getElementById("modalStatus");
-    const observacoes = document.getElementById("modalObservacoes");
+    const blocoManutencao = document.getElementById("modalBlocoManutencao");
     const finalizarButton = document.getElementById("finalizarButton");
 
     // Recupera os dados da ordem de serviço
@@ -199,12 +214,21 @@ window.mostrarDetalhes = async function(id) {
 
     if (docSnap.exists()) {
         const servico = docSnap.data();
-        descricao.textContent = servico.descricao;
-        dataLimite.textContent = servico.dataLimite;
-        prioridade.textContent = servico.prioridade;
-        status.textContent = servico.status;
-        observacoes.textContent = servico.observacoes || "Sem observações";
-
+        
+        // Preenche o modal com os dados da ordem de serviço
+        numeroID.textContent = servico.numeroID || "Não disponível";
+        nome.textContent = servico.nome || "Não disponível";
+        descricao.textContent = servico.descricao || "Não disponível";
+        criador.textContent = servico.criador || "Não disponível";
+        status.textContent = servico.status || "Não disponível";
+        ambiente.textContent = servico.ambiente || "Não disponível";
+        tipoSolicitacao.textContent = servico.tipoSolicitacao || "Não disponível";
+        categoria.textContent = servico.categoria || "Não disponível";
+        dataPedido.textContent = servico.dataPedido || "Não disponível";
+        dataLimite.textContent = servico.dataLimite || "Não disponível";
+        prioridade.textContent = servico.prioridade || "Não disponível";
+        blocoManutencao.textContent = servico.blocoManutencao || "Não disponível";
+        
         // Mostrar o botão "Finalizar OS" apenas se o status for "Em andamento"
         if (servico.status === "Em andamento") {
             finalizarButton.style.display = "block"; // Exibe o botão
@@ -215,27 +239,31 @@ window.mostrarDetalhes = async function(id) {
         // Exibe o modal
         modal.style.display = "block"; 
 
-        // Evento de clique para finalizar a OS
-        finalizarButton.onclick = async function() {
-            try {
-                // Atualiza o status da ordem de serviço para "Concluído"
-                await updateDoc(docRef, {
-                    status: "Concluído"
-                });
+// Evento de clique para finalizar a OS
+finalizarButton.onclick = async function() {
+    try {
+        const dataEncerrado = new Date(); // Obtém a data e horário atuais
 
-                // Fecha o modal após a atualização
-                modal.style.display = "none";
+        // Atualiza o status da ordem de serviço para "Concluído" e a data de encerramento
+        await updateDoc(docRef, {
+            status: "Concluído",          // Atualiza o status para "Concluído"
+            dataEncerrado: dataEncerrado  // Atualiza o campo dataEncerrado com a data/hora atual
+        });
 
-                // Recarrega os serviços atribuídos
-                carregarServicosAtribuidos(sessionStorage.getItem('nome'));
-            } catch (error) {
-                console.error("Erro ao finalizar a ordem de serviço:", error);
-            }
-        };
+        // Fecha o modal após a atualização
+        modal.style.display = "none";
+
+        // Recarrega os serviços atribuídos
+        carregarServicosAtribuidos(sessionStorage.getItem('nome'));
+    } catch (error) {
+        console.error("Erro ao finalizar a ordem de serviço:", error);
+    }
+};
     } else {
         console.log("Ordem de serviço não encontrada!");
     }
 }
+
 
     // Função para confirmar que a ordem está em andamento
     window.confirmarEmAndamento = async function(id) {

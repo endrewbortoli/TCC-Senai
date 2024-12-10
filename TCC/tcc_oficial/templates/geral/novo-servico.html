@@ -175,9 +175,15 @@
             <label for="tipoSolicitacao">Tipo da Solicitação</label>
             <select id="tipoSolicitacao" name="tipoSolicitacao">
                 <option value="" disabled selected>Selecione</option>
-                <option value="Preventiva">Preventiva</option>
-                <option value="Manutencao">Manutenção</option>
+                <option value="ObrasReformas">Obras e Reformas</option>
+                <option value="ManutencaoCorretiva">Manutenção Corretiva</option>
+                <option value="ManutencaoPreventiva">Manutenção Preventiva</option>
                 <option value="Geral">Programada</option>
+                <option value="Limpeza">Limpeza</option>
+                <option value="Calibracao">Calibração de Equipamentos</option>
+                <option value="Instalacao">Instalação de Novos Equipamentos</option>
+                <option value="Compras">Solicitação de Compras ou Estoque</option>
+    
             </select>
         </div>
         <div class="form-group">
@@ -186,8 +192,8 @@
                 <option value="" disabled selected>Selecione</option>
                 <option value="Elétrica">Elétrica</option>
                 <option value="Hidráulica">Hidráulica</option>
-                <option value="Pintura">Pintura</option>
-                <option value="Refrigeração">Refrigeração</option>
+                <option value="Pintura">Predial</option>
+                <option value="Refrigeração">Máquinas e/ou Equipamentos</option>
                 <option value="Outros">Outros</option>
             </select>
         </div>
@@ -248,50 +254,52 @@
             return Math.floor(1000 + Math.random() * 9000); // Gera um número aleatório entre 1000 e 9999
         }
 
-        // Função para adicionar ordem de serviço
-        document.getElementById('submitData').addEventListener('click', async () => {
-            const nome = document.getElementById("nome").value;
-            const descricao = document.getElementById("descricao").value;
-            const criador = document.getElementById("criador").value;
-            const status = document.getElementById("status").value; 
-            const ambiente = document.getElementById("ambiente").value;
-            const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
-            const categoria = document.getElementById("categoria").value;
-            const dataPedido = document.getElementById("dataPedido").value;
-            const dataLimite = document.getElementById("dataLimite").value;
-            const prioridade = document.getElementById("prioridade").value;
-            const numeroID = generateRandomID(); // Gerar número ID
-            const dataEncerrado = ''; // Inicializa como vazio
+// Função para adicionar ordem de serviço
+document.getElementById('submitData').addEventListener('click', async () => {
+    const nome = document.getElementById("nome").value;
+    const descricao = document.getElementById("descricao").value;
+    const criador = document.getElementById("criador").value;
+    const status = document.getElementById("status").value; 
+    const ambiente = document.getElementById("ambiente").value;
+    const tipoSolicitacao = document.getElementById("tipoSolicitacao").value;
+    const categoria = document.getElementById("categoria").value;
+    const dataPedido = document.getElementById("dataPedido").value;
+    const dataLimite = document.getElementById("dataLimite").value;
+    const prioridade = document.getElementById("prioridade").value;
+    const blocoManutencao = document.getElementById("blocoManutenção").value; // Captura o valor de blocoManutencao
+    const numeroID = generateRandomID(); // Gerar número ID
+    const dataEncerrado = ''; // Inicializa como vazio
 
-            if (!descricao || !criador || !ambiente || !tipoSolicitacao || !dataPedido || !dataLimite || !prioridade || !categoria) {
-                alert("Por favor, preencha todos os campos obrigatórios.");
-                return;
-            }
+    if (!descricao || !criador || !ambiente || !tipoSolicitacao || !dataPedido || !dataLimite || !prioridade || !categoria || !blocoManutencao) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
+    }
 
-            try {
-                const docRef = await addDoc(collection(db, "ordemServicos"), {
-                    nome: nome,
-                    descricao: descricao,
-                    criador: criador,
-                    status: status,
-                    ambiente: ambiente,
-                    tipoSolicitacao: tipoSolicitacao,
-                    categoria: categoria, // Adiciona a categoria ao banco de dados
-                    dataPedido: dataPedido,
-                    dataLimite: dataLimite,
-                    prioridade: prioridade,
-                    numeroID: numeroID, // Envia o número ID
-                    dataEncerrado: dataEncerrado, // Envia o valor vazio
-                });
-
-                alert("Ordem de serviço criada com sucesso!");
-                window.location.href = "{% url 'geral_dashboard' %}";
-
-                document.querySelector(".form-container").reset(); // Limpa o formulário
-            } catch (e) {
-                console.error("Erro ao adicionar documento: ", e);
-            }
+    try {
+        const docRef = await addDoc(collection(db, "ordemServicos"), {
+            nome: nome,
+            descricao: descricao,
+            criador: criador,
+            status: status,
+            ambiente: ambiente,
+            tipoSolicitacao: tipoSolicitacao,
+            categoria: categoria, // Adiciona a categoria ao banco de dados
+            dataPedido: dataPedido,
+            dataLimite: dataLimite,
+            prioridade: prioridade,
+            blocoManutencao: blocoManutencao, // Inclui o blocoManutencao
+            numeroID: numeroID, // Envia o número ID
+            dataEncerrado: dataEncerrado, // Envia o valor vazio
         });
+
+        alert("Ordem de serviço criada com sucesso!");
+        window.location.href = "{% url 'geral_dashboard' %}";
+
+        document.querySelector(".form-container").reset(); // Limpa o formulário
+    } catch (e) {
+        console.error("Erro ao adicionar documento: ", e);
+    }
+});
     </script>
 
     <script src="{% static 'js/verificacao.js' %}"></script>

@@ -194,8 +194,6 @@
             <span class="close" onclick="closeOrdemServicoModal()">&times;</span>
             <h2>Editar Ordem de Serviço</h2>
             <form id="ordemServicoForm">
-                <label for="editOrdemId">ID da Ordem:</label>
-                <input type="text" id="editOrdemId" required disabled><br>
                 <label for="editNome">Nome:</label>
                 <input type="text" id="editNome" required><br>
                 <label for="editDescricao">Descrição:</label>
@@ -272,75 +270,76 @@
     const closeImage = "{% static 'img/closeicon.webp' %}";
     const searchImage = "{% static 'img/search-icon.png' %}";
 
-async function loadOrdensServico() {
+    async function loadOrdensServico() {
     const querySnapshot = await getDocs(collection(db, "ordemServicos"));
     const osTable = document.querySelector("#osTable tbody");
     osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
 
+    querySnapshot.forEach((doc) => {
+        const osData = doc.data();
+        const row = document.createElement("tr");
 
-        querySnapshot.forEach((doc) => {
-            const osData = doc.data();
-            const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${osData.nome}</td>
+            <td>${osData.descricao}</td>
+            <td>${osData.criador}</td>
+            <td>${osData.atribuido}</td>
+            <td>${osData.status}</td>
+            <td>${osData.ambiente}</td>
+            <td>${osData.dataPedido}</td>
+            <td>${osData.dataLimite}</td>
+            <td>${osData.prioridade}</td>
+            <td>
+                <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <button onclick="deleteOS('${doc.id}')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button onclick="viewOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}', '${osData.tipoSolicitacao}', '${osData.categoria}', '${osData.blocoManutencao}', '${osData.dataEncerrado}', '${osData.feedback}', '${osData.rating}')">
+                    <i class="fas fa-search"></i>
+                </button>
+            </td>
+        `;
+        osTable.appendChild(row);
+    });
+}
 
-row.innerHTML = `
-    <td>${osData.nome}</td>
-    <td>${osData.descricao}</td>
-    <td>${osData.criador}</td>
-    <td>${osData.atribuido}</td>
-    <td>${osData.status}</td>
-    <td>${osData.ambiente}</td>
-    <td>${osData.dataPedido}</td>
-    <td>${osData.dataLimite}</td>
-    <td>${osData.prioridade}</td>
-    <td>
-        <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-            <i class="fas fa-pen"></i>
-        </button>
-        <button onclick="deleteOS('${doc.id}')">
-            <i class="fas fa-times"></i>
-        </button>
-        <button onclick="viewOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}', '${osData.tipoSolicitacao}')">
-            <i class="fas fa-search"></i>
-        </button>
-    </td>
-`;
-                    osTable.appendChild(row);
-        });
-    }
+window.editOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
+    currentEditingId = id; // Armazena o ID da ordem de serviço sendo editada
+    // O ID não será mais atribuído a nenhum campo de input
 
-    window.editOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
-        currentEditingId = id; // Armazena o ID da ordem de serviço sendo editada
-        document.getElementById("editOrdemId").value = id; // Define o ID no campo de texto (se necessário)
-        document.getElementById("editNome").value = nome;
-        document.getElementById("editDescricao").value = descricao;
-        document.getElementById("editCriador").value = criador;
-        document.getElementById("editAtribuido").value = atribuido;
-        document.getElementById("editStatus").value = status;
-        document.getElementById("editAmbiente").value = ambiente;
-        document.getElementById("editDataPedido").value = dataPedido;
-        document.getElementById("editDataLimite").value = dataLimite;
-        document.getElementById("editPrioridade").value = prioridade; // Aqui, você deve garantir que esse ID exista no HTML
-        document.getElementById("ordemServicoModal").style.display = "block";
-    };
+    document.getElementById("editNome").value = nome;
+    document.getElementById("editDescricao").value = descricao;
+    document.getElementById("editCriador").value = criador;
+    document.getElementById("editAtribuido").value = atribuido;
+    document.getElementById("editStatus").value = status;
+    document.getElementById("editAmbiente").value = ambiente;
+    document.getElementById("editDataPedido").value = dataPedido;
+    document.getElementById("editDataLimite").value = dataLimite;
+    document.getElementById("editPrioridade").value = prioridade;
+    document.getElementById("ordemServicoModal").style.display = "block";
+};
 
     window.closeOrdemServicoModal = () => {
         document.getElementById("ordemServicoModal").style.display = "none";
     };
 
     document.getElementById("ordemServicoForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        
-        const nome = document.getElementById("editNome").value;
-        const descricao = document.getElementById("editDescricao").value;
-        const criador = document.getElementById("editCriador").value;
-        const atribuido = document.getElementById("editAtribuido").value;
-        const status = document.getElementById("editStatus").value;
-        const ambiente = document.getElementById("editAmbiente").value;
-        const dataPedido = document.getElementById("editDataPedido").value;
-        const dataLimite = document.getElementById("editDataLimite").value;
-        const prioridade = document.getElementById("editPrioridade").value;
+    e.preventDefault();
+    
+    const nome = document.getElementById("editNome").value;
+    const descricao = document.getElementById("editDescricao").value;
+    const criador = document.getElementById("editCriador").value;
+    const atribuido = document.getElementById("editAtribuido").value;
+    const status = document.getElementById("editStatus").value;
+    const ambiente = document.getElementById("editAmbiente").value;
+    const dataPedido = document.getElementById("editDataPedido").value;
+    const dataLimite = document.getElementById("editDataLimite").value;
+    const prioridade = document.getElementById("editPrioridade").value;
 
-        // Atualiza o documento no Firestore
+    try {
+        // Update document and handle response
         await updateDoc(doc(db, "ordemServicos", currentEditingId), {
             nome: nome,
             descricao: descricao,
@@ -352,10 +351,12 @@ row.innerHTML = `
             dataLimite: dataLimite,
             prioridade: prioridade,
         });
-
         closeOrdemServicoModal();
-        loadOrdensServico();
-    });
+        loadOrdensServico();  // Recarrega a tabela após salvar
+    } catch (error) {
+        console.error("Erro ao salvar a ordem de serviço:", error);
+    }
+});
 
     window.deleteOS = async (id) => {
         const confirmation = confirm("Tem certeza que deseja excluir esta Ordem de Serviço?");
@@ -403,13 +404,13 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 });
 
 
-// Função para abrir o modal de visualização de detalhes
-window.viewOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade, tipoSolicitacao) => {
+window.viewOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade, tipoSolicitacao, categoria, blocoManutencao, dataEncerrado, feedback, rating) => {
     const modal = document.getElementById("viewOrdemServicoModal");
     const detailsContainer = document.getElementById("viewOrdemServicoDetails");
 
     // Preencher os detalhes no modal
     detailsContainer.innerHTML = `
+        <p><strong>ID da Ordem:</strong> ${id}</p>  <!-- Exibindo o número ID -->
         <p><strong>Nome:</strong> ${nome}</p>
         <p><strong>Descrição:</strong> ${descricao}</p>
         <p><strong>Criador:</strong> ${criador}</p>
@@ -420,6 +421,11 @@ window.viewOS = (id, nome, descricao, criador, atribuido, status, ambiente, data
         <p><strong>Data Limite:</strong> ${dataLimite}</p>
         <p><strong>Prioridade:</strong> ${prioridade}</p>
         <p><strong>Tipo de Solicitação:</strong> ${tipoSolicitacao}</p>
+        <p><strong>Categoria:</strong> ${categoria}</p>  <!-- Exibindo Categoria -->
+        <p><strong>Bloco de Manutenção:</strong> ${blocoManutencao}</p>  <!-- Exibindo Bloco de Manutenção -->
+        <p><strong>Data de Encerramento:</strong> ${dataEncerrado}</p>  <!-- Exibindo Data de Encerramento -->
+        <p><strong>Feedback:</strong> ${feedback}</p>  <!-- Exibindo Feedback -->
+        <p><strong>Nota:</strong> ${rating}</p>  <!-- Exibindo Rating -->
     `;
 
     // Exibir o modal

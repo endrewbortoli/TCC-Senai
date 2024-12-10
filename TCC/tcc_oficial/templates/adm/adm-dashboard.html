@@ -73,13 +73,13 @@
         <p><strong>Data do Pedido:</strong> <span id="modalDataPedido"></span></p>
         <p><strong>Descrição:</strong> <span id="modalDescricao"></span></p>
         <p><strong>Prioridade:</strong> <span id="modalPrioridade"></span></p>
-        <p><strong>Status:</strong>
+        <!-- <p><strong>Status:</strong>
             <select id="modalStatusSelect">
                 <option value="Em andamento">Em andamento</option>
                 <option value="Esperando Confirmação">Esperando Confirmação</option>
                 <option value="Esperando Confirmação">Esperando Confirmação</option>
             </select>
-        </p>
+        </p> -->
         <p><strong>Tipo de Solicitação:</strong> <span id="modalTipoSolicitacao"></span></p>
 
         <!-- Adicionado campo para editar "Atribuído a" -->
@@ -89,8 +89,8 @@
             </select>
         </p>
 
-        <button id="saveStatusButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Status</button>
-        <button id="saveAtribuidoButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Atribuído a</button>
+        <!-- <button id="saveStatusButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Status</button> -->
+        <button id="saveAtribuidoButton" style="background-color: #900000; padding: 20px; color: white; border-radius: 10px;">Salvar Atribuíçção</button>
     </div>
 </div>
 
@@ -133,7 +133,7 @@
 
     // Função para preencher a tabela com dados de Firestore filtrados por status
     async function loadOrdensServicos() {
-        const q = query(collection(db, "ordemServicos"), where("status", "in", ["Não atribuído", "Em andamento", "Em análise", "Atribuído"]));
+        const q = query(collection(db, "ordemServicos"), where("status", "in", ["Não atribuído", "Em andamento", "Em análise", "Atribuído", "Concluído"]));
         const querySnapshot = await getDocs(q);
         const tableBody = document.getElementById("ordemServicosTableBody");
 

@@ -36,7 +36,9 @@
         </div>
         <div class="form-group">
           <label for="criador">Solicitante</label>
-          <input type="text" id="criador" name="criador"/>
+          <select id="criador" name="criador">
+            <option value="" disabled selected>Selecione</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="blocoManutenção">Em qual bloco há necessidade de manutenção?</label>
@@ -58,7 +60,7 @@
         <div class="form-group">
           <label for="atribuido">Atribuído a</label>
           <select id="atribuido" name="atribuido">
-            <option value="">Selecione</option>
+            <option value="" disabled selected>Selecione</option>
           </select>
         </div>
         <div class="form-group">
@@ -93,9 +95,10 @@
           <label for="categoriaServico">Categoria do Serviço</label>
           <select id="categoriaServico" name="categoriaServico">
             <option value="" disabled selected>Selecione</option>
-            <option value="Instalacao">Instalação</option>
-            <option value="Reparo">Reparo</option>
-            <option value="Revisao">Revisão</option>
+            <option value="Elétrica">Elétrica</option>
+            <option value="Hidraúlica">Hidraúlica</option>
+            <option value="Predial">Predial</option>
+            <option value="Máquinas e/ou Equipamentos">Máquinas e/ou Equipamentos</option>
             <option value="Outros">Outros</option>
           </select>
         </div>
@@ -231,6 +234,35 @@
         console.error("Erro ao adicionar documento: ", e);
       }
     });
+
+
+    // Função para buscar e preencher os usuários de "Solicitante"
+const preencherUsuariosSolicitante = async () => {
+  const criadorSelect = document.getElementById("criador");
+
+  try {
+    // Consultar todos os usuários da coleção "users"
+    const querySnapshot = await getDocs(collection(db, "users"));
+
+    // Adicionar cada usuário ao campo de seleção
+    querySnapshot.forEach((doc) => {
+      const userData = doc.data();
+      const option = document.createElement("option");
+      option.value = userData.nome;
+      option.textContent = userData.nome;
+      criadorSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Erro ao buscar usuários: ", error);
+  }
+};
+
+// Chamar a função ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  preencherUsuariosManutencao(); // Já existente, mantém a funcionalidade
+  preencherUsuariosSolicitante(); // Chama a função para preencher o campo "Solicitante"
+});
+
   </script>
 
   <script src="{% static 'js/verificacao.js'%}"></script>
