@@ -25,43 +25,97 @@
           <!-- Formulário de Usuários -->
           <div class="form-container">
             <h2>FORMULÁRIO DE USUÁRIOS</h2>
-
+        
             <div class="form-group">
-              <label for="nome">Nome Completo</label>
-              <input type="text" id="nome" name="nome" />
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" />
             </div>
-
+        
             <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" />
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" />
             </div>
-
+        
             <div class="form-group">
-              <label for="senha">Senha</label>
-              <input type="password" id="senha" name="senha" />
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" />
             </div>
-
+        
             <div class="form-group">
-              <label for="nif">NIF</label>
-              <input type="text" id="nif" name="nif" />
+                <label for="nif">NIF</label>
+                <input type="text" id="nif" name="nif" />
             </div>
-
+        
             <div class="form-group">
-              <label for="tipoUsuario">Tipo de Usuário</label>
-              <select id="tipoUsuario" name="tipoUsuario">
-                <option value="" disabled selected>Selecione</option>
-                <option value="Administrador">Administrador</option>
-                <option value="Trabalhador">Manutenção</option>
-                <option value="Geral">Geral</option>
-              </select>
+                <label for="telefone">Número do celular</label>
+                <input type="text" id="telefone" name="telefone" />
             </div>
-
+        
+            <div class="form-group">
+                <label for="tipoUsuario">Tipo de Usuário</label>
+                <select id="tipoUsuario" name="tipoUsuario">
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Trabalhador">Manutenção</option>
+                    <option value="Geral">Geral</option>
+                </select>
+            </div>
+        
             <button type="button" id="submitData" class="submit-button">Criar Usuário</button>
-          </div>
         </div>
+      </div>
     </div>
 
-    <script type="module" src="{% static 'js/novo-funcionario.js'%}">
+    <script type="module">
+
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import {
+          getFirestore,
+          addDoc,
+          collection
+        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
+            authDomain: "fir-crud-56c52.firebaseapp.com",
+            projectId: "fir-crud-56c52",
+            storageBucket: "fir-crud-56c52.appspot.com",
+            messagingSenderId: "906266562649",
+            appId: "1:906266562649:web:55742c6c6b67449857e148",
+            measurementId: "G-VN53GXMXM6"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+
+      document.getElementById("submitData").addEventListener("click", async () => {
+  const nome = document.getElementById("nome").value;
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+  const nif = document.getElementById("nif").value;
+  const telefone = document.getElementById("telefone").value;  // Novo campo
+  const tipoUsuario = document.getElementById("tipoUsuario").value;
+
+  try {
+    await addDoc(collection(db, "users"), {
+      nome,
+      email,
+      senha,
+      nif,
+      telefone,  // Enviando telefone para o Firestore
+      tipoUsuario,
+    });
+    window.alert("Usuário Criado com Sucesso");
+    window.location.href = "{% url 'funcionarios' %}"; // Redirecionar após sucesso
+  } catch (error) {
+    console.error("Erro ao criar usuário: ", error);
+  }
+});
+
     </script>
 
         <script src="{% static 'js/verificacao.js'%}"></script>

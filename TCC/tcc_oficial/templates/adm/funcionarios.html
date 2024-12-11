@@ -13,17 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-      .styled-table td button.edit-btn {
-        width: 20px;
-        height: 20px;
-      }
-
-      .styled-table td button.delete-btn {
-        width: 20px;
-        height: 20px;
-      }
-
-      /* Estilo da tabela e modal */
+      /* Estilos da tabela e do modal são os mesmos, então mantemos aqui */
       .styled-table {
         width: 90%;
         border-collapse: separate;
@@ -60,9 +50,9 @@
         cursor: pointer;
       }
 
-      /* Estilo do Modal */
+      /* Estilos do Modal */
       .modal {
-        display: none; /* Esconder o modal por padrão */
+        display: none;
         position: fixed;
         z-index: 1;
         left: 0;
@@ -81,7 +71,7 @@
         padding: 20px;
         border: 1px solid #888;
         width: 90%;
-        max-width: 500px; /* Limita a largura do modal */
+        max-width: 500px;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
@@ -104,7 +94,7 @@
       form {
         display: flex;
         flex-direction: column;
-        gap: 10px; /* Espaçamento entre os campos */
+        gap: 10px;
       }
 
       label {
@@ -117,10 +107,6 @@
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
-      }
-
-      input[type="checkbox"] {
-        margin-top: 10px;
       }
 
       button[type="submit"] {
@@ -136,36 +122,14 @@
       button[type="submit"]:hover {
         background-color: #b51d1d;
       }
-
-      /* Personalização dos inputs */
-#editForm input {
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    margin-bottom: 10px;
-    transition: border 0.3s ease;
-}
-
-/* Efeito de foco nos inputs */
-#editForm input:focus {
-  border-color: #941919; 
-  outline: none;
-}
-
     </style>
   </head>
   <body>
     <div class="sideright">
-        <!-- Sidebar Menu -->
         {% include 'components/adm-sidebar.html' %}
-
   
-        <!-- Main content -->
         <div class="main">
-            <!-- Header -->
             {% include 'components/adm-header.html' %}
-
 
         <button class="open-button" style="margin-left: 30px;">
             <a href="{% url 'novo_funcionario' %}">Novo Funcionário</a>
@@ -180,13 +144,14 @@
               <th>NIF</th>
               <th>Nome</th>
               <th>Email</th>
+              <th>Telefone</th> <!-- Nova coluna -->
               <th>Senha</th>
               <th>Nível</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            <!-- Os dados serão inseridos aqui pelo JavaScript -->
+            <!-- Dados carregados pelo JavaScript -->
           </tbody>
         </table>
       </div>
@@ -197,13 +162,15 @@
       <div class="modal-content">
           <span class="close" onclick="closeModal()">&times;</span>
           <h2>Editar Usuário</h2>
-          <form id="editForm" >
+          <form id="editForm">
               <label for="editNif">NIF:</label>
               <input type="text" id="editNif" required><br>
               <label for="editName">Nome:</label>
               <input type="text" id="editName" required><br>
               <label for="editEmail">Email:</label>
               <input type="email" id="editEmail" required><br>
+              <label for="editPhone">Telefone:</label> <!-- Novo campo -->
+              <input type="text" id="editPhone" required><br>
               <label for="editPassword">Senha:</label>
               <input type="password" id="editPassword" required><br>
               <input type="checkbox" id="showPassword"> Mostrar Senha
@@ -212,12 +179,12 @@
               <button type="submit">Salvar</button>
           </form>
       </div>
-  </div>
+    </div>
 
     <script type="module" src="{% static 'js/verificacao.js'%}"></script>
 
     <script type="module">
-     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
       import {
         getFirestore,
         getDocs,
@@ -242,126 +209,97 @@
 
       // Função para carregar usuários do Firestore e exibi-los na tabela
       async function loadUsers() {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        const userTable = document.querySelector("#userTable tbody");
-        userTable.innerHTML = ""; // Limpa a tabela antes de recarregar
+  const querySnapshot = await getDocs(collection(db, "users"));
+  const userTable = document.querySelector("#userTable tbody");
+  userTable.innerHTML = ""; // Limpa a tabela antes de recarregar
 
-        querySnapshot.forEach((doc) => {
-          const userData = doc.data();
-          const row = document.createElement("tr");
+  querySnapshot.forEach((doc) => {
+    const userData = doc.data();
+    
+    // Verificar se cada campo está definido, caso contrário, exibir "Indefinido"
+    const nif = userData.nif || "Indefinido";
+    const nome = userData.nome || "Indefinido";
+    const email = userData.email || "Indefinido";
+    const telefone = userData.telefone || "Indefinido";
+    const senha = userData.senha || "Indefinido";
+    const tipoUsuario = userData.tipoUsuario || "Indefinido";
 
-          row.innerHTML = `
-                    <td>${userData.nif}</td>
-                    <td>${userData.nome}</td>
-                    <td>${userData.email}</td>
-                    <td>${userData.senha}</td>
-                    <td>${userData.tipoUsuario}</td>
-                    <td>
-                        <button class= "edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><i class="fas fa-pen"></i></button>
-                        <button class= "delete-btn" onclick="deleteOS('${doc.id}')"><i class="fas fa-times"></i></button>
-                    </td>
-                `;
-          userTable.appendChild(row);
-        });
-      }
+    const row = document.createElement("tr");
 
-              // Função para abrir o modal com os dados do usuário
-              window.openModal = (id, nif, nome, email, senha, tipoUsuario) => {
-            document.getElementById("editNif").value = nif;
-            document.getElementById("editName").value = nome;
-            document.getElementById("editEmail").value = email;
-            document.getElementById("editPassword").value = senha;
-            document.getElementById("editLevel").value = tipoUsuario;
-            window.currentEditUserId = id;
+    row.innerHTML = `
+      <td>${nif}</td>
+      <td>${nome}</td>
+      <td>${email}</td>
+      <td>${telefone}</td>
+      <td>${senha}</td>
+      <td>${tipoUsuario}</td>
+      <td>
+          <button class="edit-btn" onclick="openModal('${doc.id}', '${nif}', '${nome}', '${email}', '${telefone}', '${senha}', '${tipoUsuario}')"><i class="fas fa-pen"></i></button>
+          <button class="delete-btn" onclick="deleteOS('${doc.id}')"><i class="fas fa-times"></i></button>
+      </td>
+    `;
+    userTable.appendChild(row);
+  });
+}
 
-            document.getElementById("editModal").style.display = "block";
+      // Função para abrir o modal com os dados do usuário
+      window.openModal = (id, nif, nome, email, telefone, senha, tipoUsuario) => {
+        document.getElementById("editNif").value = nif;
+        document.getElementById("editName").value = nome;
+        document.getElementById("editEmail").value = email;
+        document.getElementById("editPhone").value = telefone; // Preenchendo o campo telefone
+        document.getElementById("editPassword").value = senha;
+        document.getElementById("editLevel").value = tipoUsuario;
+        document.getElementById("editForm").onsubmit = (e) => {
+          e.preventDefault();
+          updateUser(id);
         };
-
-                // Função para fechar o modal
-                window.closeModal = () => {
-            document.getElementById("editModal").style.display = "none";
-        };
-
-
-        // Função para deletar um usuário
-        window.deleteUser = async (id) => {
-            await deleteDoc(doc(db, "users", id));
-            loadUsers(); // Atualiza a tabela após a exclusão
-        };
-
-
-        // Função para salvar as edições no usuário
-        document.getElementById("editForm").addEventListener("submit", async (event) => {
-            event.preventDefault();
-
-            const nif = document.getElementById("editNif").value;
-            const nome = document.getElementById("editName").value;
-            const email = document.getElementById("editEmail").value;
-            const senha = document.getElementById("editPassword").value;
-            const tipoUsuario = document.getElementById("editLevel").value;
-
-            const userRef = doc(db, "users", window.currentEditUserId);
-            await updateDoc(userRef, {
-                nif,
-                nome,
-                email,
-                senha,
-                tipoUsuario
-            });
-
-            closeModal(); // Fecha o modal após a edição
-            loadUsers(); // Atualiza a tabela
-        });
-
-      // Fechar o modal ao clicar fora dele
-      window.onclick = function (event) {
-        const modal = document.getElementById("editUsers");
-        if (event.target === modal) {
-          closeModal();
-        }
+        document.getElementById("editModal").style.display = "block";
       };
 
-      // Filtrando os usuários na tabela conforme a pesquisa
-      document.querySelector(".search-bar").addEventListener("input", async function () {
-        const searchTerm = this.value.toLowerCase();
-        const querySnapshot = await getDocs(collection(db, "users"));
-        const userTable = document.querySelector("#userTable tbody");
-        userTable.innerHTML = "";
+      // Função para atualizar os dados do usuário no Firestore
+      async function updateUser(id) {
+        const nif = document.getElementById("editNif").value;
+        const nome = document.getElementById("editName").value;
+        const email = document.getElementById("editEmail").value;
+        const telefone = document.getElementById("editPhone").value;
+        const senha = document.getElementById("editPassword").value;
+        const tipoUsuario = document.getElementById("editLevel").value;
 
-        querySnapshot.forEach((doc) => {
-          const userData = doc.data();
-          if (
-            userData.nif.toLowerCase().includes(searchTerm) ||
-            userData.nome.toLowerCase().includes(searchTerm) ||
-            userData.email.toLowerCase().includes(searchTerm)
-          ) {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                    <td>${userData.nif}</td>
-                    <td>${userData.nome}</td>
-                    <td>${userData.email}</td>
-                    <td>${userData.senha}</td>
-                    <td>${userData.tipoUsuario}</td>
-                    <td>
-                        <button class= "edit-btn" onclick="openModal('${doc.id}', '${userData.nif}', '${userData.nome}', '${userData.email}', '${userData.senha}', '${userData.tipoUsuario}')"><i class="fas fa-pen"></i></button>
-                        <button class= "delete-btn" onclick="deleteOS('${doc.id}')"><i class="fas fa-times"></i></button>
-                    </td>
-                `;
-            userTable.appendChild(row);
-          }
+        await updateDoc(doc(db, "users", id), {
+          nif,
+          nome,
+          email,
+          telefone, // Novo campo atualizado
+          senha,
+          tipoUsuario,
         });
-      });
 
-              // Função para mostrar ou ocultar a senha
-              document.getElementById("showPassword").addEventListener("change", function() {
-            const passwordInput = document.getElementById("editPassword");
-            passwordInput.type = this.checked ? "text" : "password"; // Altera o tipo de input
-        });
+        closeModal();
+        loadUsers();
+      }
+
+      // Função para fechar o modal
+      function closeModal() {
+        document.getElementById("editModal").style.display = "none";
+      }
+
+      // Função para deletar um usuário
+      async function deleteOS(id) {
+        await deleteDoc(doc(db, "users", id));
+        loadUsers();
+      }
+      
+  // Fechar modal ao clicar fora da área do modal
+  window.onclick = function(event) {
+    var modal = document.getElementById("editModal");
+    if (event.target == modal) {
+      closeModal();
+    }
+  };
 
 
       loadUsers();
-
     </script>
-
   </body>
 </html>

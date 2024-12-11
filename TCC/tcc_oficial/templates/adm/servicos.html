@@ -170,6 +170,7 @@
             <table id="osTable" class="styled-table">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Solicitante</th>
@@ -178,7 +179,6 @@
                         <th>Ambiente</th>
                         <th>Data do Pedido</th>
                         <th>Data Limite</th>
-                        <th>Prioridade</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -189,46 +189,61 @@
         </div>
     </div>
 
-    <div id="ordemServicoModal" class="modal">
+    <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeOrdemServicoModal()">&times;</span>
             <h2>Editar Ordem de Serviço</h2>
             <form id="ordemServicoForm">
                 <label for="editNome">Nome:</label>
-                <input type="text" id="editNome" required><br>
+                <input type="text" id="editNome"><br>
                 <label for="editDescricao">Descrição:</label>
-                <input type="text" id="editDescricao" required><br>
-                <label for="editCriador">Criador:</label>
-                <input type="text" id="editCriador" required><br>
+                <input type="text" id="editDescricao" ><br>
+                <label for="editCriador">Solicitante:</label>
+                <select id="editCriador"></select><br>
+                
                 <label for="editAtribuido">Atribuído a:</label>
-                <input type="text" id="editAtribuido" required><br>
+                <select id="editAtribuido"></select><br>
+                
                 <label for="editStatus">Status:</label>
-                <input type="text" id="editStatus" required><br>
-                <label for="editAmbiente">Ambiente:</label>
-                <input type="text" id="editAmbiente" required><br>               
+                <select id="editStatus" name="status">
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="Em análise">Em análise</option>
+                    <option value="Não atribuído">Não atribuído</option>
+                    <option value="Atribuído">Atribuído</option>
+                    <option value="Em andamento">Em andamento</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Finalizado">Finalizado</option>
+                  </select>       
+                        <label for="editAmbiente">Ambiente:</label>
+                <input type="text" id="editAmbiente" ><br>               
                 <label for="tipoSolicitacao">Tipo da Solicitação</label>
                 <select id="tipoSolicitacao" name="tipoSolicitacao">
-                  <option value="" disabled selected>Selecione</option>
-                  <option value="ObrasReformas">Obras e Reformas</option>
-                  <option value="ManutencaoCorretiva">Manutenção Corretiva</option>
-                  <option value="ManutencaoCorretiva">Manutenção Preventiva</option>
-                  <option value="Geral">Programada</option>
-                  <option value="Limpeza">Limpeza</option>
-                  <option value="Calibracao">Calibração de Equipamentos</option>
-                  <option value="Instalacao">Instalação de Novos Equipamentos</option>
-                  <option value="Compras">Solicitação de Compras ou Estoque</option>
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="ObrasReformas">Obras e Reformas</option>
+                    <option value="ManutencaoCorretiva">Manutenção Corretiva</option>
+                    <option value="ManutencaoPreventiva">Manutenção Preventiva</option>
+                    <option value="Geral">Programada</option>
+                    <option value="Limpeza">Limpeza</option>
+                    <option value="Calibracao">Calibração de Equipamentos</option>
+                    <option value="Instalacao">Instalação de Novos Equipamentos</option>
+                    <option value="Compras">Solicitação de Compras ou Estoque</option>
                 </select>
                 <label for="editDataPedido">Data do Pedido:</label>
                 <input type="date" id="editDataPedido" required><br>
                 <label for="editDataLimite">Data Limite:</label>
                 <input type="date" id="editDataLimite" required><br>
                 <label for="editPrioridade">Prioridade:</label>
-                <input type="text" id="editPrioridade" required><br>
+                <select id="editPrioridade" name="prioridade">
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="Baixa">Baixa</option>
+                    <option value="Media">Média</option>
+                    <option value="Alta">Alta</option>
+                </select>
                 <button type="submit">Salvar</button>
             </form>
         </div>
     </div>
-
+    
     <!-- Modal de Visualizar Ordem de Serviço -->
 <div id="viewOrdemServicoModal" class="modal">
     <div class="modal-content">
@@ -243,14 +258,15 @@
 
     <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import {
-        getFirestore,
-        getDocs,
-        doc,
-        deleteDoc,
-        updateDoc,
-        collection
-    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+            import {
+    getFirestore,
+    getDocs,
+    getDoc,   // Adicione essa linha
+    doc,
+    deleteDoc,
+    updateDoc,
+    collection
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBjHux5Th122xDRmD35KsdjfTzrezHU8bY",
@@ -276,87 +292,118 @@
     osTable.innerHTML = ""; // Limpa a tabela antes de recarregar
 
     querySnapshot.forEach((doc) => {
-        const osData = doc.data();
-        const row = document.createElement("tr");
+    const osData = doc.data();
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${osData.numeroID}</td> <!-- Exibindo o Número ID -->
+        <td>${osData.nome}</td>
+        <td>${osData.descricao}</td>
+        <td>${osData.criador}</td>
+        <td>${osData.atribuido}</td>
+        <td>${osData.status}</td>
+        <td>${osData.ambiente}</td>
+        <td>${osData.dataPedido}</td>
+        <td>${osData.dataLimite}</td>
+        <td>
+            <button class="editOSButton" data-id="${doc.id}">
+                <i class="fas fa-pen"></i>
+            </button>
+            <button onclick="deleteOS('${doc.id}')">
+                <i class="fas fa-times"></i>
+            </button>
+            <button onclick="viewOS('${osData.id}', '${osData.numeroID}','${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}', '${osData.tipoSolicitacao}')">
+                <i class="fas fa-search"></i>
+            </button>
+        </td>
+    `;
+    osTable.appendChild(row);
+});
 
-        row.innerHTML = `
-            <td>${osData.nome}</td>
-            <td>${osData.descricao}</td>
-            <td>${osData.criador}</td>
-            <td>${osData.atribuido}</td>
-            <td>${osData.status}</td>
-            <td>${osData.ambiente}</td>
-            <td>${osData.dataPedido}</td>
-            <td>${osData.dataLimite}</td>
-            <td>${osData.prioridade}</td>
-            <td>
-                <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
-                    <i class="fas fa-pen"></i>
-                </button>
-                <button onclick="deleteOS('${doc.id}')">
-                    <i class="fas fa-times"></i>
-                </button>
-                <button onclick="viewOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}', '${osData.tipoSolicitacao}', '${osData.categoria}', '${osData.blocoManutencao}', '${osData.dataEncerrado}', '${osData.feedback}', '${osData.rating}')">
-                    <i class="fas fa-search"></i>
-                </button>
-            </td>
-        `;
-        osTable.appendChild(row);
+// Usar event delegation para capturar o clique nos botões de edição
+document.querySelector("#osTable tbody").addEventListener("click", function (e) {
+    if (e.target.closest('.editOSButton')) {
+        const id = e.target.closest('.editOSButton').getAttribute('data-id');
+        editOS(id);  // Chama a função editOS passando o id
+    }
+});
+
+}
+
+function editOS(id){
+    const modal = document.getElementById("editModal");
+
+    // Buscar a ordem de serviço no Firestore
+    const osRef = doc(db, "ordemServicos", id);
+    getDoc(osRef).then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+            const osData = docSnapshot.data();
+
+            // Preencher o modal com as informações da ordem de serviço
+            document.getElementById("editNome").value = osData.nome;
+            document.getElementById("editDescricao").value = osData.descricao;
+            document.getElementById("editCriador").value = osData.criador;
+            document.getElementById("editAtribuido").value = osData.atribuido;
+            document.getElementById("editStatus").value = osData.status;
+            document.getElementById("editAmbiente").value = osData.ambiente;
+            document.getElementById("editDataPedido").value = osData.dataPedido;
+            document.getElementById("editDataLimite").value = osData.dataLimite;
+            document.getElementById("editPrioridade").value = osData.prioridade;
+
+            // Preencher o campo Tipo de Solicitação
+            document.getElementById("tipoSolicitacao").value = osData.tipoSolicitacao;
+
+            // Exibir o modal
+            modal.style.display = "block";
+
+            // Atualizar os dados ao submeter o formulário
+            const form = document.getElementById("ordemServicoForm");
+            form.onsubmit = function (e) {
+                e.preventDefault();
+
+                const updatedOS = {
+                    nome: document.getElementById("editNome").value,
+                    descricao: document.getElementById("editDescricao").value,
+                    criador: document.getElementById("editCriador").value,
+                    atribuido: document.getElementById("editAtribuido").value,
+                    status: document.getElementById("editStatus").value,
+                    ambiente: document.getElementById("editAmbiente").value,
+                    dataPedido: document.getElementById("editDataPedido").value,
+                    dataLimite: document.getElementById("editDataLimite").value,
+                    prioridade: document.getElementById("editPrioridade").value,
+                    tipoSolicitacao: document.getElementById("tipoSolicitacao").value,
+                };
+
+                // Atualizar a ordem de serviço no Firestore
+                updateDoc(osRef, updatedOS)
+                    .then(() => {
+                        alert("Ordem de serviço atualizada com sucesso!");
+                        modal.style.display = "none";
+                        location.reload();  // Recarrega a página para exibir os dados atualizados
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao atualizar a ordem de serviço:", error);
+                    });
+            };
+        } else {
+            console.log("Ordem de serviço não encontrada");
+        }
+    }).catch((error) => {
+        console.error("Erro ao buscar a ordem de serviço:", error);
     });
 }
 
-window.editOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade) => {
-    currentEditingId = id; // Armazena o ID da ordem de serviço sendo editada
-    // O ID não será mais atribuído a nenhum campo de input
 
-    document.getElementById("editNome").value = nome;
-    document.getElementById("editDescricao").value = descricao;
-    document.getElementById("editCriador").value = criador;
-    document.getElementById("editAtribuido").value = atribuido;
-    document.getElementById("editStatus").value = status;
-    document.getElementById("editAmbiente").value = ambiente;
-    document.getElementById("editDataPedido").value = dataPedido;
-    document.getElementById("editDataLimite").value = dataLimite;
-    document.getElementById("editPrioridade").value = prioridade;
-    document.getElementById("ordemServicoModal").style.display = "block";
+
+// Função para fechar o modal de edição
+window.closeOrdemServicoModal = () => {
+    document.getElementById("ordemServicoModal").style.display = "none";
 };
+
 
     window.closeOrdemServicoModal = () => {
         document.getElementById("ordemServicoModal").style.display = "none";
     };
 
-    document.getElementById("ordemServicoForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    const nome = document.getElementById("editNome").value;
-    const descricao = document.getElementById("editDescricao").value;
-    const criador = document.getElementById("editCriador").value;
-    const atribuido = document.getElementById("editAtribuido").value;
-    const status = document.getElementById("editStatus").value;
-    const ambiente = document.getElementById("editAmbiente").value;
-    const dataPedido = document.getElementById("editDataPedido").value;
-    const dataLimite = document.getElementById("editDataLimite").value;
-    const prioridade = document.getElementById("editPrioridade").value;
-
-    try {
-        // Update document and handle response
-        await updateDoc(doc(db, "ordemServicos", currentEditingId), {
-            nome: nome,
-            descricao: descricao,
-            criador: criador,
-            atribuido: atribuido,
-            status: status,
-            ambiente: ambiente,
-            dataPedido: dataPedido,
-            dataLimite: dataLimite,
-            prioridade: prioridade,
-        });
-        closeOrdemServicoModal();
-        loadOrdensServico();  // Recarrega a tabela após salvar
-    } catch (error) {
-        console.error("Erro ao salvar a ordem de serviço:", error);
-    }
-});
 
     window.deleteOS = async (id) => {
         const confirmation = confirm("Tem certeza que deseja excluir esta Ordem de Serviço?");
@@ -404,28 +451,28 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 });
 
 
-window.viewOS = (id, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade, tipoSolicitacao, categoria, blocoManutencao, dataEncerrado, feedback, rating) => {
+window.viewOS = (id, numeroID, nome, descricao, criador, atribuido, status, ambiente, dataPedido, dataLimite, prioridade, tipoSolicitacao, categoria, blocoManutencao, dataEncerrado, feedback, rating) => {
     const modal = document.getElementById("viewOrdemServicoModal");
     const detailsContainer = document.getElementById("viewOrdemServicoDetails");
 
     // Preencher os detalhes no modal
     detailsContainer.innerHTML = `
-        <p><strong>ID da Ordem:</strong> ${id}</p>  <!-- Exibindo o número ID -->
-        <p><strong>Nome:</strong> ${nome}</p>
-        <p><strong>Descrição:</strong> ${descricao}</p>
-        <p><strong>Criador:</strong> ${criador}</p>
-        <p><strong>Atribuído a:</strong> ${atribuido}</p>
-        <p><strong>Status:</strong> ${status}</p>
-        <p><strong>Ambiente:</strong> ${ambiente}</p>
-        <p><strong>Data do Pedido:</strong> ${dataPedido}</p>
-        <p><strong>Data Limite:</strong> ${dataLimite}</p>
-        <p><strong>Prioridade:</strong> ${prioridade}</p>
-        <p><strong>Tipo de Solicitação:</strong> ${tipoSolicitacao}</p>
-        <p><strong>Categoria:</strong> ${categoria}</p>  <!-- Exibindo Categoria -->
-        <p><strong>Bloco de Manutenção:</strong> ${blocoManutencao}</p>  <!-- Exibindo Bloco de Manutenção -->
-        <p><strong>Data de Encerramento:</strong> ${dataEncerrado}</p>  <!-- Exibindo Data de Encerramento -->
-        <p><strong>Feedback:</strong> ${feedback}</p>  <!-- Exibindo Feedback -->
-        <p><strong>Nota:</strong> ${rating}</p>  <!-- Exibindo Rating -->
+        <p><strong>Número ID:</strong> ${formatValue(numeroID)}</p>
+        <p><strong>Nome:</strong> ${formatValue(nome)}</p>
+        <p><strong>Descrição:</strong> ${formatValue(descricao)}</p>
+        <p><strong>Criador:</strong> ${formatValue(criador)}</p>
+        <p><strong>Atribuído a:</strong> ${formatValue(atribuido)}</p>
+        <p><strong>Status:</strong> ${formatValue(status)}</p>
+        <p><strong>Ambiente:</strong> ${formatValue(ambiente)}</p>
+        <p><strong>Data do Pedido:</strong> ${formatValue(dataPedido)}</p>
+        <p><strong>Data Limite:</strong> ${formatValue(dataLimite)}</p>
+        <p><strong>Prioridade:</strong> ${formatValue(prioridade)}</p>
+        <p><strong>Tipo de Solicitação:</strong> ${formatValue(tipoSolicitacao)}</p>
+        <p><strong>Categoria:</strong> ${formatValue(categoria)}</p>
+        <p><strong>Bloco de Manutenção:</strong> ${formatValue(blocoManutencao)}</p>
+        <p><strong>Data de Encerramento:</strong> ${formatValue(dataEncerrado)}</p>
+        <p><strong>Feedback:</strong> ${formatValue(feedback)}</p>
+        <p><strong>Nota:</strong> ${formatValue(rating)}</p>
     `;
 
     // Exibir o modal
@@ -436,6 +483,11 @@ window.viewOS = (id, nome, descricao, criador, atribuido, status, ambiente, data
 window.closeViewOrdemServicoModal = () => {
     document.getElementById("viewOrdemServicoModal").style.display = "none";
 };
+
+// Função para garantir que valores undefined sejam substituídos por "Indefinido"
+function formatValue(value) {
+    return value === undefined || value === null || value === "" ? "Indefinido" : value;
+}
 
 
 document.querySelector(".search-bar").addEventListener("input", async function () {
@@ -472,7 +524,7 @@ document.querySelector(".search-bar").addEventListener("input", async function (
                 <td>${osData.dataLimite}</td>
                 <td>${osData.prioridade}</td>
                 <td>
-                    <button onclick="editOS('${osData.id}', '${osData.nome}', '${osData.descricao}', '${osData.criador}', '${osData.atribuido}', '${osData.status}', '${osData.ambiente}', '${osData.dataPedido}', '${osData.dataLimite}', '${osData.prioridade}')">
+                <button onclick="editOSbutton" data-id="${doc.id}">
                         <i class="fas fa-pen"></i>
                     </button>
                     <button onclick="deleteOS('${doc.id}')">
@@ -487,6 +539,20 @@ document.querySelector(".search-bar").addEventListener("input", async function (
         }
     });
 });
+
+
+// Função para fechar o modal de edição
+window.closeOrdemServicoModal = () => {
+    document.getElementById("editModal").style.display = "none"; // Corrigido para 'editModal'
+};
+
+// Fechar o modal se clicar fora do conteúdo
+window.onclick = (event) => {
+    const modal = document.getElementById("editModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
 
     </script>
 
