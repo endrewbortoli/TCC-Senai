@@ -234,11 +234,10 @@ form input, form select, form button {
       const atribuido = osData.atribuido ? osData.atribuido : "Não atribuído";
 
       // Condição para filtrar "Finalizado" e "Cancelado"
-      if (osData.status === "Finalizado") {
-        return; // Ignorar esta ordem de serviço se o status for "Finalizado"
+      if (osData.status === "Finalizado" || osData.status === "Cancelado") {
+        return; 
       }
 
-      // Atribui o status correto, com "Em análise" como fallback
       const status = osData.status && osData.status !== "Cancelado" ? osData.status : "Em análise";
 
       const row = document.createElement("tr");
@@ -316,7 +315,6 @@ function openCompletionModal(id) {
     }
   };
 
-  // Lógica para atualizar a ordem de serviço com feedback e avaliação
   const form = document.getElementById("completionForm");
   form.onsubmit = function (e) {
     e.preventDefault();
@@ -336,12 +334,14 @@ function openCompletionModal(id) {
       .then(() => {
         alert("Ordem de serviço finalizada com sucesso!");
         modal.style.display = "none";
-        location.reload();
+        loadOrdensServico(nomeUsuario); // Chama a função novamente para atualizar a tabela
+        loadOrdensFinalizadas(nomeUsuario); // Chama a função novamente para atualizar a tabela de ordens finalizadas
       })
       .catch((error) => {
         console.error("Erro ao atualizar a ordem de serviço:", error);
       });
   };
+
 }
 
   function editOS(id) {
@@ -354,19 +354,19 @@ function openCompletionModal(id) {
     if (docSnapshot.exists()) {
       const osData = docSnapshot.data();
 
-      // Preencher o modal com as informações da ordem de serviço
+      // Preenche o modal com as informações da ordem de serviço
       document.getElementById("nome").value = osData.nome;
       document.getElementById("descricao").value = osData.descricao;
       document.getElementById("atribuido").value = osData.atribuido || "Não atribuído";
       
-      // Preencher o campo de status, mas tornar o campo readonly
+      // Preenche o campo de status, mas tornar o campo readonly
       const statusDisplay = document.getElementById("statusDisplay");
       statusDisplay.value = osData.status; // Exibir o status, mas sem permitir edição
 
       document.getElementById("ambiente").value = osData.ambiente;
       document.getElementById("dataLimite").value = osData.dataLimite;
 
-      // Exibir o modal
+      // Exibi o modal
       modal.style.display = "block";
 
       // Quando o usuário fechar o modal
@@ -413,18 +413,19 @@ function openCompletionModal(id) {
     console.error("Erro ao buscar a ordem de serviço:", error);
   });
 }
-  function deleteOS(id) {
-    if (confirm("Tem certeza que deseja excluir esta ordem de serviço?")) {
-      deleteDoc(doc(db, "ordemServicos", id))
-        .then(() => {
-          alert("Ordem de serviço excluída com sucesso!");
-          location.reload();
-        })
-        .catch((error) => {
-          console.error("Erro ao excluir a ordem de serviço:", error);
-        });
-    }
+function deleteOS(id) {
+  if (confirm("Tem certeza que deseja excluir esta ordem de serviço?")) {
+    deleteDoc(doc(db, "ordemServicos", id))
+      .then(() => {
+        alert("Ordem de serviço excluída com sucesso!");
+        loadOrdensServico(nomeUsuario); // Chama a função novamente para atualizar a tabela
+        loadOrdensFinalizadas(nomeUsuario); // Chama a função novamente para atualizar a tabela de ordens finalizadas
+      })
+      .catch((error) => {
+        console.error("Erro ao excluir a ordem de serviço:", error);
+      });
   }
+}
 
 async function loadOrdensFinalizadas(nomeUsuario) {
   const q = query(

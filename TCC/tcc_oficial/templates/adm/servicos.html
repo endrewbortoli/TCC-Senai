@@ -199,11 +199,9 @@
                 <label for="editDescricao">Descrição:</label>
                 <input type="text" id="editDescricao" ><br>
                 <label for="editCriador">Solicitante:</label>
-                <select id="editCriador"></select><br>
-                
-                <label for="editAtribuido">Atribuído a:</label>
-                <select id="editAtribuido"></select><br>
-                
+                <input type="text" id="editCriador" readonly><br>
+                <label for="editAtribuido" >Atribuído a:</label>
+                <input type="text" id="editAtribuido" readonly><br>
                 <label for="editStatus">Status:</label>
                 <select id="editStatus" name="status">
                     <option value="" disabled selected>Selecione</option>
@@ -415,9 +413,6 @@ window.closeOrdemServicoModal = () => {
 
     window.onload = loadOrdensServico;
 
-    function logout() {
-        console.log("Logout realizado");
-    }
 
     // Função para exportar os dados para Excel
 document.getElementById("exportBtn").addEventListener("click", () => {
